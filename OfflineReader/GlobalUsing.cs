@@ -1,0 +1,9 @@
+﻿global using CommunityToolkit.Mvvm.ComponentModel;
+global using CommunityToolkit.Mvvm.Input;
+global using OfflineReader.Model;
+global using OfflineReader.ViewModel;
+global using OfflineReader.View;
+global using OfflineReader.Service;
+global using System.Text.Json;
+global using System.Collections.ObjectModel;
+global using System.Diagnostics;

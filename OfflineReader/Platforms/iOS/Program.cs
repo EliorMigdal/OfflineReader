@@ -1,5 +1,4 @@
-﻿using ObjCRuntime;
-using UIKit;
+﻿using UIKit;
 
 namespace OfflineReader;
 
@@ -13,4 +12,3 @@ public class Program
 		UIApplication.Main(args, null, typeof(AppDelegate));
 	}
 }
-

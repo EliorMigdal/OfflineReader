@@ -30,6 +30,9 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-ios|AnyCPU'">
+	  <CreatePackage>false</CreatePackage>
+	</PropertyGroup>
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
@@ -50,6 +53,31 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Remove="Model\" />
+	  <None Remove="View\" />
+	  <None Remove="ViewModel\" />
+	  <None Remove="Resources\Images\trending.png" />
+	  <None Remove="Tests\articles.json" />
+	  <None Remove="Tests\ynetmain.jpg" />
+	  <None Remove="Tests\wallamain.jpeg" />
+	  <None Remove="Tests\makomain.jpg" />
+	  <None Remove="Service\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Model\" />
+	  <Folder Include="View\" />
+	  <Folder Include="ViewModel\" />
+	  <Folder Include="Service\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <BundleResource Include="Resources\Images\trending.png" />
+	  <BundleResource Include="Tests\articles.json" />
+	  <BundleResource Include="Tests\ynetmain.jpg" />
+	  <BundleResource Include="Tests\wallamain.jpeg" />
+	  <BundleResource Include="Tests\makomain.jpg" />
+	</ItemGroup>
 </Project>

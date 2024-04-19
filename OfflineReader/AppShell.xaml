@@ -3,13 +3,12 @@
     x:Class="OfflineReader.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:OfflineReader"
+    xmlns:local="clr-namespace:OfflineReader.View"
     Shell.FlyoutBehavior="Disabled">
 
     <ShellContent
-        Title="Home"
+        Title="Trending"
         ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
-
+        Route="MainPage">
+    </ShellContent>
 </Shell>
-
