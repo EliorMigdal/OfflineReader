@@ -1,6 +1,6 @@
 ﻿namespace OfflineReader.ViewModel;
 
-public partial class MainViewModel : ObservableObject
+public partial class MainViewModel : BaseViewModel
 {
     public ArticlesService ArticlesService { get; set; } = new();
     public ObservableCollection<Article> Articles { get; set; } = new();
@@ -14,5 +14,11 @@ public partial class MainViewModel : ObservableObject
         {
             Articles.Add(article);
         }
+    }
+
+    [RelayCommand]
+    public async Task GoToReaderPage()
+    {
+        await Shell.Current.GoToAsync(nameof(ReaderPage));
     }
 }

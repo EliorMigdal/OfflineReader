@@ -63,7 +63,6 @@
                                     WidthRequest="225"
                                     HeightRequest="30"
                                     Margin="-8"
-                                    VerticalOptions="Start"
                                     Background="PaleVioletRed"
                                     StrokeShape="RoundRectangle 80">
                                 <Grid ColumnDefinitions="Auto, *, Auto">
@@ -73,7 +72,6 @@
                                            FontSize="Body"
                                            FontAttributes="Bold"
                                            Margin="4"
-                                           HorizontalOptions="Start"
                                            Padding="10"/>
                                     <Label Grid.Column="2"
                                            Text="{Binding Date}"
@@ -86,7 +84,6 @@
                                 </Grid>
                             </Border>
                             <Border Grid.Row="1"
-                                    VerticalOptions="Start"
                                     Margin="5"
                                     StrokeShape="RoundRectangle 80"
                                     Stroke="{StaticResource Gray100}"
@@ -105,8 +102,6 @@
                                         <Image Aspect="AspectFill"
                                                HeightRequest="90"
                                                WidthRequest="100"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="Center"
                                                Source="{Binding Image}"/>
                                         </Frame>
                                     <Grid Grid.Column="1"
@@ -160,7 +155,8 @@
                         WidthRequest="20"
                         HeightRequest="20"
                         Margin="10"
-                        VerticalOptions="Center"/>
+                        VerticalOptions="Center"
+                        Command="{Binding GoToReaderPageCommand}"/>
             </HorizontalStackLayout>
         </Frame>
     </Grid>
