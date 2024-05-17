@@ -44,43 +44,16 @@
                    TextColor="DarkBlue"
                    Padding="5"/>
         </Border>
-        <ScrollView Grid.Row="2"
-                    VerticalScrollBarVisibility="Always">
-        <CollectionView BackgroundColor="Transparent"
-                        ItemsSource="{Binding Articles}"
-                        WidthRequest="400"
-                        SelectionMode="None">
+        <ScrollView Grid.Row="2" VerticalScrollBarVisibility="Always">
+        <CollectionView BackgroundColor="Transparent" ItemsSource="{Binding Articles}" WidthRequest="400" SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:Article">
-                    <Grid RowDefinitions="Auto, Auto"
-                          Margin="0"
-                          Padding="20">
-                        <Grid RowDefinitions="Auto, Auto"
-                              Grid.Row="0"
-                              WidthRequest="400"
-                              Margin="0">
-                            <Border Grid.Row="0"
-                                    WidthRequest="225"
-                                    HeightRequest="30"
-                                    Margin="-8"
-                                    Background="PaleVioletRed"
-                                    StrokeShape="RoundRectangle 80">
+                    <Grid RowDefinitions="Auto, Auto" Margin="0" Padding="20">
+                        <Grid RowDefinitions="Auto, Auto" Grid.Row="0" WidthRequest="400" Margin="0">
+                            <Border Grid.Row="0" WidthRequest="225" HeightRequest="30" Margin="-8" Background="PaleVioletRed" StrokeShape="RoundRectangle 80">
                                 <Grid ColumnDefinitions="Auto, *, Auto">
-                                    <Label Grid.Column="0"
-                                           Text="{Binding Website}"
-                                           TextColor="Black"
-                                           FontSize="Body"
-                                           FontAttributes="Bold"
-                                           Margin="4"
-                                           Padding="10"/>
-                                    <Label Grid.Column="2"
-                                           Text="{Binding Date}"
-                                           TextColor="Black"
-                                           FontSize="Body"
-                                           FontAttributes="Bold"
-                                           Margin="4"
-                                           HorizontalOptions="End"
-                                           Padding="10"/>
+                                    <Label Grid.Column="0" Text="{Binding Website}" TextColor="Black" FontSize="Body" FontAttributes="Bold" Margin="4" Padding="10"/>
+                                    <Label Grid.Column="2" Text="{Binding Date}" TextColor="Black" FontSize="Body" FontAttributes="Bold" Margin="4" HorizontalOptions="End" Padding="10"/>
                                 </Grid>
                             </Border>
                             <Border Grid.Row="1"
@@ -90,6 +63,11 @@
                                     StrokeThickness="5"
                                     HeightRequest="125"
                                     WidthRequest="400">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=GoToReaderModeAsyncCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                    </Border.GestureRecognizers>
                                 <Grid ColumnDefinitions="Auto, *">
                                     <Frame Grid.Column="0"
                                             VerticalOptions="Center"
