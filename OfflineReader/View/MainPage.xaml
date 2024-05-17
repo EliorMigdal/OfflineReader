@@ -5,7 +5,7 @@
              xmlns:viewmodel="clr-namespace:OfflineReader.ViewModel"
              xmlns:model="clr-namespace:OfflineReader.Model"
              x:DataType="viewmodel:MainViewModel">
-    <Grid RowDefinitions="Auto, Auto, *, Auto"
+    <Grid RowDefinitions="Auto, Auto, *"
           RowSpacing="0">
         <Frame Grid.Row="0"
                StyleClass="Header"
@@ -44,16 +44,42 @@
                    TextColor="DarkBlue"
                    Padding="5"/>
         </Border>
-        <ScrollView Grid.Row="2" VerticalScrollBarVisibility="Always">
-        <CollectionView BackgroundColor="Transparent" ItemsSource="{Binding Articles}" WidthRequest="400" SelectionMode="None">
+        <ScrollView Grid.Row="2"
+                    VerticalScrollBarVisibility="Always">
+        <CollectionView BackgroundColor="Transparent"
+                        ItemsSource="{Binding Articles}"
+                        WidthRequest="400"
+                        SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:Article">
-                    <Grid RowDefinitions="Auto, Auto" Margin="0" Padding="20">
-                        <Grid RowDefinitions="Auto, Auto" Grid.Row="0" WidthRequest="400" Margin="0">
-                            <Border Grid.Row="0" WidthRequest="225" HeightRequest="30" Margin="-8" Background="PaleVioletRed" StrokeShape="RoundRectangle 80">
+                    <Grid RowDefinitions="Auto, Auto"
+                          Margin="0"
+                          Padding="20">
+                        <Grid RowDefinitions="Auto, Auto"
+                              Grid.Row="0"
+                              WidthRequest="400"
+                              Margin="0">
+                            <Border Grid.Row="0"
+                                    WidthRequest="225"
+                                    HeightRequest="30" Margin="-8"
+                                    Background="PaleVioletRed"
+                                    StrokeShape="RoundRectangle 80">
                                 <Grid ColumnDefinitions="Auto, *, Auto">
-                                    <Label Grid.Column="0" Text="{Binding Website}" TextColor="Black" FontSize="Body" FontAttributes="Bold" Margin="4" Padding="10"/>
-                                    <Label Grid.Column="2" Text="{Binding Date}" TextColor="Black" FontSize="Body" FontAttributes="Bold" Margin="4" HorizontalOptions="End" Padding="10"/>
+                                    <Label Grid.Column="0"
+                                           Text="{Binding Website}"
+                                           TextColor="Black"
+                                           FontSize="Body"
+                                           FontAttributes="Bold"
+                                           Margin="4"
+                                           Padding="10"/>
+                                    <Label Grid.Column="2"
+                                           Text="{Binding Date}"
+                                           TextColor="Black"
+                                           FontSize="Body"
+                                           FontAttributes="Bold"
+                                           Margin="4"
+                                           HorizontalOptions="End"
+                                           Padding="10"/>
                                 </Grid>
                             </Border>
                             <Border Grid.Row="1"
@@ -62,13 +88,15 @@
                                     Stroke="{StaticResource Gray100}"
                                     StrokeThickness="5"
                                     HeightRequest="125"
-                                    WidthRequest="400">
+                                    WidthRequest="400"
+                                    Padding="5">
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer 
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=GoToReaderModeAsyncCommand}"
                                             CommandParameter="{Binding .}"/>
                                     </Border.GestureRecognizers>
-                                <Grid ColumnDefinitions="Auto, *">
+                                <Grid ColumnDefinitions="Auto, *"
+                                      IsClippedToBounds="True">
                                     <Frame Grid.Column="0"
                                             VerticalOptions="Center"
                                             HorizontalOptions="Center"
@@ -83,15 +111,23 @@
                                                Source="{Binding Image}"/>
                                         </Frame>
                                     <Grid Grid.Column="1"
-                                          RowDefinitions="Auto, Auto">
+                                          RowDefinitions="Auto, Auto"
+                                          IsClippedToBounds="True">
                                         <Label Grid.Row="0"
                                                Text="{Binding Title}"
                                                FontSize="Large"
-                                               TextColor="Black"/>
+                                               TextColor="Black"
+                                               FlowDirection="RightToLeft"
+                                               HorizontalTextAlignment="Center"
+                                               MaxLines="2"
+                                               Padding="2"/>
                                         <Label Grid.Row="1"
                                                Text="{Binding Description}"
                                                FontSize="Small"
-                                               TextColor="Black"/>
+                                               TextColor="Black"
+                                               FlowDirection="RightToLeft"
+                                               VerticalTextAlignment="Center"
+                                               HorizontalTextAlignment="Center"/>
                                     </Grid>
                                 </Grid>
                             </Border>
@@ -101,41 +137,5 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
         </ScrollView>
-
-        <Frame Grid.Row="3"
-               StyleClass="Menu"
-               CornerRadius="65"
-               BackgroundColor="LightBlue">
-            <HorizontalStackLayout HorizontalOptions="Center"
-                                   HeightRequest="20"
-                                   Margin="2">
-                <Button BackgroundColor="AliceBlue"
-                        WidthRequest="20"
-                        HeightRequest="20"
-                        Margin="10"
-                        VerticalOptions="Center"/>
-                <Button BackgroundColor="AliceBlue"
-                        WidthRequest="20"
-                        HeightRequest="20"
-                        Margin="10"
-                        VerticalOptions="Center"/>
-                <Button BackgroundColor="AliceBlue"
-                        WidthRequest="20"
-                        HeightRequest="20"
-                        Margin="10"
-                        VerticalOptions="Center"/>
-                <Button BackgroundColor="AliceBlue"
-                        WidthRequest="20"
-                        HeightRequest="20"
-                        Margin="10"
-                        VerticalOptions="Center"/>
-                <Button BackgroundColor="AliceBlue"
-                        WidthRequest="20"
-                        HeightRequest="20"
-                        Margin="10"
-                        VerticalOptions="Center"
-                        Command="{Binding GoToReaderPageCommand}"/>
-            </HorizontalStackLayout>
-        </Frame>
     </Grid>
 </ContentPage>

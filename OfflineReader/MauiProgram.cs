@@ -19,12 +19,6 @@ public static class MauiProgram
 				builder.Logging.AddDebug();
 		#endif
 
-		Routing.RegisterRoute(nameof(HomePage), typeof(HomePage));
-		builder.Services.AddSingleton<HomePage>();
-
-		Routing.RegisterRoute(nameof(FlyoutMenuPage), typeof(FlyoutMenuPage));
-		builder.Services.AddSingleton<FlyoutMenuPage>();
-
         Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
         builder.Services.AddSingleton<MainViewModel>();
         builder.Services.AddSingleton<MainPage>();
