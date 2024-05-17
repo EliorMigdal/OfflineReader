@@ -17,8 +17,14 @@ public partial class MainViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    public async Task GoToReaderPage()
+    async Task GoToReaderModeAsync(Article i_Article)
     {
-        await Shell.Current.GoToAsync(nameof(ReaderPage));
+        if (i_Article == null)
+            return;
+
+        await Shell.Current.GoToAsync(nameof(ReaderPage), true, new Dictionary<string, object>
+        {
+            { "Article", i_Article }
+        });
     }
 }

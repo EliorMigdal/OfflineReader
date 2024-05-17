@@ -4,11 +4,15 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:OfflineReader.View"
-    Shell.FlyoutBehavior="Disabled">
+    Shell.FlyoutBehavior="Flyout">
 
-    <ShellContent
-        Title="Trending"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage">
-    </ShellContent>
+    <ShellContent ContentTemplate="{DataTemplate local:MainPage}"/>
+
+    <FlyoutItem Title="Main Page" Icon="icon_mainpage.png">
+        <ShellContent ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage"/>
+    </FlyoutItem>
+
+        <FlyoutItem Title="Reader Mode" Icon="icon_mainpage.png">
+        <ShellContent ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage"/>
+    </FlyoutItem>
 </Shell>
