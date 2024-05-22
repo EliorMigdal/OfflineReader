@@ -17,7 +17,7 @@ public partial class MainViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    async Task GoToReaderModeAsync(Article i_Article)
+    public async Task GoToReaderModeAsync(Article i_Article)
     {
         if (i_Article == null)
             return;

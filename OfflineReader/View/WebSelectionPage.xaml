@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="OfflineReader.View.WebSelectionPage"
+             xmlns:model="clr-namespace:OfflineReader.Model"
+             xmlns:viewmodel="clr-namespace:OfflineReader.ViewModel"
+             x:DataType="viewmodel:WebSelectionViewModel"
+             Title="Web Selection Page">
+    <Grid RowDefinitions="Auto, Auto, *"
+          RowSpacing="0">
+        <Frame Grid.Row="0"
+               StyleClass="Header"
+               HeightRequest="70"
+               BackgroundColor="LightBlue"
+               CornerRadius="0"
+               BorderColor="Transparent">
+            <Grid ColumnDefinitions="Auto, *, Auto">
+                <Button Grid.Column="0"
+                        HeightRequest="20"
+                        WidthRequest="20"
+                        BackgroundColor="AliceBlue"
+                        Margin="10">
+                </Button>
+                <Button Grid.Column="2"
+                        HeightRequest="20"
+                        WidthRequest="20"
+                        BackgroundColor="AliceBlue"
+                        Margin="10">
+                </Button>
+            </Grid>
+        </Frame>
+        <Border Grid.Row="1"
+                StrokeShape="RoundRectangle 90"
+                Stroke="White"
+                StrokeThickness="5"
+                HeightRequest="40"
+                WidthRequest="220"
+                Padding="0"
+                BackgroundColor="LightBlue"
+                Margin="0,-20,0,0"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
+            <Label HorizontalOptions="Center"
+                   Text="Web Selection"
+                   FontSize="Header"
+                   FontAttributes="Bold"
+                   TextColor="DarkBlue"
+                   Padding="5">
+            </Label>
+        </Border>
+        <ScrollView Grid.Row="2"
+                    VerticalScrollBarVisibility="Always">
+            <CollectionView BackgroundColor="Transparent"
+                            ItemsSource="{Binding SupportedWebsites}"
+                            WidthRequest="400"
+                            SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:SupportedWebsite">
+                        <Grid>
+                            <Border Margin="5"
+                                    StrokeShape="RoundRectangle 80"
+                                    Stroke="{StaticResource Gray100}"
+                                    StrokeThickness="5"
+                                    HeightRequest="60"
+                                    WidthRequest="400">
+                                <Grid ColumnDefinitions="Auto, 50, Auto, Auto, Auto">
+                                    <Switch Grid.Column="0"
+                                            OnColor="LightGreen"
+                                            ThumbColor="AliceBlue"
+                                            HorizontalOptions="CenterAndExpand"
+                                            VerticalOptions="CenterAndExpand"
+                                            Margin="10">
+                                    </Switch>
+                                    <Frame Grid.Column="2"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center"
+                                           CornerRadius="20"
+                                           IsClippedToBounds="True"
+                                           HeightRequest="40"
+                                           WidthRequest="50">
+                                        <Image Source="{Binding Logo}"
+                                               Aspect="AspectFit">
+                                        </Image>
+                                    </Frame>
+                                    <Label Grid.Column="3"
+                                           Text="{Binding Name}"
+                                           FontSize="Body"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           Padding="10">
+                                    </Label>
+                                    <Picker Grid.Column="4"
+                                            Title="Depth"
+                                            HorizontalOptions="End"
+                                            VerticalOptions="Center"
+                                            Margin="80"
+                                            WidthRequest="60">
+                                         <Picker.ItemsSource>
+                                            <x:Array Type="{x:Type x:Int16}">
+                                                <x:Int16>1</x:Int16>
+                                                <x:Int16>2</x:Int16>
+                                                <x:Int16>3</x:Int16>
+                                            </x:Array>
+                                        </Picker.ItemsSource>
+                                    </Picker>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+    </Grid>
+</ContentPage>

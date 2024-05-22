@@ -7,3 +7,5 @@ global using OfflineReader.Service;
 global using System.Text.Json;
 global using System.Collections.ObjectModel;
 global using System.Diagnostics;
+global using Microsoft.Maui.Controls;
+global using Microsoft.Maui.Graphics;
