@@ -6,7 +6,7 @@
              xmlns:viewmodel="clr-namespace:OfflineReader.ViewModel"
              x:DataType="viewmodel:WebSelectionViewModel"
              Title="Web Selection Page">
-    <Grid RowDefinitions="Auto, Auto, *"
+    <Grid RowDefinitions="Auto, Auto, *, Auto"
           RowSpacing="0">
         <Frame Grid.Row="0"
                StyleClass="Header"
@@ -63,7 +63,8 @@
                                     StrokeThickness="5"
                                     HeightRequest="60"
                                     WidthRequest="400">
-                                <Grid ColumnDefinitions="Auto, 50, Auto, Auto, Auto">
+                                <Grid ColumnDefinitions="Auto, 50, Auto, Auto, Auto"
+                                      IsClippedToBounds="True">
                                     <Switch Grid.Column="0"
                                             OnColor="LightGreen"
                                             ThumbColor="AliceBlue"
@@ -72,14 +73,10 @@
                                             Margin="10">
                                     </Switch>
                                     <Frame Grid.Column="2"
-                                           VerticalOptions="Center"
-                                           HorizontalOptions="Center"
                                            CornerRadius="20"
-                                           IsClippedToBounds="True"
                                            HeightRequest="40"
                                            WidthRequest="50">
-                                        <Image Source="{Binding Logo}"
-                                               Aspect="AspectFit">
+                                        <Image Source="{Binding Logo}">
                                         </Image>
                                     </Frame>
                                     <Label Grid.Column="3"
