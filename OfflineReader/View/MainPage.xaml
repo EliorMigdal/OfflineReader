@@ -4,24 +4,26 @@
              x:Class="OfflineReader.View.MainPage"
              xmlns:viewmodel="clr-namespace:OfflineReader.ViewModel"
              xmlns:model="clr-namespace:OfflineReader.Model"
-             x:DataType="viewmodel:MainViewModel">
+             x:DataType="viewmodel:MainViewModel"
+             Title="Main Page">
     <Grid RowDefinitions="Auto, Auto, *"
           RowSpacing="0">
         <Frame Grid.Row="0"
                StyleClass="Header"
-               HeightRequest="70"
+               HeightRequest="{OnPlatform iOS=70,Android=50}"
                BackgroundColor="LightBlue"
+               Padding="0"
                CornerRadius="0"
                BorderColor="Transparent">
             <Grid ColumnDefinitions="Auto, *, Auto">
                 <Button Grid.Column="0"
-                        HeightRequest="20"
-                        WidthRequest="20"
+                        HeightRequest="{OnPlatform iOS=20,Android=30}"
+                        WidthRequest="{OnPlatform iOS=20,Android=30}"
                         BackgroundColor="AliceBlue"
                         Margin="10"/>
                 <Button Grid.Column="2"
-                        HeightRequest="20"
-                        WidthRequest="20"
+                        HeightRequest="{OnPlatform iOS=20,Android=30}"
+                        WidthRequest="{OnPlatform iOS=20,Android=30}"
                         BackgroundColor="AliceBlue"
                         Margin="10"/>
             </Grid>
@@ -48,7 +50,6 @@
                     VerticalScrollBarVisibility="Always">
         <CollectionView BackgroundColor="Transparent"
                         ItemsSource="{Binding Articles}"
-                        WidthRequest="400"
                         SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:Article">
@@ -57,11 +58,11 @@
                           Padding="20">
                         <Grid RowDefinitions="Auto, Auto"
                               Grid.Row="0"
-                              WidthRequest="400"
                               Margin="0">
                             <Border Grid.Row="0"
                                     WidthRequest="225"
-                                    HeightRequest="30" Margin="-8"
+                                    HeightRequest="30"
+                                    Margin="-8"
                                     Background="PaleVioletRed"
                                     StrokeShape="RoundRectangle 80">
                                 <Grid ColumnDefinitions="Auto, *, Auto">
@@ -88,7 +89,6 @@
                                     Stroke="{StaticResource Gray100}"
                                     StrokeThickness="5"
                                     HeightRequest="125"
-                                    WidthRequest="400"
                                     Padding="5">
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer 

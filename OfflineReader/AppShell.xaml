@@ -12,7 +12,11 @@
         <ShellContent ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage"/>
     </FlyoutItem>
 
-        <FlyoutItem Title="Reader Mode" Icon="icon_mainpage.png">
-        <ShellContent ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage"/>
+    <FlyoutItem Title="Reader Mode" Icon="icon_mainpage.png">
+        <ShellContent ContentTemplate="{DataTemplate local:ReaderPage}" Route="ReaderPage"/>
+    </FlyoutItem>
+
+    <FlyoutItem Title="Web Selection" Icon="icon_mainpage.png">
+        <ShellContent ContentTemplate="{DataTemplate local:WebSelectionPage}" Route="WebSelectionPage"/>
     </FlyoutItem>
 </Shell>

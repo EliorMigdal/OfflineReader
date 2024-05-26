@@ -26,6 +26,10 @@ public static class MauiProgram
         Routing.RegisterRoute(nameof(ReaderPage), typeof(ReaderPage));
         builder.Services.AddSingleton<ReaderPage>();
 
+        Routing.RegisterRoute(nameof(WebSelectionPage), typeof(WebSelectionPage));
+        builder.Services.AddSingleton<WebSelectionViewModel>();
+        builder.Services.AddSingleton<WebSelectionPage>();
+
         return builder.Build();
     }
 }
