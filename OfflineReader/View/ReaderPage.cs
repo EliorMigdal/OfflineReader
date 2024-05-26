@@ -2,8 +2,9 @@
 
 public partial class ReaderPage : ContentPage
 {
-    public ReaderPage()
+    public ReaderPage(ReaderPageViewModel i_ReaderViewModel)
     {
-       
+        InitializeComponent();
+        BindingContext = i_ReaderViewModel;
     }
 }

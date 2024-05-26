@@ -4,7 +4,8 @@
              x:Class="OfflineReader.View.MainPage"
              xmlns:viewmodel="clr-namespace:OfflineReader.ViewModel"
              xmlns:model="clr-namespace:OfflineReader.Model"
-             x:DataType="viewmodel:MainViewModel">
+             x:DataType="viewmodel:MainViewModel"
+             BackgroundColor="White">
     <Grid RowDefinitions="Auto, Auto, *"
           RowSpacing="0">
         <Frame Grid.Row="0"
@@ -55,11 +56,16 @@
                     <Grid RowDefinitions="Auto, Auto"
                           Margin="0"
                           Padding="20">
-                        <Grid RowDefinitions="Auto, Auto"
+                            <Grid RowDefinitions="Auto, Auto"
                               Grid.Row="0"
                               WidthRequest="400"
                               Margin="0">
-                            <Border Grid.Row="0"
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=GoToReaderModeCommand}"
+                                        CommandParameter="{Binding .}"/>
+                                </Grid.GestureRecognizers>
+                                <Border Grid.Row="0"
                                     WidthRequest="225"
                                     HeightRequest="30" Margin="-8"
                                     Background="PaleVioletRed"
@@ -82,20 +88,16 @@
                                            Padding="10"/>
                                 </Grid>
                             </Border>
-                            <Border Grid.Row="1"
+                                <Border Grid.Row="1"
                                     Margin="5"
                                     StrokeShape="RoundRectangle 80"
                                     Stroke="{StaticResource Gray100}"
                                     StrokeThickness="5"
-                                    HeightRequest="125"
+                                    HeightRequest="170"
                                     WidthRequest="400"
-                                    Padding="5">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer 
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=GoToReaderModeAsyncCommand}"
-                                            CommandParameter="{Binding .}"/>
-                                    </Border.GestureRecognizers>
-                                <Grid ColumnDefinitions="Auto, *"
+                                    Padding="5"
+                                    BackgroundColor="White">
+                                    <Grid ColumnDefinitions="Auto, *"
                                       IsClippedToBounds="True">
                                     <Frame Grid.Column="0"
                                             VerticalOptions="Center"
@@ -115,7 +117,7 @@
                                           IsClippedToBounds="True">
                                         <Label Grid.Row="0"
                                                Text="{Binding Title}"
-                                               FontSize="Large"
+                                               FontSize="Default"
                                                TextColor="Black"
                                                FlowDirection="RightToLeft"
                                                HorizontalTextAlignment="Center"

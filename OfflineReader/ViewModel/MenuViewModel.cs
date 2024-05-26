@@ -1,6 +1,4 @@
-﻿using System.Windows.Input;
-
-namespace OfflineReader.ViewModel;
+﻿namespace OfflineReader.ViewModel;
 
 public class MenuViewModel : BindableObject
 {

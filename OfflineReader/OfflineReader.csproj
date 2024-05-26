@@ -74,14 +74,15 @@
 	<ItemGroup>
 	  <Folder Include="Model\" />
 	  <Folder Include="View\" />
-	  <Folder Include="ViewModel\" />
 	  <Folder Include="Service\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <BundleResource Include="Resources\Images\trending.png" />
-	  <BundleResource Include="Tests\articles.json" />
-	  <BundleResource Include="Tests\ynetmain.jpg" />
-	  <BundleResource Include="Tests\wallamain.jpeg" />
-	  <BundleResource Include="Tests\makomain.jpg" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="Tests\articles.json" />
+	  <EmbeddedResource Include="Tests\makomain.jpg" />
+	  <EmbeddedResource Include="Tests\wallamain.jpeg" />
+	  <EmbeddedResource Include="Tests\ynetmain.jpg" />
 	</ItemGroup>
 </Project>

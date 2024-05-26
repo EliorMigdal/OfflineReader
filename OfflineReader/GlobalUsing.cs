@@ -6,4 +6,7 @@ global using OfflineReader.View;
 global using OfflineReader.Service;
 global using System.Text.Json;
 global using System.Collections.ObjectModel;
+global using System.Net;
+global using System.Reflection;
+global using System.Windows.Input;
 global using System.Diagnostics;

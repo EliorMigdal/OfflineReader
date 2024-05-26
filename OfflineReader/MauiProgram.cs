@@ -24,6 +24,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<MainPage>();
 
         Routing.RegisterRoute(nameof(ReaderPage), typeof(ReaderPage));
+        builder.Services.AddSingleton<ReaderPageViewModel>();
         builder.Services.AddSingleton<ReaderPage>();
 
         return builder.Build();

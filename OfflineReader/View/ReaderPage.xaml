@@ -1,6 +1,72 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="OfflineReader.View.ReaderPage">
-
+             x:Class="OfflineReader.View.ReaderPage"
+             xmlns:viewmodel="clr-namespace:OfflineReader.ViewModel"
+             xmlns:model="clr-namespace:OfflineReader.Model"
+             x:DataType="viewmodel:ReaderPageViewModel"
+             BackgroundColor="White">
+    <Grid RowDefinitions="Auto, Auto, *"
+      RowSpacing="0">
+        <Frame Grid.Row="0"
+           StyleClass="Header"
+           HeightRequest="70"
+           BackgroundColor="LightBlue"
+           CornerRadius="0"
+           BorderColor="Transparent">
+            <Grid ColumnDefinitions="Auto, *, Auto">
+                <Button Grid.Column="0"
+                    HeightRequest="20"
+                    WidthRequest="20"
+                    BackgroundColor="AliceBlue"
+                    Margin="10"/>
+                <Button Grid.Column="2"
+                    HeightRequest="20"
+                    WidthRequest="20"
+                    BackgroundColor="AliceBlue"
+                    Margin="10"/>
+            </Grid>
+        </Frame>
+        <Border Grid.Row="1"
+            StrokeShape="RoundRectangle 90"
+            Stroke="White"
+            StrokeThickness="5"
+            HeightRequest="40"
+            WidthRequest="220"
+            Padding="0"
+            BackgroundColor="LightBlue"
+            Margin="0,-20,0,0"
+            HorizontalOptions="Center"
+            VerticalOptions="Center">
+            <Label HorizontalOptions="Center"
+               Text="Trending News"
+               FontSize="Header"
+               FontAttributes="Bold"
+               TextColor="DarkBlue"
+               Padding="5"/>
+        </Border>
+        <ScrollView Grid.Row="2">
+            <StackLayout Padding="10">
+                <Label Text="{Binding SingleArticle.Title}" 
+                TextColor="Black"
+                FontSize="Large" 
+                FontAttributes="Bold" />
+                <Label Text="{Binding SingleArticle.SubTitle}" 
+                TextColor="Black"
+                FontSize="Medium" 
+                FontAttributes="Bold" />
+                <Label Text="{Binding SingleArticle.Date}" 
+                TextColor="Black"
+                FontSize="Medium" />
+                <Label Text="{Binding SingleArticle.Website}" 
+                TextColor="Black"
+                FontSize="Medium" />
+                <Image Source="{Binding SingleArticle.Image}" 
+                Aspect="AspectFit" />
+                <Label Text="{Binding SingleArticle.ArticleBody}" 
+                TextColor="Black"
+                FontSize="Medium" />
+            </StackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>
