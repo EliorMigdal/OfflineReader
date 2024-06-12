@@ -2,8 +2,9 @@
 
 public partial class SavedArticlesPage : ContentPage
 {
-    public SavedArticlesPage()
+    public SavedArticlesPage(SavedArticlesViewModel i_ViewModel)
     {
         InitializeComponent();
+        BindingContext = i_ViewModel;
     }
 }

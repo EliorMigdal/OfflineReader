@@ -30,6 +30,10 @@ public static class MauiProgram
         builder.Services.AddSingleton<WebSelectionViewModel>();
         builder.Services.AddSingleton<WebSelectionPage>();
 
+		Routing.RegisterRoute(nameof(SavedArticlesPage), typeof(SavedArticlesPage));
+		builder.Services.AddSingleton<SavedArticlesViewModel>();
+		builder.Services.AddSingleton<SavedArticlesPage>();
+
         return builder.Build();
     }
 }

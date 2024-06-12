@@ -19,4 +19,8 @@
     <FlyoutItem Title="Web Selection" Icon="icon_mainpage.png">
         <ShellContent ContentTemplate="{DataTemplate local:WebSelectionPage}" Route="WebSelectionPage"/>
     </FlyoutItem>
+
+    <FlyoutItem Title="Saved Articles" Icon="icon_mainpage.png">
+        <ShellContent ContentTemplate="{DataTemplate local:SavedArticlesPage}" Route="SavedArticlesPage"/>
+    </FlyoutItem>
 </Shell>
