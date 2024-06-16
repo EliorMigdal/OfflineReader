@@ -50,7 +50,9 @@
                     VerticalScrollBarVisibility="Always">
         <CollectionView BackgroundColor="Transparent"
                         ItemsSource="{Binding Articles}"
-                        SelectionMode="None">
+                        SelectionMode="Single"
+                        SelectedItem="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=SelectedArticle, Mode=TwoWay}"
+                        SelectionChangedCommand="{Binding ArticleSelectedCommand}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:Article">
                     <Grid RowDefinitions="Auto, Auto"
@@ -90,11 +92,6 @@
                                     StrokeThickness="5"
                                     HeightRequest="125"
                                     Padding="5">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer 
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=GoToReaderModeAsyncCommand}"
-                                            CommandParameter="{Binding .}"/>
-                                    </Border.GestureRecognizers>
                                 <Grid ColumnDefinitions="Auto, *"
                                       IsClippedToBounds="True">
                                     <Frame Grid.Column="0"

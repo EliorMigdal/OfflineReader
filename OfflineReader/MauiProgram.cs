@@ -17,7 +17,11 @@ public static class MauiProgram
 
 		#if DEBUG
 				builder.Logging.AddDebug();
-		#endif
+        #endif
+
+        Routing.RegisterRoute(nameof(TestView), typeof(TestView));
+		builder.Services.AddTransient<TestViewModel>();
+		builder.Services.AddTransient<TestView>();
 
         Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
         builder.Services.AddSingleton<MainViewModel>();

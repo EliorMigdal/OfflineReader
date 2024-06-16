@@ -55,6 +55,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 		<PackageReference Include="Syncfusion.Maui.TreeView" Version="25.2.5" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -67,12 +68,16 @@
 	  <None Remove="Tests\wallamain.jpeg" />
 	  <None Remove="Tests\makomain.jpg" />
 	  <None Remove="Service\" />
+	  <None Remove="Model\HTMLParser\" />
+	  <None Remove="Model\HTMLParser\ArticleParsers\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Model\" />
 	  <Folder Include="View\" />
 	  <Folder Include="ViewModel\" />
 	  <Folder Include="Service\" />
+	  <Folder Include="Model\HTMLParser\" />
+	  <Folder Include="Model\HTMLParser\ArticleParsers\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <BundleResource Include="Resources\Images\trending.png" />
