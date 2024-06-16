@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="OfflineReader.View.TestView"
+             xmlns:viewmodel="clr-namespace:OfflineReader.ViewModel"
+             Title="Test View">
+    <ContentPage.BindingContext>
+        <viewmodel:TestViewModel/>
+    </ContentPage.BindingContext>
+    <ScrollView>
+        <StackLayout Padding="20" Margin="10"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="FillAndExpand">
+            <ContentView Content="{Binding ArticleLayout}" />
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

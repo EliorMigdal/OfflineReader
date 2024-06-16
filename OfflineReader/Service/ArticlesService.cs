@@ -1,4 +1,6 @@
-﻿namespace OfflineReader.Service;
+﻿using System.Text.Json;
+
+namespace OfflineReader.Service;
 
 public class ArticlesService
 {
@@ -15,7 +17,9 @@ public class ArticlesService
                 Image = item.image,
                 Description = item.description,
                 Title = item.title,
-                Website = item.website
+                Website = item.website,
+                URL = item.url,
+                ID = item.id
             };
 
             articles.Add(article);
@@ -37,6 +41,8 @@ public class ArticlesService
         public string description { get; set; }
         public string image { get; set; }
         public string date { get; set; }
+        public string url { get; set; }
+        public string id { get; set; }
     }
 
     public class Root
