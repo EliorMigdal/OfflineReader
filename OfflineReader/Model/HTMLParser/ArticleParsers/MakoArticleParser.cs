@@ -2,7 +2,7 @@
 
 namespace OfflineReader.Model.HTMLParser.ArticleParsers;
 
-public class MakoArticleParser : ArticleParser
+public class MakoArticleParser : IArticleParser
 {
     [Obsolete]
     public StackLayout ParseHTML(string i_HTML)

@@ -16,7 +16,7 @@ public partial class TestViewModel : BaseViewModel
         string website = SharedData.SharedArticle.Website;
         string html = SharedData.HTML;
 
-        ArticleParser articleParser = ParserFactory.generateParser(website);
+        IArticleParser articleParser = ParserFactory.GenerateParser(website);
         ArticleLayout = articleParser.ParseHTML(html);
     }
 }

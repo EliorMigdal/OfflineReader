@@ -108,7 +108,7 @@
                                                Source="{Binding Image}"/>
                                         </Frame>
                                     <Grid Grid.Column="1"
-                                          RowDefinitions="Auto, Auto"
+                                          RowDefinitions="Auto"
                                           IsClippedToBounds="True">
                                         <Label Grid.Row="0"
                                                Text="{Binding Title}"
@@ -116,15 +116,11 @@
                                                TextColor="Black"
                                                FlowDirection="RightToLeft"
                                                HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="Center"
                                                MaxLines="2"
                                                Padding="2"/>
-                                        <Label Grid.Row="1"
-                                               Text="{Binding Description}"
-                                               FontSize="Small"
-                                               TextColor="Black"
-                                               FlowDirection="RightToLeft"
-                                               VerticalTextAlignment="Center"
-                                               HorizontalTextAlignment="Center"/>
                                     </Grid>
                                 </Grid>
                             </Border>

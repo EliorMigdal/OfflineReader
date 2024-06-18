@@ -1,6 +1,6 @@
 ﻿namespace OfflineReader.Model.HTMLParser;
 
-public interface ArticleParser
+public interface IArticleParser
 {
     StackLayout ParseHTML(string i_HTML);
 }
