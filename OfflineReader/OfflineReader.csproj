@@ -70,6 +70,7 @@
 	  <None Remove="Service\" />
 	  <None Remove="Model\HTMLParser\" />
 	  <None Remove="Model\HTMLParser\ArticleParsers\" />
+	  <None Remove="Model\HTMLParser\MainPageParsers\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Model\" />
@@ -78,6 +79,7 @@
 	  <Folder Include="Service\" />
 	  <Folder Include="Model\HTMLParser\" />
 	  <Folder Include="Model\HTMLParser\ArticleParsers\" />
+	  <Folder Include="Model\HTMLParser\MainPageParsers\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <BundleResource Include="Resources\Images\trending.png" />

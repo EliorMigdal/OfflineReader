@@ -1,17 +1,17 @@
-﻿using OfflineReader.Model.HTMLParser.ArticleParsers;
+﻿using OfflineReader.Model.HTMLParser.MainPageParsers;
 
 namespace OfflineReader.Model.HTMLParser;
 
-public class ArticleParserFactory
+public class MainPageParserFactory
 {
-    public IArticleParser GenerateParser(string i_Website)
+    public IMainPageParser GenerateMainPageParser(string i_Website)
     {
-        IArticleParser parser;
+        IMainPageParser parser;
 
         switch (i_Website)
         {
             case "mako":
-                parser = new MakoArticleParser();
+                parser = new MakoMainPageParser();
                 break;
 
             default:

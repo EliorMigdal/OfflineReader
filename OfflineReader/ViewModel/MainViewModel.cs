@@ -8,7 +8,8 @@ public partial class MainViewModel : BaseViewModel
     public ArticlesService ArticlesService { get; set; } = new();
     public ObservableCollection<Article> Articles { get; set; } = new();
     private HTMLSupplierService HTMLSupplier { get; set; } = new();
-    private ArticleParserFactory ParserFactory { get; set; } = new();
+    private ArticleParserFactory ArticleParserFactory { get; set; } = new();
+    private MainPageParserFactory MainPageParserFactory { get; set; } = new();
     public ICommand ArticleSelectedCommand { get; }
     private Article _selectedArticle;
     public Article SelectedArticle
@@ -39,7 +40,9 @@ public partial class MainViewModel : BaseViewModel
     [RelayCommand]
     public async Task GetArticlesAsync()
     {
-        List<Article> articles = await ArticlesService.LoadArticles();
+        string htmlCode = await HTMLSupplier.GetHTMLAsync("https://www.mako.co.il/");
+        IMainPageParser mainPageParser = MainPageParserFactory.GenerateMainPageParser("mako");
+        List<Article> articles = mainPageParser.ParseHTML(htmlCode);
 
         foreach (Article article in articles)
         {
@@ -67,7 +70,7 @@ public partial class MainViewModel : BaseViewModel
         string htmlCode = await HTMLSupplier.GetHTMLAsync(i_Article.URL);
         SharedData.SharedArticle = i_Article;
         SharedData.HTML = htmlCode;
-        ArticleParser articleParser = ParserFactory.generateParser(i_Article.Website.ToLower());
+        IArticleParser articleParser = ArticleParserFactory.GenerateParser(i_Article.Website.ToLower());
         StackLayout ArticleLayout = articleParser.ParseHTML(htmlCode);
 
         await Shell.Current.GoToAsync(nameof(TestView), true);
