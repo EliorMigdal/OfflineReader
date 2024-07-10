@@ -63,7 +63,7 @@
                                     StrokeThickness="5"
                                     HeightRequest="60"
                                     WidthRequest="400">
-                                <Grid ColumnDefinitions="Auto, 50, Auto, Auto, Auto"
+                                <Grid ColumnDefinitions="Auto, 50, Auto, 80, Auto"
                                       IsClippedToBounds="True">
                                     <Switch Grid.Column="0"
                                             OnColor="LightGreen"
@@ -88,9 +88,9 @@
                                     </Label>
                                     <Picker Grid.Column="4"
                                             Title="Depth"
-                                            HorizontalOptions="End"
+                                            HorizontalOptions="StartAndExpand"
                                             VerticalOptions="Center"
-                                            Margin="80"
+                                            Margin="60"
                                             WidthRequest="60">
                                          <Picker.ItemsSource>
                                             <x:Array Type="{x:Type x:Int16}">
