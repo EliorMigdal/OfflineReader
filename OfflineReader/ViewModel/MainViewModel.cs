@@ -10,6 +10,7 @@ public partial class MainViewModel : BaseViewModel
     private HTMLSupplierService HTMLSupplier { get; set; } = new();
     private ArticleParserFactory ArticleParserFactory { get; set; } = new();
     private MainPageParserFactory MainPageParserFactory { get; set; } = new();
+    private IConnectivity m_Connectivity;
     public ICommand ArticleSelectedCommand { get; }
     private Article _selectedArticle;
     public Article SelectedArticle
@@ -32,21 +33,55 @@ public partial class MainViewModel : BaseViewModel
         }
     }
 
-    public MainViewModel()
+    public MainViewModel(IConnectivity i_Connectivity)
     {
         ArticleSelectedCommand = new Command<Article>(testCommand);
+        m_Connectivity = i_Connectivity;
     }
+
+    [ObservableProperty]
+    bool isRefreshing;
 
     [RelayCommand]
     public async Task GetArticlesAsync()
     {
-        string htmlCode = await HTMLSupplier.GetHTMLAsync("https://www.mako.co.il/");
-        IMainPageParser mainPageParser = MainPageParserFactory.GenerateMainPageParser("mako");
-        List<Article> articles = mainPageParser.ParseHTML(htmlCode);
+        if (IsBusy)
+            return;
 
-        foreach (Article article in articles)
+        try
         {
-            Articles.Add(article);
+            if (Articles.Count == 0 && m_Connectivity.NetworkAccess != NetworkAccess.Internet)
+            {
+                await Shell.Current.DisplayAlert("No connectivity!",
+                    $"Please check internet and try again.", "OK");
+                return;
+            }
+
+            else if (m_Connectivity.NetworkAccess != NetworkAccess.Internet)
+            {
+                await Shell.Current.DisplayAlert("No connectivity!",
+                    $"Please check internet and try again.", "OK");
+                return;
+            }
+
+            string htmlCode = await HTMLSupplier.GetHTMLAsync("https://www.mako.co.il/");
+            IMainPageParser mainPageParser = MainPageParserFactory.GenerateMainPageParser("mako");
+            List<Article> articles = mainPageParser.ParseHTML(htmlCode);
+
+            Articles.Clear();
+
+            foreach (Article article in articles)
+            {
+                Articles.Add(article);
+            }
+
+            OnPropertyChanged(nameof(Articles));
+        }
+
+        finally
+        {
+            IsRefreshing = false;
+            IsBusy = false;
         }
     }
 
@@ -67,12 +102,26 @@ public partial class MainViewModel : BaseViewModel
         if (i_Article is null)
             return;
 
-        string htmlCode = await HTMLSupplier.GetHTMLAsync(i_Article.URL);
-        SharedData.SharedArticle = i_Article;
-        SharedData.HTML = htmlCode;
-        IArticleParser articleParser = ArticleParserFactory.GenerateParser(i_Article.Website.ToLower());
-        StackLayout ArticleLayout = articleParser.ParseHTML(htmlCode);
+        try
+        {
+            if (!IsBusy)
+            {
+                IsBusy = true;
 
-        await Shell.Current.GoToAsync(nameof(TestView), true);
+                string htmlCode = await HTMLSupplier.GetHTMLAsync(i_Article.URL);
+                SharedData.SharedArticle = i_Article;
+                SharedData.HTML = htmlCode;
+                IArticleParser articleParser = ArticleParserFactory.GenerateParser(i_Article.Website.ToLower());
+                StackLayout ArticleLayout = articleParser.ParseHTML(htmlCode);
+
+                IsBusy = false;
+                await Shell.Current.GoToAsync(nameof(TestView), true);
+            }
+        }
+
+        finally
+        {
+            SelectedArticle = null;
+        }
     }
 }
