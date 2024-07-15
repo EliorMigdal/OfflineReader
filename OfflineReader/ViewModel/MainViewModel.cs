@@ -10,7 +10,9 @@ public partial class MainViewModel : BaseViewModel
     private HTMLSupplierService HTMLSupplier { get; set; } = new();
     private ArticleParserFactory ArticleParserFactory { get; set; } = new();
     private MainPageParserFactory MainPageParserFactory { get; set; } = new();
-    private IConnectivity m_Connectivity;
+    private readonly IConnectivity m_Connectivity;
+    private readonly Timer configFileCheckTimer;
+    private DateTime lastConfigFileWriteTime;
     public ICommand ArticleSelectedCommand { get; }
     private Article _selectedArticle;
     public Article SelectedArticle
@@ -37,6 +39,27 @@ public partial class MainViewModel : BaseViewModel
     {
         ArticleSelectedCommand = new Command<Article>(testCommand);
         m_Connectivity = i_Connectivity;
+
+        configFileCheckTimer = new Timer(CheckConfigFileChanges, null, 0, 10000);
+
+        // Get initial last write time of the config file
+        if (File.Exists(ConfigService.ConfigFilePath))
+        {
+            lastConfigFileWriteTime = File.GetLastWriteTime(ConfigService.ConfigFilePath);
+        }
+    }
+
+    private void CheckConfigFileChanges(object state)
+    {
+        if (File.Exists(ConfigService.ConfigFilePath))
+        {
+            DateTime currentWriteTime = File.GetLastWriteTime(ConfigService.ConfigFilePath);
+            if (currentWriteTime != lastConfigFileWriteTime)
+            {
+                lastConfigFileWriteTime = currentWriteTime;
+                MainThread.BeginInvokeOnMainThread(async () => await GetArticlesAsync());
+            }
+        }
     }
 
     [ObservableProperty]
@@ -50,23 +73,27 @@ public partial class MainViewModel : BaseViewModel
 
         try
         {
-            if (Articles.Count == 0 && m_Connectivity.NetworkAccess != NetworkAccess.Internet)
-            {
-                await Shell.Current.DisplayAlert("No connectivity!",
-                    $"Please check internet and try again.", "OK");
-                return;
-            }
+            handleConnectivity();
 
-            else if (m_Connectivity.NetworkAccess != NetworkAccess.Internet)
-            {
-                await Shell.Current.DisplayAlert("No connectivity!",
-                    $"Please check internet and try again.", "OK");
-                return;
-            }
+            List<string> selectedURLs = ConfigService.LoadSupportedWebsites();
+            List<Article> articles = new();
 
-            string htmlCode = await HTMLSupplier.GetHTMLAsync("https://www.mako.co.il/");
-            IMainPageParser mainPageParser = MainPageParserFactory.GenerateMainPageParser("mako");
-            List<Article> articles = mainPageParser.ParseHTML(htmlCode);
+            Debug.WriteLine($"Got selected websites size: {selectedURLs.Count}");
+
+            foreach (string webURL in selectedURLs)
+            {
+                Debug.WriteLine($"Handling selected website: {webURL}");
+                string htmlCode = await HTMLSupplier.GetHTMLAsync(webURL);
+                IMainPageParser mainPageParser = MainPageParserFactory.GenerateMainPageParser("mako");
+                List<Article> websiteArticles = mainPageParser.ParseHTML(htmlCode);
+
+                Debug.WriteLine($"Got {websiteArticles.Count} articles from {webURL}");
+
+                foreach (Article article in websiteArticles)
+                {
+                    articles.Add(article);
+                }
+            }
 
             Articles.Clear();
 
@@ -107,8 +134,8 @@ public partial class MainViewModel : BaseViewModel
             if (!IsBusy)
             {
                 IsBusy = true;
-
                 string htmlCode = await HTMLSupplier.GetHTMLAsync(i_Article.URL);
+
                 SharedData.SharedArticle = i_Article;
                 SharedData.HTML = htmlCode;
                 IArticleParser articleParser = ArticleParserFactory.GenerateParser(i_Article.Website.ToLower());
@@ -122,6 +149,23 @@ public partial class MainViewModel : BaseViewModel
         finally
         {
             SelectedArticle = null;
+        }
+    }
+
+    private async void handleConnectivity()
+    {
+        if (Articles.Count == 0 && m_Connectivity.NetworkAccess != NetworkAccess.Internet)
+        {
+            await Shell.Current.DisplayAlert("No connectivity!",
+                $"Please check internet and try again.", "OK");
+            return;
+        }
+
+        else if (m_Connectivity.NetworkAccess != NetworkAccess.Internet)
+        {
+            await Shell.Current.DisplayAlert("No connectivity!",
+                $"Please check internet and try again.", "OK");
+            return;
         }
     }
 }
