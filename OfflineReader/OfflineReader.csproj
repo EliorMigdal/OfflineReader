@@ -56,6 +56,7 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 		<PackageReference Include="Syncfusion.Maui.TreeView" Version="25.2.5" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>

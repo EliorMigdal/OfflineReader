@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="OfflineReader.View.FirstBootView"
+             xmlns:model="clr-namespace:OfflineReader.Model"
+             xmlns:viewmodel="clr-namespace:OfflineReader.ViewModel"
+             x:DataType="viewmodel:FirstBootViewModel"
+             Title="Welcome">
+    <StackLayout Padding="10"
+                 BackgroundColor="Transparent"
+                 VerticalOptions="Center">
+        <Grid RowDefinitions="Auto, Auto, Auto, Auto">
+            <Label Text="Welcome to Offline Reader!"
+                   FontSize="Large"
+                   TextColor="Black"
+                   HorizontalOptions="Center"
+                   Margin="5"
+                   Grid.Row="0"/>
+            <Label Text="Please select your preferred websites, so the app may fit your preferences."
+                   FontSize="Medium"
+                   TextColor="Black"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   VerticalTextAlignment="Center"
+                   HorizontalTextAlignment="Center"
+                   Margin="5"
+                   Grid.Row="1"/>
+            <CollectionView ItemsSource="{Binding SupportedWebsites}"
+                            SelectionMode="None"
+                            Grid.Row="2">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:SupportedWebsite">
+                        <HorizontalStackLayout Padding="5">
+                            <Label Text="{Binding Name}"
+                                    Padding="5"
+                                    Margin="5"
+                                    WidthRequest="80"/>
+                            <Switch Margin="5"
+                                    Toggled="OnSwitchToggled"/>
+                        </HorizontalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Button Text="Continue to app"
+                    Command="{Binding ContinueCommand}"
+                    HorizontalOptions="Center"
+                    VerticalOptions="End"
+                    Margin="5"
+                    Grid.Row="3"/>
+        </Grid>
+    </StackLayout>
+</ContentPage>
