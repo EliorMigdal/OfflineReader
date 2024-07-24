@@ -2,9 +2,9 @@
 
 public class SupportedWebsite
 {
-    public string Name { get; private set; } = "ynet";
+    public string Name { get; private set; }
     public bool Selection { get; set; } = false;
-    public string Logo { get; private set; } = "ynetlogo";
+    public string Logo { get; private set; }
     public string URL { get; private set; }
 
     public SupportedWebsite() { }

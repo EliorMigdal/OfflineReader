@@ -1,4 +1,6 @@
-﻿namespace OfflineReader.Service;
+﻿using OfflineReader.Model;
+
+namespace OfflineReader.Service;
 
 public class HTMLSupplierService
 {

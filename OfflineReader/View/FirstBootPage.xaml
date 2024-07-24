@@ -1,12 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="OfflineReader.View.FirstBootView"
+             x:Class="OfflineReader.View.FirstBootPage"
              xmlns:model="clr-namespace:OfflineReader.Model"
              xmlns:viewmodel="clr-namespace:OfflineReader.ViewModel"
-             x:DataType="viewmodel:FirstBootViewModel"
-             Title="Welcome">
-    <StackLayout Padding="10"
+             x:DataType="viewmodel:FirstBootViewModel">
+        <StackLayout Padding="10"
                  BackgroundColor="Transparent"
                  VerticalOptions="Center">
         <Grid RowDefinitions="Auto, Auto, Auto, Auto">

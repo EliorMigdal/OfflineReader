@@ -2,9 +2,8 @@
 
 public partial class TestView : ContentPage
 {
-    public TestView(TestViewModel i_ViewModel)
+    public TestView()
     {
         InitializeComponent();
-        BindingContext = i_ViewModel;
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace OfflineReader.View;
+﻿using OfflineReader.ViewModel;
+
+namespace OfflineReader.View;
 
 public partial class SavedArticlesPage : ContentPage
 {

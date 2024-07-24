@@ -1,4 +1,8 @@
-﻿using System.Windows.Input;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Windows.Input;
+using OfflineReader.Model;
+using OfflineReader.Service;
 
 namespace OfflineReader.ViewModel;
 
@@ -41,7 +45,7 @@ public class FirstBootViewModel : BaseViewModel
         if (website != null)
         {
             website.Selection = !website.Selection;
-            System.Diagnostics.Debug.WriteLine($"Toggled: {website.Name}");
+            Debug.WriteLine($"Toggled: {website.Name}");
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using HtmlAgilityPack;
 
-namespace OfflineReader.Model.HTMLParser.MainPageParsers;
+namespace OfflineReader.Model.HTMLParser.MainPageParser.Type;
 
 public class MakoMainPageParser : IMainPageParser
 {
