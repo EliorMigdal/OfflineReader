@@ -4,15 +4,13 @@
              x:Class="OfflineReader.View.MainPage"
              xmlns:viewmodel="clr-namespace:OfflineReader.ViewModel"
              xmlns:model="clr-namespace:OfflineReader.Model"
-             x:DataType="viewmodel:MainViewModel"
-             Title="Main Page">
+             x:DataType="viewmodel:MainViewModel">
     <Grid
         RowDefinitions="Auto, Auto, *"
         RowSpacing="0">
         <Frame
             Grid.Row="0"
             StyleClass="Header"
-            HeightRequest="{OnPlatform iOS=70,Android=50}"
             BackgroundColor="LightBlue"
             Padding="0"
             CornerRadius="0"
@@ -21,14 +19,10 @@
                 ColumnDefinitions="Auto, *, Auto">
                 <Button
                     Grid.Column="0"
-                    HeightRequest="{OnPlatform iOS=20,Android=30}"
-                    WidthRequest="{OnPlatform iOS=20,Android=30}"
                     BackgroundColor="AliceBlue"
                     Margin="10"/>
                 <Button
                     Grid.Column="2"
-                    HeightRequest="{OnPlatform iOS=20,Android=30}"
-                    WidthRequest="{OnPlatform iOS=20,Android=30}"
                     BackgroundColor="AliceBlue"
                     Margin="10"/>
             </Grid>
@@ -38,8 +32,6 @@
             StrokeShape="RoundRectangle 90"
             Stroke="White"
             StrokeThickness="5"
-            HeightRequest="40"
-            WidthRequest="220"
             Padding="0"
             BackgroundColor="LightBlue"
             Margin="0,-20,0,0"
@@ -51,6 +43,7 @@
                 FontSize="Header"
                 FontAttributes="Bold"
                 TextColor="DarkBlue"
+                Margin="50, 0, 50, 0"
                 Padding="5"/>
         </Border>
         <RefreshView
@@ -70,20 +63,6 @@
                             <Grid RowDefinitions="Auto, Auto"
                                   Margin="0"
                                   Padding="10">
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup Name="CommonStates">
-                                        <VisualState Name="Normal">
-                                            <VisualState.Setters>
-                                                <Setter TargetName="articleFrame" Property="BackgroundColor" Value="Transparent" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState Name="Selected">
-                                            <VisualState.Setters>
-                                                <Setter TargetName="articleFrame" Property="BackgroundColor" Value="Transparent" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
                                 <Grid RowDefinitions="Auto, Auto"
                                       Grid.Row="0"
                                       Margin="0">

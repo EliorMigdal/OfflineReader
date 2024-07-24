@@ -8,19 +8,20 @@
 
     <ShellContent ContentTemplate="{DataTemplate local:MainPage}"/>
 
-    <FlyoutItem Title="Main Page" Icon="icon_mainpage.png">
+    <FlyoutItem Title="Main Page">
         <ShellContent ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage"/>
     </FlyoutItem>
 
-    <FlyoutItem Title="Reader Mode" Icon="icon_mainpage.png">
+    <FlyoutItem Title="Reader Mode">
         <ShellContent ContentTemplate="{DataTemplate local:ReaderPage}" Route="ReaderPage"/>
     </FlyoutItem>
 
-    <FlyoutItem Title="Web Selection" Icon="icon_mainpage.png">
+    <FlyoutItem Title="Web Selection">
         <ShellContent ContentTemplate="{DataTemplate local:WebSelectionPage}" Route="WebSelectionPage"/>
     </FlyoutItem>
 
-    <FlyoutItem Title="Saved Articles" Icon="icon_mainpage.png">
+    <FlyoutItem Title="Saved Articles">
         <ShellContent ContentTemplate="{DataTemplate local:SavedArticlesPage}" Route="SavedArticlesPage"/>
     </FlyoutItem>
+
 </Shell>

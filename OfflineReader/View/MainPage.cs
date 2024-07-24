@@ -1,4 +1,8 @@
-﻿namespace OfflineReader.View;
+﻿using OfflineReader.ViewModel;
+using OfflineReader.Service;
+using System.Diagnostics;
+
+namespace OfflineReader.View;
 
 public partial class MainPage : ContentPage
 {
@@ -16,7 +20,7 @@ public partial class MainPage : ContentPage
         else
         {
             _ = i_ViewModel.GetArticlesAsync();
-        }        
+        }
     }
 
     private bool IsFirstBoot()
@@ -26,14 +30,6 @@ public partial class MainPage : ContentPage
 
     private async void DisplayFirstTimePage()
     {
-        try
-        {
-            await Shell.Current.Navigation.PushModalAsync(new FirstBootView());
-        }
-
-        finally
-        {
-            _ = (BindingContext as MainViewModel).GetArticlesAsync();
-        }
+        await Shell.Current.Navigation.PushModalAsync(new FirstBootPage());
     }
 }

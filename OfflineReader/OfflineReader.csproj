@@ -16,7 +16,7 @@
 
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.offlinereader</ApplicationId>
-		<ApplicationIdGuid>232d7c81-7090-4cf4-b91f-bb464f721684</ApplicationIdGuid>
+		<ApplicationIdGuid>c473063b-7932-4673-a059-19a65178a1f4</ApplicationIdGuid>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -54,39 +54,40 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-		<PackageReference Include="Syncfusion.Maui.TreeView" Version="25.2.5" />
-		<PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Model\" />
 	  <None Remove="View\" />
 	  <None Remove="ViewModel\" />
-	  <None Remove="Resources\Images\trending.png" />
-	  <None Remove="Tests\articles.json" />
-	  <None Remove="Tests\ynetmain.jpg" />
-	  <None Remove="Tests\wallamain.jpeg" />
-	  <None Remove="Tests\makomain.jpg" />
+	  <None Remove="Model\" />
 	  <None Remove="Service\" />
 	  <None Remove="Model\HTMLParser\" />
-	  <None Remove="Model\HTMLParser\ArticleParsers\" />
-	  <None Remove="Model\HTMLParser\MainPageParsers\" />
+	  <None Remove="Model\HTMLParser\ArticleParser\" />
+	  <None Remove="Model\HTMLParser\MainPageParser\" />
+	  <None Remove="Model\HTMLParser\ArticleParser\Type\" />
+	  <None Remove="Model\HTMLParser\MainPageParser\Type\" />
+	  <None Remove="Model\ArticleContent\" />
+	  <None Remove="Helpers\" />
+	  <None Remove="Helpers\Content\" />
+	  <None Remove="Helpers\Content\Generator\" />
+	  <None Remove="Model\ArticleContent\TextType\" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Model\" />
 	  <Folder Include="View\" />
 	  <Folder Include="ViewModel\" />
+	  <Folder Include="Model\" />
 	  <Folder Include="Service\" />
 	  <Folder Include="Model\HTMLParser\" />
-	  <Folder Include="Model\HTMLParser\ArticleParsers\" />
-	  <Folder Include="Model\HTMLParser\MainPageParsers\" />
-	</ItemGroup>
-	<ItemGroup>
-	  <BundleResource Include="Resources\Images\trending.png" />
-	  <BundleResource Include="Tests\articles.json" />
-	  <BundleResource Include="Tests\ynetmain.jpg" />
-	  <BundleResource Include="Tests\wallamain.jpeg" />
-	  <BundleResource Include="Tests\makomain.jpg" />
+	  <Folder Include="Model\HTMLParser\ArticleParser\" />
+	  <Folder Include="Model\HTMLParser\MainPageParser\" />
+	  <Folder Include="Model\HTMLParser\ArticleParser\Type\" />
+	  <Folder Include="Model\HTMLParser\MainPageParser\Type\" />
+	  <Folder Include="Model\ArticleContent\" />
+	  <Folder Include="Helpers\" />
+	  <Folder Include="Helpers\Content\" />
+	  <Folder Include="Helpers\Content\Generator\" />
+	  <Folder Include="Model\ArticleContent\TextType\" />
 	</ItemGroup>
 </Project>

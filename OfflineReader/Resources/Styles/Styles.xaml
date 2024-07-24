@@ -402,16 +402,5 @@
         <Setter Property="SelectedTabColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray200}}" />
     </Style>
 
-    <Style x:Key="Header" TargetType="Frame">
-        <Setter Property="BackgroundColor" Value="{StaticResource Blue100Accent}"/>
-        <Setter Property="BorderColor" Value="Transparent"/>
-        <Setter Property="HeightRequest" Value="125"/>
-    </Style>
-
-    <Style x:Key="Menu" TargetType="Frame">
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Blue100Accent}, Dark={StaticResource Gray950}}" />
-        <Setter Property="HeightRequest" Value="80"/>
-        <Setter Property="BorderColor" Value="Transparent"/>
-    </Style>
-
 </ResourceDictionary>
+

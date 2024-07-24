@@ -1,4 +1,7 @@
-﻿namespace OfflineReader.Service;
+﻿using System.Text;
+using OfflineReader.Model;
+
+namespace OfflineReader.Service;
 
 public class PathParsingService
 {

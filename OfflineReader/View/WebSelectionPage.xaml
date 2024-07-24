@@ -1,29 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="OfflineReader.View.WebSelectionPage"
              xmlns:model="clr-namespace:OfflineReader.Model"
              xmlns:viewmodel="clr-namespace:OfflineReader.ViewModel"
              x:DataType="viewmodel:WebSelectionViewModel"
-             Title="Web Selection Page">
+             x:Class="OfflineReader.View.WebSelectionPage">
     <Grid RowDefinitions="Auto, Auto, *, Auto"
           RowSpacing="0">
         <Frame Grid.Row="0"
                StyleClass="Header"
-               HeightRequest="70"
                BackgroundColor="LightBlue"
                CornerRadius="0"
+               Padding="0"
                BorderColor="Transparent">
             <Grid ColumnDefinitions="Auto, *, Auto">
                 <Button Grid.Column="0"
-                        HeightRequest="20"
-                        WidthRequest="20"
                         BackgroundColor="AliceBlue"
                         Margin="10">
                 </Button>
                 <Button Grid.Column="2"
-                        HeightRequest="20"
-                        WidthRequest="20"
                         BackgroundColor="AliceBlue"
                         Margin="10">
                 </Button>
@@ -33,19 +28,18 @@
                 StrokeShape="RoundRectangle 90"
                 Stroke="White"
                 StrokeThickness="5"
-                HeightRequest="40"
-                WidthRequest="220"
                 Padding="0"
                 BackgroundColor="LightBlue"
                 Margin="0,-20,0,0"
                 HorizontalOptions="Center"
                 VerticalOptions="Center">
             <Label HorizontalOptions="Center"
-                   Text="Web Selection"
-                   FontSize="Header"
-                   FontAttributes="Bold"
-                   TextColor="DarkBlue"
-                   Padding="5">
+                    Text="Web Selection"
+                    FontSize="Header"
+                    FontAttributes="Bold"
+                    TextColor="DarkBlue"
+                    Margin="50, 0, 50, 0"
+                    Padding="5">
             </Label>
         </Border>
         <ScrollView Grid.Row="2"

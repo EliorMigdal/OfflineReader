@@ -1,4 +1,4 @@
-﻿namespace OfflineReader.Model.HTMLParser;
+﻿namespace OfflineReader.Model.HTMLParser.MainPageParser;
 
 public interface IMainPageParser
 {

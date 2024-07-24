@@ -1,8 +1,11 @@
-﻿namespace OfflineReader.View;
+﻿using OfflineReader.ViewModel;
+using OfflineReader.Model;
 
-public partial class FirstBootView : ContentPage
+namespace OfflineReader.View;
+
+public partial class FirstBootPage : ContentPage
 {
-    public FirstBootView()
+    public FirstBootPage()
     {
         InitializeComponent();
         BindingContext = new FirstBootViewModel();
@@ -10,9 +13,9 @@ public partial class FirstBootView : ContentPage
 
     private void OnSwitchToggled(object sender, ToggledEventArgs e)
     {
-        var switchControl = (Microsoft.Maui.Controls.Switch)sender;
+        var switchControl = sender as Switch;
         var website = (SupportedWebsite)switchControl.BindingContext;
-        var viewModel = (FirstBootViewModel)BindingContext;
+        var viewModel = BindingContext as FirstBootViewModel;
 
         viewModel.OnToggleSwitch(website);
     }

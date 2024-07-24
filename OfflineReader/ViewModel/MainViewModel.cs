@@ -1,11 +1,18 @@
-﻿using System.Windows.Input;
-using OfflineReader.Model.HTMLParser;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
+using OfflineReader.View;
+using OfflineReader.Service;
+using OfflineReader.Model;
+using OfflineReader.Model.HTMLParser.ArticleParser;
+using OfflineReader.Model.HTMLParser.MainPageParser;
+using System.Diagnostics;
 
 namespace OfflineReader.ViewModel;
 
 public partial class MainViewModel : BaseViewModel
 {
-    public ArticlesService ArticlesService { get; set; } = new();
     public ObservableCollection<Article> Articles { get; set; } = new();
     private HTMLSupplierService HTMLSupplier { get; set; } = new();
     private ArticleParserFactory ArticleParserFactory { get; set; } = new();
@@ -35,6 +42,9 @@ public partial class MainViewModel : BaseViewModel
         }
     }
 
+    [ObservableProperty]
+    bool isRefreshing;
+
     public MainViewModel(IConnectivity i_Connectivity)
     {
         ArticleSelectedCommand = new Command<Article>(testCommand);
@@ -42,7 +52,6 @@ public partial class MainViewModel : BaseViewModel
 
         configFileCheckTimer = new Timer(CheckConfigFileChanges, null, 0, 10000);
 
-        // Get initial last write time of the config file
         if (File.Exists(ConfigService.ConfigFilePath))
         {
             lastConfigFileWriteTime = File.GetLastWriteTime(ConfigService.ConfigFilePath);
@@ -61,9 +70,6 @@ public partial class MainViewModel : BaseViewModel
             }
         }
     }
-
-    [ObservableProperty]
-    bool isRefreshing;
 
     [RelayCommand]
     public async Task GetArticlesAsync()
@@ -139,7 +145,6 @@ public partial class MainViewModel : BaseViewModel
                 SharedData.SharedArticle = i_Article;
                 SharedData.HTML = htmlCode;
                 IArticleParser articleParser = ArticleParserFactory.GenerateParser(i_Article.Website.ToLower());
-                StackLayout ArticleLayout = articleParser.ParseHTML(htmlCode);
 
                 IsBusy = false;
                 await Shell.Current.GoToAsync(nameof(TestView), true);
