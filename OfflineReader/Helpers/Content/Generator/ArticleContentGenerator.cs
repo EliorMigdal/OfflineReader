@@ -47,31 +47,37 @@ public class ArticleContentGenerator
 
     private void addArticleAuthor(StackLayout io_StackLayout, Article i_Article)
     {
-        io_StackLayout.Add(new StackLayout
+        StackLayout authorStackLayout = new()
         {
             Orientation = StackOrientation.Horizontal,
             Margin = new Thickness(0, 0, 0, 10),
             FlowDirection = FlowDirection.RightToLeft,
             VerticalOptions = LayoutOptions.Center,
-            HorizontalOptions = LayoutOptions.Center,
-            Children =
+            HorizontalOptions = LayoutOptions.Center
+        };
+
+        if (!i_Article.Author.Image.Equals(string.Empty))
+        {
+            authorStackLayout.Children.Add(new Image
             {
-                new Image
-                {
-                    Source = i_Article.Author.Image,
-                    HeightRequest = 50,
-                    WidthRequest = 50,
-                    Aspect = Aspect.AspectFit,
-                    Margin = new Thickness(0, 0, 10, 0)
-                },
-                new Label
-                {
-                    Text = i_Article.Author.Name,
-                    FontSize = 16,
-                    VerticalOptions = LayoutOptions.Center
-                }
-            }
+                Source = i_Article.Author.Image,
+                Aspect = Aspect.AspectFit,
+                Margin = new Thickness(0, 0, 10, 0),
+                HorizontalOptions = LayoutOptions.Center,
+                MaximumWidthRequest = 50,
+                MaximumHeightRequest = 50
+            });
+        }
+
+        authorStackLayout.Children.Add(new Label
+        {
+            Text = i_Article.Author.Name,
+            FontSize = 16,
+            VerticalOptions = LayoutOptions.Center,
+            HorizontalOptions = LayoutOptions.Center
         });
+
+        io_StackLayout.Add(authorStackLayout);
     }
 
     private void addArticleDates(StackLayout io_StackLayout, Article i_Article)
@@ -114,7 +120,8 @@ public class ArticleContentGenerator
                         FontSize = 10,
                         TextColor = Colors.Gray,
                         Margin = new Thickness(0, 5, 0, 0),
-                        FlowDirection = FlowDirection.RightToLeft
+                        FlowDirection = FlowDirection.RightToLeft,
+                        HorizontalOptions = LayoutOptions.Center
                     });
                 }
 

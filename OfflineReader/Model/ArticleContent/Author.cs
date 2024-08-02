@@ -3,7 +3,7 @@
 public class Author
 {
     public string Name { get; set; }
-    public string Image { get; set; }
+    public string Image { get; set; } = string.Empty;
 
     public Author() { }
 }

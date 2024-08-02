@@ -13,6 +13,7 @@ public class Article
     public DateTime PublishedDate { get; set; }
     public DateTime LastUpdated { get; set; }
     public string Website { get; set; }
+    public string Category { get; set; }
     public string Image { get; set; }
     public string URL { get; set; }
     public string ID { get; set; }

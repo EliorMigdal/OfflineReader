@@ -8,19 +8,29 @@ using OfflineReader.Model;
 using OfflineReader.Model.HTMLParser.ArticleParser;
 using OfflineReader.Model.HTMLParser.MainPageParser;
 using System.Diagnostics;
+using AsyncAwaitBestPractices.MVVM;
 
 namespace OfflineReader.ViewModel;
 
 public partial class MainViewModel : BaseViewModel
 {
-    public ObservableCollection<Article> Articles { get; set; } = new();
-    private HTMLSupplierService HTMLSupplier { get; set; } = new();
-    private ArticleParserFactory ArticleParserFactory { get; set; } = new();
-    private MainPageParserFactory MainPageParserFactory { get; set; } = new();
+    public ICommand OnlineClickedCommand { get; }
+    public ICommand OfflineClickedCommand { get; }
+    public ICommand ArticleSelectedCommand { get; }
+    public ICommand LoadMoreArticlesCommand { get; }
+
+    public ObservableCollection<Article> Articles { get; set; } = new ObservableCollection<Article>();
+    private List<Article> m_OnlineArticles = new List<Article>();
+    private List<Article> m_OfflineArticles = new List<Article>();
+    private List<Article> m_ArticlesSource;
+
+    private HTMLSupplierService HTMLSupplier { get; set; } = new HTMLSupplierService();
+    private ArticleParserFactory ArticleParserFactory { get; set; } = new ArticleParserFactory();
+    private MainPageParserFactory MainPageParserFactory { get; set; } = new MainPageParserFactory();
     private readonly IConnectivity m_Connectivity;
     private readonly Timer configFileCheckTimer;
     private DateTime lastConfigFileWriteTime;
-    public ICommand ArticleSelectedCommand { get; }
+    
     private Article _selectedArticle;
     public Article SelectedArticle
     {
@@ -42,13 +52,63 @@ public partial class MainViewModel : BaseViewModel
         }
     }
 
+    private Color _onlineBorderColor = Colors.LightGreen;
+    public Color OnlineBorderColor
+    {
+        get => _onlineBorderColor;
+        set
+        {
+            _onlineBorderColor = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private Color _offlineBorderColor = Colors.LightGray;
+    public Color OfflineBorderColor
+    {
+        get => _offlineBorderColor;
+        set
+        {
+            _offlineBorderColor = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private int m_DisplayableArticles = 15;
+    public int DisplayableArticles
+    {
+        get => m_DisplayableArticles;
+
+        set
+        {
+            m_DisplayableArticles = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private bool m_AnyArticlesToLoad;
+    public bool AnyArticlesToLoad
+    {
+        get => m_ArticlesSource.Count > Articles.Count;
+
+        set
+        {
+            m_AnyArticlesToLoad = value;
+            OnPropertyChanged();
+        }
+    }
+
     [ObservableProperty]
     bool isRefreshing;
 
     public MainViewModel(IConnectivity i_Connectivity)
     {
+        OnlineClickedCommand = new AsyncCommand(OnOnlineTapped);
+        OfflineClickedCommand = new AsyncCommand(OnOfflineTapped);
         ArticleSelectedCommand = new Command<Article>(testCommand);
+        LoadMoreArticlesCommand = new Command(loadMoreArticlesCommand);
         m_Connectivity = i_Connectivity;
+        m_ArticlesSource = m_OnlineArticles;
 
         configFileCheckTimer = new Timer(CheckConfigFileChanges, null, 0, 10000);
 
@@ -63,6 +123,7 @@ public partial class MainViewModel : BaseViewModel
         if (File.Exists(ConfigService.ConfigFilePath))
         {
             DateTime currentWriteTime = File.GetLastWriteTime(ConfigService.ConfigFilePath);
+
             if (currentWriteTime != lastConfigFileWriteTime)
             {
                 lastConfigFileWriteTime = currentWriteTime;
@@ -79,42 +140,52 @@ public partial class MainViewModel : BaseViewModel
 
         try
         {
-            handleConnectivity();
+            IsBusy = true;
+            List<Article> articles;
 
-            List<string> selectedURLs = ConfigService.LoadSupportedWebsites();
-            List<Article> articles = new();
-
-            Debug.WriteLine($"Got selected websites size: {selectedURLs.Count}");
-
-            foreach (string webURL in selectedURLs)
+            if (m_ArticlesSource == m_OnlineArticles)
             {
-                Debug.WriteLine($"Handling selected website: {webURL}");
-                string htmlCode = await HTMLSupplier.GetHTMLAsync(webURL);
-                IMainPageParser mainPageParser = MainPageParserFactory.GenerateMainPageParser("mako");
-                List<Article> websiteArticles = mainPageParser.ParseHTML(htmlCode);
+                Debug.WriteLine("Source is Online!");
+                articles = await loadOnlineArticles();
+                Debug.WriteLine($"Got {articles.Count} online articles!");
+            }
 
-                Debug.WriteLine($"Got {websiteArticles.Count} articles from {webURL}");
+            else
+            {
+                Debug.WriteLine("Source is Offline!");
+                articles = await loadOfflineArticles();
+                Debug.WriteLine($"Got {articles.Count} offline articles!");
+            }
 
-                foreach (Article article in websiteArticles)
+            removeDuplicateArticles(ref articles);
+            Debug.WriteLine("Removed dups!");
+
+            if (areArticlesDifferent(articles))
+            {
+                Debug.WriteLine("Collections are different");
+                m_ArticlesSource.Clear();
+
+                foreach (Article article in articles)
                 {
-                    articles.Add(article);
+                    m_ArticlesSource.Add(article);
                 }
+
+                Articles.Clear();
+
+                for (int i = 0; i < m_DisplayableArticles && i < m_ArticlesSource.Count; i++)
+                {
+                    Articles.Add(m_ArticlesSource[i]);
+                }
+
+                OnPropertyChanged(nameof(Articles));
             }
-
-            Articles.Clear();
-
-            foreach (Article article in articles)
-            {
-                Articles.Add(article);
-            }
-
-            OnPropertyChanged(nameof(Articles));
         }
 
         finally
         {
             IsRefreshing = false;
             IsBusy = false;
+            AnyArticlesToLoad = m_ArticlesSource.Count > Articles.Count;
         }
     }
 
@@ -146,7 +217,6 @@ public partial class MainViewModel : BaseViewModel
                 SharedData.HTML = htmlCode;
                 IArticleParser articleParser = ArticleParserFactory.GenerateParser(i_Article.Website.ToLower());
 
-                IsBusy = false;
                 await Shell.Current.GoToAsync(nameof(TestView), true);
             }
         }
@@ -154,6 +224,7 @@ public partial class MainViewModel : BaseViewModel
         finally
         {
             SelectedArticle = null;
+            IsBusy = false;
         }
     }
 
@@ -172,5 +243,146 @@ public partial class MainViewModel : BaseViewModel
                 $"Please check internet and try again.", "OK");
             return;
         }
+    }
+
+    private async Task OnOnlineTapped()
+    {
+        Debug.WriteLine("Tapped Online!");
+
+        if (!IsBusy && !isOnlineSelected())
+        {
+            IsBusy = true;
+            OnlineBorderColor = Colors.LightGreen;
+            OfflineBorderColor = Colors.LightGray;
+            m_ArticlesSource = m_OnlineArticles;
+            IsBusy = false;
+            await GetArticlesAsync();
+        }
+    }
+
+    private async Task OnOfflineTapped()
+    {
+        Debug.WriteLine("Tapped Offline!");
+
+        if (!IsBusy && isOnlineSelected())
+        {
+            IsBusy = true;
+            OfflineBorderColor = Colors.LightGreen;
+            OnlineBorderColor = Colors.LightGray;
+            m_ArticlesSource = m_OfflineArticles;
+            IsBusy = false;
+            await GetArticlesAsync();
+        }
+    }
+
+    private bool isOnlineSelected()
+    {
+        return OnlineBorderColor == Colors.LightGreen;
+    }
+
+    private void removeDuplicateArticles(ref List<Article> io_Articles)
+    {
+        List<Article> distinctArticles = io_Articles
+            .GroupBy(article => article.Title)
+            .Select(group => group.First())
+            .ToList();
+
+        io_Articles.Clear();
+        io_Articles.AddRange(distinctArticles);
+    }
+
+    private bool areArticlesDifferent(List<Article> i_Articles)
+    {
+        bool areDifferent = false;
+
+        if (Articles.Count == 0 || Articles.Count != i_Articles.Count)
+        {
+            areDifferent = true;
+        }
+
+        else
+        {
+            for (int i = 0; i < i_Articles.Count && !areDifferent; i++)
+            {
+                if (!isArticleInCollection(i_Articles[i]))
+                {
+                    areDifferent = true;
+                }
+            }
+        }
+
+        return areDifferent;
+    }
+
+    private bool isArticleInCollection(Article i_Article)
+    {
+        bool foundArticle = false;
+
+        for (int i = 0; i < Articles.Count && !foundArticle; i++)
+        {
+            if (i_Article.Title.Equals(m_ArticlesSource[i].Title))
+            {
+                foundArticle = true;
+            }
+        }
+
+        return foundArticle;
+    }
+
+    public void loadMoreArticlesCommand()
+    {
+        if (IsBusy)
+            return;
+
+        try
+        {
+            IsBusy = true;
+            int loaded = Articles.Count;
+
+            for (int i = loaded; i < m_ArticlesSource.Count && i < loaded + m_DisplayableArticles; i++)
+            {
+                Articles.Add(m_ArticlesSource[i]);
+            }
+
+            AnyArticlesToLoad = m_ArticlesSource.Count > Articles.Count;
+        }
+
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async Task<List<Article>> loadOnlineArticles()
+    {
+        handleConnectivity();
+        List<Article> articles = new List<Article>();
+        List<string> selectedURLs = ConfigService.LoadSupportedWebsites();
+
+        foreach (string webURL in selectedURLs)
+        {
+            //Debug.WriteLine($"Handling selected website: {webURL}");
+            string htmlCode = await HTMLSupplier.GetHTMLAsync(webURL);
+            IMainPageParser mainPageParser = MainPageParserFactory.GenerateMainPageParser
+                (SharedData.Pairs.FirstOrDefault(x => x.Value == webURL).Key);
+            List<Article> websiteArticles = mainPageParser.ParseHTML(htmlCode);
+            //Debug.WriteLine($"Got {websiteArticles.Count} articles from {webURL}");
+
+            foreach (Article article in websiteArticles)
+            {
+                articles.Add(article);
+            }
+        }
+
+        removeDuplicateArticles(ref articles);
+
+        return articles;
+    }
+
+    private async Task<List<Article>> loadOfflineArticles()
+    {
+        List<Article> articles = new List<Article>();
+
+        return articles;
     }
 }

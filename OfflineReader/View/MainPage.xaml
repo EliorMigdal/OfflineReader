@@ -5,36 +5,53 @@
              xmlns:viewmodel="clr-namespace:OfflineReader.ViewModel"
              xmlns:model="clr-namespace:OfflineReader.Model"
              x:DataType="viewmodel:MainViewModel">
-    <Grid
-        RowDefinitions="Auto, Auto, *"
-        RowSpacing="0">
-        <Frame
-            Grid.Row="0"
-            StyleClass="Header"
-            BackgroundColor="LightBlue"
-            Padding="0"
-            CornerRadius="0"
-            BorderColor="Transparent">
-            <Grid
-                ColumnDefinitions="Auto, *, Auto">
-                <Button
-                    Grid.Column="0"
-                    BackgroundColor="AliceBlue"
-                    Margin="10"/>
-                <Button
-                    Grid.Column="2"
-                    BackgroundColor="AliceBlue"
-                    Margin="10"/>
+    <Grid RowDefinitions="Auto, Auto, *, Auto"
+          RowSpacing="0">
+        <Frame Grid.Row="0"
+               StyleClass="Header"
+               Padding="0"
+               CornerRadius="0"
+               BorderColor="Transparent">
+            <Grid ColumnDefinitions="Auto, *, Auto">
+                <Border x:Name="OnlineBorder"
+                        BackgroundColor="{Binding OnlineBorderColor}"
+                        Padding="0"
+                        StrokeShape="RoundRectangle 0,0,0,50"
+                        Grid.Column="0">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OnlineClickedCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Margin="20"
+                           Text="Online"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           Padding="0">
+                    </Label>
+                </Border>
+                <Border BackgroundColor="{Binding OfflineBorderColor}"
+                        Padding="0"
+                        HorizontalOptions="EndAndExpand"
+                        Grid.Column="2"
+                        StrokeShape="RoundRectangle 0,0,50,0">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OfflineClickedCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Margin="20"
+                           Text="Offline"
+                           HorizontalOptions="End"
+                           VerticalOptions="Center">
+                    </Label>
+                </Border>
             </Grid>
         </Frame>
         <Border
-            Grid.Row="1"
+            Grid.Row="0"
             StrokeShape="RoundRectangle 90"
             Stroke="White"
             StrokeThickness="5"
             Padding="0"
             BackgroundColor="LightBlue"
-            Margin="0,-20,0,0"
+            Margin="0,0,0,0"
             HorizontalOptions="Center"
             VerticalOptions="Center">
             <Label
@@ -57,15 +74,16 @@
                     SelectionMode="Single"
                     SelectedItem="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}},
                     Path=SelectedArticle, Mode=TwoWay}"
-                    SelectionChangedCommand="{Binding ArticleSelectedCommand}">
+                    SelectionChangedCommand="{Binding ArticleSelectedCommand}"
+                    CanReorderItems="True">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="model:Article">
                             <Grid RowDefinitions="Auto, Auto"
-                                  Margin="0"
-                                  Padding="10">
+                                    Margin="0"
+                                    Padding="10">
                                 <Grid RowDefinitions="Auto, Auto"
-                                      Grid.Row="0"
-                                      Margin="0">
+                                        Grid.Row="0"
+                                        Margin="0">
                                     <Border Grid.Row="0"
                                             WidthRequest="225"
                                             HeightRequest="30"
@@ -74,20 +92,20 @@
                                             StrokeShape="RoundRectangle 80">
                                         <Grid ColumnDefinitions="Auto, *, Auto">
                                             <Label Grid.Column="0"
-                                                   Text="{Binding Website}"
-                                                   TextColor="Black"
-                                                   FontSize="Body"
-                                                   FontAttributes="Bold"
-                                                   Margin="4"
-                                                   Padding="10"/>
+                                                    Text="{Binding Website}"
+                                                    TextColor="Black"
+                                                    FontSize="Body"
+                                                    FontAttributes="Bold"
+                                                    Margin="4"
+                                                    Padding="10"/>
                                             <Label Grid.Column="2"
-                                                   Text="{Binding Date}"
-                                                   TextColor="Black"
-                                                   FontSize="Body"
-                                                   FontAttributes="Bold"
-                                                   Margin="4"
-                                                   HorizontalOptions="End"
-                                                   Padding="10"/>
+                                                    Text="{Binding Date}"
+                                                    TextColor="Black"
+                                                    FontSize="Body"
+                                                    FontAttributes="Bold"
+                                                    Margin="4"
+                                                    HorizontalOptions="End"
+                                                    Padding="10"/>
                                         </Grid>
                                     </Border>
                                     <Border Grid.Row="1"
@@ -98,35 +116,34 @@
                                             HeightRequest="105"
                                             Padding="1">
                                         <Grid ColumnDefinitions="Auto, *"
-                                              IsClippedToBounds="True">
-                                            <Frame x:Name="articleFrame"
-                                                   Grid.Column="0"
-                                                   VerticalOptions="Center"
-                                                   HorizontalOptions="Center"
-                                                   CornerRadius="45"
-                                                   IsClippedToBounds="True"
-                                                   Margin="5,8,10,5"
-                                                   HeightRequest="90"
-                                                   WidthRequest="100">
+                                                IsClippedToBounds="True">
+                                            <Frame Grid.Column="0"
+                                                    VerticalOptions="Center"
+                                                    HorizontalOptions="Center"
+                                                    CornerRadius="45"
+                                                    IsClippedToBounds="True"
+                                                    Margin="5,8,10,5"
+                                                    HeightRequest="90"
+                                                    WidthRequest="100">
                                                 <Image Aspect="AspectFill"
-                                                       HeightRequest="90"
-                                                       WidthRequest="100"
-                                                       Source="{Binding Image}"/>
+                                                        HeightRequest="90"
+                                                        WidthRequest="100"
+                                                        Source="{Binding Image}"/>
                                             </Frame>
                                             <Grid Grid.Column="1"
-                                                  RowDefinitions="Auto"
-                                                  IsClippedToBounds="True">
+                                                    RowDefinitions="Auto"
+                                                    IsClippedToBounds="True">
                                                 <Label Grid.Row="0"
-                                                       Text="{Binding Title}"
-                                                       FontSize="Large"
-                                                       TextColor="Black"
-                                                       FlowDirection="RightToLeft"
-                                                       HorizontalTextAlignment="Center"
-                                                       VerticalTextAlignment="Center"
-                                                       VerticalOptions="Center"
-                                                       HorizontalOptions="Center"
-                                                       MaxLines="2"
-                                                       Padding="10"/>
+                                                        Text="{Binding Title}"
+                                                        FontSize="Large"
+                                                        TextColor="Black"
+                                                        FlowDirection="RightToLeft"
+                                                        HorizontalTextAlignment="Center"
+                                                        VerticalTextAlignment="Center"
+                                                        VerticalOptions="Center"
+                                                        HorizontalOptions="Center"
+                                                        MaxLines="2"
+                                                        Padding="10"/>
                                             </Grid>
                                         </Grid>
                                     </Border>
@@ -134,16 +151,25 @@
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
-               </CollectionView>
+                    <CollectionView.Footer>
+                        <Button Text="Load more articles..."
+                                FontSize="Header"
+                                Command="{Binding LoadMoreArticlesCommand}"
+                                IsVisible="{Binding AnyArticlesToLoad}"
+                                HorizontalOptions="Center"
+                                VerticalOptions="End"
+                                BackgroundColor="LightBlue"/>
+                    </CollectionView.Footer>
+                </CollectionView>
             </ContentView>
         </RefreshView>
         <ActivityIndicator
-            Grid.RowSpan="1"
-            Grid.ColumnSpan="3"
+            Grid.Row="2"
             HorizontalOptions="Fill"
             VerticalOptions="Center"
             IsRunning="{Binding IsBusy}"
             IsVisible="{Binding IsBusy}"
-            Color="Black"/>
+            Color="Black"
+            Margin="2"/>
     </Grid>
 </ContentPage>
