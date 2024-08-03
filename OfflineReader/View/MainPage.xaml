@@ -44,46 +44,38 @@
                 </Border>
             </Grid>
         </Frame>
-        <Border
-            Grid.Row="0"
-            StrokeShape="RoundRectangle 90"
-            Stroke="White"
-            StrokeThickness="5"
-            Padding="0"
-            BackgroundColor="LightBlue"
-            Margin="0,0,0,0"
-            HorizontalOptions="Center"
-            VerticalOptions="Center">
-            <Label
+        <Border Grid.Row="0"
+                StrokeShape="RoundRectangle 90"
+                Stroke="White"
+                StrokeThickness="5"
+                Padding="0"
+                BackgroundColor="LightBlue"
+                Margin="0,0,0,0"
                 HorizontalOptions="Center"
-                Text="Trending News"
-                FontSize="Header"
-                FontAttributes="Bold"
-                TextColor="DarkBlue"
-                Margin="50, 0, 50, 0"
-                Padding="5"/>
+                VerticalOptions="Center">
+            <Label HorizontalOptions="Center"
+                    Text="Trending News"
+                    FontSize="Header"
+                    FontAttributes="Bold"
+                    TextColor="DarkBlue"
+                    Margin="50, 0, 50, 0"
+                    Padding="5"/>
         </Border>
-        <RefreshView
-            Command="{Binding GetArticlesCommand}"
-            IsRefreshing="{Binding IsRefreshing}"
-            Grid.Row="2">
+        <RefreshView Command="{Binding GetArticlesCommand}"
+                     IsRefreshing="{Binding IsRefreshing}"
+                     Grid.Row="2">
             <ContentView>
-                <CollectionView
-                    BackgroundColor="Transparent"
-                    ItemsSource="{Binding Articles}"
-                    SelectionMode="Single"
-                    SelectedItem="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}},
-                    Path=SelectedArticle, Mode=TwoWay}"
-                    SelectionChangedCommand="{Binding ArticleSelectedCommand}"
-                    CanReorderItems="True">
+                <CollectionView BackgroundColor="Transparent"
+                                ItemsSource="{Binding Articles}"
+                                SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="model:Article">
                             <Grid RowDefinitions="Auto, Auto"
-                                    Margin="0"
-                                    Padding="10">
+                                  Margin="0"
+                                  Padding="10">
                                 <Grid RowDefinitions="Auto, Auto"
-                                        Grid.Row="0"
-                                        Margin="0">
+                                      Grid.Row="0"
+                                      Margin="0">
                                     <Border Grid.Row="0"
                                             WidthRequest="225"
                                             HeightRequest="30"
@@ -128,13 +120,13 @@
                                                 <Image Aspect="AspectFill"
                                                         HeightRequest="90"
                                                         WidthRequest="100"
-                                                        Source="{Binding Image}"/>
+                                                        Source="{Binding MainImage.Content}"/>
                                             </Frame>
                                             <Grid Grid.Column="1"
                                                     RowDefinitions="Auto"
                                                     IsClippedToBounds="True">
                                                 <Label Grid.Row="0"
-                                                        Text="{Binding Title}"
+                                                        Text="{Binding OuterTitle}"
                                                         FontSize="Large"
                                                         TextColor="Black"
                                                         FlowDirection="RightToLeft"
@@ -146,6 +138,10 @@
                                                         Padding="10"/>
                                             </Grid>
                                         </Grid>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=ArticleSelectedCommand}"
+                                                  CommandParameter="{Binding .}"/>
+                                        </Border.GestureRecognizers>
                                     </Border>
                                 </Grid>
                             </Grid>
@@ -164,7 +160,7 @@
             </ContentView>
         </RefreshView>
         <ActivityIndicator
-            Grid.Row="2"
+            Grid.Row="1"
             HorizontalOptions="Fill"
             VerticalOptions="Center"
             IsRunning="{Binding IsBusy}"

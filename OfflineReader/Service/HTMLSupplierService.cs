@@ -4,7 +4,8 @@ namespace OfflineReader.Service;
 
 public class HTMLSupplierService
 {
-    private PathParsingService PathParser { get; set; } = new();
+    private PathParsingService PathParser { get; set; } = new PathParsingService();
+    private HttpClient Client { get; set; } = new HttpClient();
 
     public async Task<string> GetHTMLAsync(string i_URL)
     {
@@ -35,8 +36,7 @@ public class HTMLSupplierService
 
     private async Task<string> downloadWebPageAsync(string i_URL)
     {
-        using HttpClient client = new();
-        string htmlCode = await client.GetStringAsync(i_URL);
+        string htmlCode = await Client.GetStringAsync(i_URL);
         return htmlCode;
     }
 }

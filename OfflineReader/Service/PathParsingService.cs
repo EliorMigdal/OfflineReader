@@ -9,11 +9,11 @@ public class PathParsingService
     {
         StringBuilder pathBuilder = new();
 
-        string articleDate = i_Article.Date.Replace("/", "");
         string webSiteName = i_Article.Website.ToLower();
+        string articleDate = i_Article.Date.Replace("-", "");
         string articleID = i_Article.ID;
 
-        pathBuilder.Append(articleDate).Append("/").Append(webSiteName).Append("/").Append(articleID).Append(".html");
+        pathBuilder.Append("/").Append(webSiteName).Append("/").Append(articleDate).Append("/").Append(articleID).Append("/");
 
         return pathBuilder.ToString();
     }

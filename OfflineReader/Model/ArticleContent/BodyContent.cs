@@ -2,5 +2,5 @@
 
 public abstract class BodyContent
 {
-    public string Content { get; protected set; }
+    public string Content { get; set; }
 }

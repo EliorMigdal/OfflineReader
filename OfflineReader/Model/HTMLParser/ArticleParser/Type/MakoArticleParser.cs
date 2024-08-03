@@ -13,14 +13,15 @@ public class MakoArticleParser : IArticleParser
     {
         HtmlDocument htmlDocument = new();
         Article article = new();
+        int numOfImages = 1;
 
         htmlDocument.LoadHtml(i_HTML);
         extractArticleTitle(article, htmlDocument);
         extractArticleDescription(article, htmlDocument);
         extractArticleAuthorInfo(article, htmlDocument);
         extractArticleDatesInfo(article, htmlDocument);
-        extractHeaderImage(article, htmlDocument);
-        extractArticleBody(article, htmlDocument);
+        extractHeaderImage(article, htmlDocument, numOfImages);
+        extractArticleBody(article, htmlDocument, numOfImages);
 
         return article;
     }
@@ -32,7 +33,7 @@ public class MakoArticleParser : IArticleParser
         if (headlineNode != null && headlineNode.Attributes["content"] != null)
         {
             string headline = HtmlEntity.DeEntitize(headlineNode.Attributes["content"].Value);
-            io_Article.Title = headline;
+            io_Article.InnerTitle = headline;
         }
     }
 
@@ -58,7 +59,7 @@ public class MakoArticleParser : IArticleParser
 
         if (authorInfoNode != null)
         {
-            Debug.WriteLine("Author info node is not null!");
+            io_Article.Author = new Author();
             HtmlNode authorImageNode = authorInfoNode.SelectSingleNode(".//img[@src]");
             HtmlNodeCollection authorNameNodes = authorInfoNode.SelectNodes(".//a[contains(@href, 'Editor-')] | .//span[@itemprop='author' and @content] | .//span[@class='source']");
 
@@ -114,7 +115,7 @@ public class MakoArticleParser : IArticleParser
         }
     }
 
-    private void extractHeaderImage(Article io_Article, HtmlDocument i_HTML)
+    private void extractHeaderImage(Article io_Article, HtmlDocument i_HTML, int i_NumOfImages)
     {
         HtmlNode initialImageNode = i_HTML.DocumentNode.SelectSingleNode("//section[contains(@class, 'article-header')]/figure");
 
@@ -130,7 +131,7 @@ public class MakoArticleParser : IArticleParser
 
                 if (!string.IsNullOrEmpty(src))
                 {
-                    io_Article.ArticleBody.Add(new ImageContent(src));
+                    io_Article.ArticleBody.Add(new ImageContent(src, i_NumOfImages++));
 
                     if (!string.IsNullOrEmpty(description))
                     {
@@ -141,7 +142,7 @@ public class MakoArticleParser : IArticleParser
         }
     }
 
-    private void extractArticleBody(Article io_Article, HtmlDocument i_HTML)
+    private void extractArticleBody(Article io_Article, HtmlDocument i_HTML, int i_NumOfImages)
     {
         HtmlNode articleBodyNode = i_HTML.DocumentNode.SelectSingleNode("//section[contains(@class, 'article-body')]");
 
@@ -193,7 +194,7 @@ public class MakoArticleParser : IArticleParser
 
                             if (!string.IsNullOrEmpty(src))
                             {
-                                io_Article.ArticleBody.Add(new ImageContent(src));
+                                io_Article.ArticleBody.Add(new ImageContent(src, i_NumOfImages++));
 
                                 if (!string.IsNullOrEmpty(description))
                                 {

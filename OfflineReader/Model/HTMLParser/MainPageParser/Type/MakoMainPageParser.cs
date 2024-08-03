@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using HtmlAgilityPack;
+using OfflineReader.Model.ArticleContent;
 
 namespace OfflineReader.Model.HTMLParser.MainPageParser.Type;
 
@@ -40,11 +41,12 @@ public class MakoMainPageParser : IMainPageParser
 
                 io_Articles.Add(new Article
                 {
-                    Title = articleTitle,
+                    OuterTitle = articleTitle,
                     URL = articleURL,
-                    Image = articleImage,
+                    MainImage = new ImageContent(articleImage, 0),
                     Website = k_Website,
-                    Date = articleDate
+                    Date = articleDate,
+                    ID = "1"
                 });
             }
         }

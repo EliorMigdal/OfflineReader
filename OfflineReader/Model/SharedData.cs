@@ -8,4 +8,5 @@ public static class SharedData
     {
         {"mako", "https://www.mako.co.il" }
     };
+    public static bool Cached { get; set; } = false;
 }

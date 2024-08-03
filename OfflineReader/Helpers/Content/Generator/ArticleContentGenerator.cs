@@ -23,7 +23,7 @@ public class ArticleContentGenerator
     {
         io_StackLayout.Children.Add(new Label
         {
-            Text = i_Article.Title,
+            Text = i_Article.InnerTitle,
             FontSize = 32,
             FontAttributes = FontAttributes.Bold,
             Margin = new Thickness(0, 0, 0, 10),

@@ -27,6 +27,7 @@ public partial class MainViewModel : BaseViewModel
     private HTMLSupplierService HTMLSupplier { get; set; } = new HTMLSupplierService();
     private ArticleParserFactory ArticleParserFactory { get; set; } = new ArticleParserFactory();
     private MainPageParserFactory MainPageParserFactory { get; set; } = new MainPageParserFactory();
+    private CacheService CacheService { get; set; } = new CacheService();
     private readonly IConnectivity m_Connectivity;
     private readonly Timer configFileCheckTimer;
     private DateTime lastConfigFileWriteTime;
@@ -46,7 +47,7 @@ public partial class MainViewModel : BaseViewModel
 
                 if (_selectedArticle != null)
                 {
-                    testCommand(_selectedArticle);
+                    ReadArticleCommand(_selectedArticle);
                 }
             }
         }
@@ -105,7 +106,7 @@ public partial class MainViewModel : BaseViewModel
     {
         OnlineClickedCommand = new AsyncCommand(OnOnlineTapped);
         OfflineClickedCommand = new AsyncCommand(OnOfflineTapped);
-        ArticleSelectedCommand = new Command<Article>(testCommand);
+        ArticleSelectedCommand = new Command<Article>(ReadArticleCommand);
         LoadMoreArticlesCommand = new Command(loadMoreArticlesCommand);
         m_Connectivity = i_Connectivity;
         m_ArticlesSource = m_OnlineArticles;
@@ -140,44 +141,29 @@ public partial class MainViewModel : BaseViewModel
 
         try
         {
-            IsBusy = true;
+            if (!IsRefreshing)
+            {
+                IsBusy = true;
+            }
+            
             List<Article> articles;
 
             if (m_ArticlesSource == m_OnlineArticles)
             {
-                Debug.WriteLine("Source is Online!");
                 articles = await loadOnlineArticles();
-                Debug.WriteLine($"Got {articles.Count} online articles!");
             }
 
             else
             {
-                Debug.WriteLine("Source is Offline!");
                 articles = await loadOfflineArticles();
-                Debug.WriteLine($"Got {articles.Count} offline articles!");
             }
 
             removeDuplicateArticles(ref articles);
-            Debug.WriteLine("Removed dups!");
 
             if (areArticlesDifferent(articles))
             {
-                Debug.WriteLine("Collections are different");
-                m_ArticlesSource.Clear();
-
-                foreach (Article article in articles)
-                {
-                    m_ArticlesSource.Add(article);
-                }
-
-                Articles.Clear();
-
-                for (int i = 0; i < m_DisplayableArticles && i < m_ArticlesSource.Count; i++)
-                {
-                    Articles.Add(m_ArticlesSource[i]);
-                }
-
-                OnPropertyChanged(nameof(Articles));
+                updateArticlesSource(articles);
+                updateMainCollection();
             }
         }
 
@@ -189,36 +175,36 @@ public partial class MainViewModel : BaseViewModel
         }
     }
 
-    [RelayCommand]
-    public async Task GoToReaderModeAsync(Article i_Article)
+    private async void ReadArticleCommand(Article i_Article)
     {
-        if (i_Article == null)
-            return;
-
-        await Shell.Current.GoToAsync(nameof(ReaderPage), true, new Dictionary<string, object>
-        {
-            { "Article", i_Article }
-        });
-    }
-
-    private async void testCommand(Article i_Article)
-    {
-        if (i_Article is null)
+        if (i_Article is null || IsBusy)
             return;
 
         try
         {
-            if (!IsBusy)
-            {
-                IsBusy = true;
-                string htmlCode = await HTMLSupplier.GetHTMLAsync(i_Article.URL);
+            IsBusy = true;
+            Debug.WriteLine("Searching for cached article!");
+            Article cachedArticle = CacheService.FindCachedArticle(i_Article);
+            Debug.WriteLine("Done searching for cached article!");
 
+            if (cachedArticle is null)
+            {
+                Debug.WriteLine("Didn't find cached article!");
+                string htmlCode = await HTMLSupplier.GetHTMLAsync(i_Article.URL);
                 SharedData.SharedArticle = i_Article;
                 SharedData.HTML = htmlCode;
-                IArticleParser articleParser = ArticleParserFactory.GenerateParser(i_Article.Website.ToLower());
-
-                await Shell.Current.GoToAsync(nameof(TestView), true);
+                SharedData.Cached = false;
             }
+
+            else
+            {
+                Debug.WriteLine("Found cached article!");
+                SharedData.SharedArticle = cachedArticle;
+                SharedData.HTML = string.Empty;
+                SharedData.Cached = true;
+            }
+
+            await Shell.Current.GoToAsync(nameof(TestView), true);
         }
 
         finally
@@ -247,17 +233,33 @@ public partial class MainViewModel : BaseViewModel
 
     private async Task OnOnlineTapped()
     {
-        Debug.WriteLine("Tapped Online!");
-
-        if (!IsBusy && !isOnlineSelected())
+        try
         {
-            IsBusy = true;
-            OnlineBorderColor = Colors.LightGreen;
-            OfflineBorderColor = Colors.LightGray;
-            m_ArticlesSource = m_OnlineArticles;
-            IsBusy = false;
-            await GetArticlesAsync();
+            if (!IsBusy && !isOnlineSelected())
+            {
+                IsBusy = true;
+                OnlineBorderColor = Colors.LightGreen;
+                OfflineBorderColor = Colors.LightGray;
+                m_ArticlesSource = m_OnlineArticles;
+
+                if (m_OnlineArticles.Count == 0)
+                {
+                    IsBusy = false;
+                    await GetArticlesAsync();
+                }
+
+                else
+                {
+                    updateMainCollection();
+                }
+            }
         }
+
+        finally
+        {
+            IsBusy = false;
+        }
+
     }
 
     private async Task OnOfflineTapped()
@@ -283,7 +285,7 @@ public partial class MainViewModel : BaseViewModel
     private void removeDuplicateArticles(ref List<Article> io_Articles)
     {
         List<Article> distinctArticles = io_Articles
-            .GroupBy(article => article.Title)
+            .GroupBy(article => article.OuterTitle)
             .Select(group => group.First())
             .ToList();
 
@@ -320,7 +322,7 @@ public partial class MainViewModel : BaseViewModel
 
         for (int i = 0; i < Articles.Count && !foundArticle; i++)
         {
-            if (i_Article.Title.Equals(m_ArticlesSource[i].Title))
+            if (i_Article.OuterTitle.Equals(m_ArticlesSource[i].OuterTitle))
             {
                 foundArticle = true;
             }
@@ -361,12 +363,10 @@ public partial class MainViewModel : BaseViewModel
 
         foreach (string webURL in selectedURLs)
         {
-            //Debug.WriteLine($"Handling selected website: {webURL}");
             string htmlCode = await HTMLSupplier.GetHTMLAsync(webURL);
             IMainPageParser mainPageParser = MainPageParserFactory.GenerateMainPageParser
                 (SharedData.Pairs.FirstOrDefault(x => x.Value == webURL).Key);
             List<Article> websiteArticles = mainPageParser.ParseHTML(htmlCode);
-            //Debug.WriteLine($"Got {websiteArticles.Count} articles from {webURL}");
 
             foreach (Article article in websiteArticles)
             {
@@ -384,5 +384,29 @@ public partial class MainViewModel : BaseViewModel
         List<Article> articles = new List<Article>();
 
         return articles;
+    }
+
+    private void updateMainCollection()
+    {
+        Articles.Clear();
+
+        for (int i = 0; i < m_DisplayableArticles && i < m_ArticlesSource.Count; i++)
+        {
+            Articles.Add(m_ArticlesSource[i]);
+        }
+
+        AnyArticlesToLoad = m_ArticlesSource.Count > Articles.Count;
+
+        OnPropertyChanged(nameof(Articles));
+    }
+
+    private void updateArticlesSource(List<Article> i_Articles)
+    {
+        m_ArticlesSource.Clear();
+
+        foreach (Article article in i_Articles)
+        {
+            m_ArticlesSource.Add(article);
+        }
     }
 }
