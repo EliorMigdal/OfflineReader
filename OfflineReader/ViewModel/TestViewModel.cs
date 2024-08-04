@@ -1,8 +1,7 @@
 ﻿using OfflineReader.Model.HTMLParser.ArticleParser;
 using OfflineReader.Model;
 using OfflineReader.Helpers.Content.Generator;
-using OfflineReader.Service;
-using System.Diagnostics;
+using OfflineReader.Service.Local;
 
 namespace OfflineReader.ViewModel;
 
@@ -10,7 +9,7 @@ public class TestViewModel : BaseViewModel
 {
     private ArticleParserFactory ParserFactory { get; set; } = new ArticleParserFactory();
     private ArticleContentGenerator ContentGenerator { get; set; } = new ArticleContentGenerator();
-    private CacheService CacheService { get; set; } = new CacheService();
+    private CacheService CacheService { get; } = CacheService.Instance;
     private StackLayout _articleLayout;
     public StackLayout ArticleLayout
     {
@@ -30,17 +29,14 @@ public class TestViewModel : BaseViewModel
 
         if (SharedData.Cached)
         {
-            Debug.WriteLine($"Cached!");
             article = SharedData.SharedArticle;
         }
 
         else
         {
-            Debug.WriteLine($"Not Cached!");
             string html = SharedData.HTML;
             IArticleParser articleParser = ParserFactory.GenerateParser(website);
             article = articleParser.ParseHTML(html);
-            Debug.WriteLine($"About to cache the article!");
             _ = Task.Run(() => CacheService.CacheArticle(article));
         }
         

@@ -1,5 +1,5 @@
 ﻿using OfflineReader.ViewModel;
-using OfflineReader.Service;
+using OfflineReader.Service.Local;
 using System.Diagnostics;
 
 namespace OfflineReader.View;

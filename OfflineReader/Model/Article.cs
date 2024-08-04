@@ -1,9 +1,17 @@
-﻿using OfflineReader.Model.ArticleContent;
-using System.Diagnostics;
+﻿using System.Xml.Serialization;
+using OfflineReader.Model.ArticleContent;
+using OfflineReader.Model.ArticleContent.TextType;
 
 namespace OfflineReader.Model;
 
 [Serializable]
+[XmlInclude(typeof(BodyContent))]
+[XmlInclude(typeof(TextContent))]
+[XmlInclude(typeof(ImageContent))]
+[XmlInclude(typeof(ImageCredit))]
+[XmlInclude(typeof(RegularText))]
+[XmlInclude(typeof(SubHeader))]
+[XmlInclude(typeof(TextListItem))]
 public class Article
 {
     public string OuterTitle { get; set; }
@@ -12,7 +20,7 @@ public class Article
     public ImageContent MainImage { get; set; }
     public string Category { get; set; }
     public string URL { get; set; }
-    public string ID { get; set; } = "1";
+    public string ID { get; set; }
 
     public string InnerTitle { get; set; }
     public string SubTitle { get; set; }
@@ -25,7 +33,7 @@ public class Article
     public static Article MergeInnerAndOuterObjects(Article i_ArticleA, Article i_ArticleB)
     {
         Article innerArticle, outerArticle;
-        Debug.WriteLine($"About to merege! Inner A: {i_ArticleA.InnerTitle}, Inner B: {i_ArticleB.InnerTitle}");
+        ArticleIDGenerator articleIDGenerator = ArticleIDGenerator.Instance;
 
         if (i_ArticleA.OuterTitle.Equals(string.Empty))
         {
@@ -54,7 +62,7 @@ public class Article
             LastUpdated = innerArticle.LastUpdated,
             Category = outerArticle.Category,
             URL = outerArticle.URL,
-            ID = outerArticle.ID
+            ID = articleIDGenerator.GenerateArticleID(outerArticle)
         };
     }
 }

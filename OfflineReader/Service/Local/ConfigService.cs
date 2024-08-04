@@ -2,11 +2,21 @@
 using Newtonsoft.Json;
 using OfflineReader.Model;
 
-namespace OfflineReader.Service;
+namespace OfflineReader.Service.Local;
 
 public class ConfigService
 {
     public static string ConfigFilePath => Path.Combine(FileSystem.AppDataDirectory, "Config.json");
+    private static ConfigService m_Instance;
+    public static ConfigService Instance
+    {
+        get
+        {
+            m_Instance ??= new ConfigService();
+
+            return m_Instance;
+        }
+    }
 
     public static bool DoesConfigFileExist()
     {

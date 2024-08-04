@@ -45,8 +45,8 @@ public class MakoMainPageParser : IMainPageParser
                     URL = articleURL,
                     MainImage = new ImageContent(articleImage, 0),
                     Website = k_Website,
-                    Date = articleDate,
-                    ID = "1"
+                    Date = articleDate[..10],
+                    LastUpdated = DateTime.Parse(articleNode.SelectSingleNode(".//time").GetAttributeValue("dateTime", string.Empty))
                 });
             }
         }

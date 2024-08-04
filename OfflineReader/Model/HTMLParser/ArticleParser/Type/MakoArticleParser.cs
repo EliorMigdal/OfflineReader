@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using System.Text;
 using HtmlAgilityPack;
 using OfflineReader.Model.ArticleContent;
 using OfflineReader.Model.ArticleContent.TextType;
@@ -20,8 +19,8 @@ public class MakoArticleParser : IArticleParser
         extractArticleDescription(article, htmlDocument);
         extractArticleAuthorInfo(article, htmlDocument);
         extractArticleDatesInfo(article, htmlDocument);
-        extractHeaderImage(article, htmlDocument, numOfImages);
-        extractArticleBody(article, htmlDocument, numOfImages);
+        extractHeaderImage(article, htmlDocument, ref numOfImages);
+        extractArticleBody(article, htmlDocument, ref numOfImages);
 
         return article;
     }
@@ -115,7 +114,7 @@ public class MakoArticleParser : IArticleParser
         }
     }
 
-    private void extractHeaderImage(Article io_Article, HtmlDocument i_HTML, int i_NumOfImages)
+    private void extractHeaderImage(Article io_Article, HtmlDocument i_HTML, ref int i_NumOfImages)
     {
         HtmlNode initialImageNode = i_HTML.DocumentNode.SelectSingleNode("//section[contains(@class, 'article-header')]/figure");
 
@@ -142,7 +141,7 @@ public class MakoArticleParser : IArticleParser
         }
     }
 
-    private void extractArticleBody(Article io_Article, HtmlDocument i_HTML, int i_NumOfImages)
+    private void extractArticleBody(Article io_Article, HtmlDocument i_HTML, ref int i_NumOfImages)
     {
         HtmlNode articleBodyNode = i_HTML.DocumentNode.SelectSingleNode("//section[contains(@class, 'article-body')]");
 

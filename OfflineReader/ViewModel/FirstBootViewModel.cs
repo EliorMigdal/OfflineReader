@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Windows.Input;
 using OfflineReader.Model;
-using OfflineReader.Service;
+using OfflineReader.Service.Local;
 
 namespace OfflineReader.ViewModel;
 

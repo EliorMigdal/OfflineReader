@@ -3,7 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using OfflineReader.View;
-using OfflineReader.Service;
+using OfflineReader.Service.Local;
+using OfflineReader.Service.Remote;
 using OfflineReader.Model;
 using OfflineReader.Model.HTMLParser.ArticleParser;
 using OfflineReader.Model.HTMLParser.MainPageParser;
@@ -24,13 +25,14 @@ public partial class MainViewModel : BaseViewModel
     private List<Article> m_OfflineArticles = new List<Article>();
     private List<Article> m_ArticlesSource;
 
-    private HTMLSupplierService HTMLSupplier { get; set; } = new HTMLSupplierService();
-    private ArticleParserFactory ArticleParserFactory { get; set; } = new ArticleParserFactory();
-    private MainPageParserFactory MainPageParserFactory { get; set; } = new MainPageParserFactory();
-    private CacheService CacheService { get; set; } = new CacheService();
+    private HTMLSupplierService HTMLSupplier { get; } = HTMLSupplierService.Instance;
+    private CacheService CacheService { get; } = CacheService.Instance;
     private readonly IConnectivity m_Connectivity;
     private readonly Timer configFileCheckTimer;
     private DateTime lastConfigFileWriteTime;
+
+    private ArticleParserFactory ArticleParserFactory { get; } = new ArticleParserFactory();
+    private MainPageParserFactory MainPageParserFactory { get; } = new MainPageParserFactory();
     
     private Article _selectedArticle;
     public Article SelectedArticle

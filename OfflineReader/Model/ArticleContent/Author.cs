@@ -1,5 +1,6 @@
 ﻿namespace OfflineReader.Model.ArticleContent;
 
+[Serializable]
 public class Author
 {
     public string Name { get; set; }

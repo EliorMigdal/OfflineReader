@@ -1,8 +1,11 @@
 ﻿namespace OfflineReader.Model.ArticleContent;
 
+[Serializable]
 public class ImageContent : BodyContent
 {
-    public int ImageID { get; private set; }
+    public int ImageID { get; set; }
+
+    public ImageContent() { }
 
     public ImageContent(string i_ImageSource, int i_ImageID)
     {

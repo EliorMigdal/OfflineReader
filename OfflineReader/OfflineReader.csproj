@@ -74,6 +74,8 @@
 	  <None Remove="Helpers\Content\" />
 	  <None Remove="Helpers\Content\Generator\" />
 	  <None Remove="Model\ArticleContent\TextType\" />
+	  <None Remove="Service\Local\" />
+	  <None Remove="Service\Remote\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="View\" />
@@ -90,5 +92,7 @@
 	  <Folder Include="Helpers\Content\" />
 	  <Folder Include="Helpers\Content\Generator\" />
 	  <Folder Include="Model\ArticleContent\TextType\" />
+	  <Folder Include="Service\Local\" />
+	  <Folder Include="Service\Remote\" />
 	</ItemGroup>
 </Project>
