@@ -17,6 +17,8 @@ public class ConfigService
             return m_Instance;
         }
     }
+    
+    private ConfigService() {}
 
     public static bool DoesConfigFileExist()
     {

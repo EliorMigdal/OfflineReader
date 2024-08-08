@@ -26,7 +26,7 @@ public class ArticleContentGenerator
             Text = i_Article.InnerTitle,
             FontSize = 32,
             FontAttributes = FontAttributes.Bold,
-            Margin = new Thickness(0, 0, 0, 10),
+            Margin = new Thickness(0, -10, 0, 10),
             FlowDirection = FlowDirection.RightToLeft,
             HorizontalTextAlignment = TextAlignment.Center
         });

@@ -21,8 +21,8 @@ public partial class MainViewModel : BaseViewModel
     public ICommand LoadMoreArticlesCommand { get; }
 
     public ObservableCollection<Article> Articles { get; set; } = new ObservableCollection<Article>();
-    private List<Article> m_OnlineArticles = new List<Article>();
-    private List<Article> m_OfflineArticles = new List<Article>();
+    private readonly List<Article> m_OnlineArticles = new List<Article>();
+    private readonly List<Article> m_OfflineArticles = new List<Article>();
     private List<Article> m_ArticlesSource;
 
     private HTMLSupplierService HTMLSupplier { get; } = HTMLSupplierService.Instance;
@@ -30,8 +30,6 @@ public partial class MainViewModel : BaseViewModel
     private readonly IConnectivity m_Connectivity;
     private readonly Timer configFileCheckTimer;
     private DateTime lastConfigFileWriteTime;
-
-    private ArticleParserFactory ArticleParserFactory { get; } = new ArticleParserFactory();
     private MainPageParserFactory MainPageParserFactory { get; } = new MainPageParserFactory();
     
     private Article _selectedArticle;
@@ -92,7 +90,7 @@ public partial class MainViewModel : BaseViewModel
     private bool m_AnyArticlesToLoad;
     public bool AnyArticlesToLoad
     {
-        get => m_ArticlesSource.Count > Articles.Count;
+        get => m_AnyArticlesToLoad;
 
         set
         {
@@ -102,7 +100,7 @@ public partial class MainViewModel : BaseViewModel
     }
 
     [ObservableProperty]
-    bool isRefreshing;
+    private bool isRefreshing;
 
     public MainViewModel(IConnectivity i_Connectivity)
     {
@@ -179,31 +177,25 @@ public partial class MainViewModel : BaseViewModel
 
     private async void ReadArticleCommand(Article i_Article)
     {
-        if (i_Article is null || IsBusy)
-            return;
+        if (i_Article is null || IsBusy) return;
 
         try
         {
             IsBusy = true;
-            Debug.WriteLine("Searching for cached article!");
             Article cachedArticle = CacheService.FindCachedArticle(i_Article);
-            Debug.WriteLine("Done searching for cached article!");
+            SharedData.Cached = cachedArticle is not null;
 
-            if (cachedArticle is null)
+            if (SharedData.Cached)
             {
-                Debug.WriteLine("Didn't find cached article!");
-                string htmlCode = await HTMLSupplier.GetHTMLAsync(i_Article.URL);
-                SharedData.SharedArticle = i_Article;
-                SharedData.HTML = htmlCode;
-                SharedData.Cached = false;
+                Debug.WriteLine("Cached: True");
+                SharedData.ParsedArticle = cachedArticle;
             }
 
             else
             {
-                Debug.WriteLine("Found cached article!");
-                SharedData.SharedArticle = cachedArticle;
-                SharedData.HTML = string.Empty;
-                SharedData.Cached = true;
+                Debug.WriteLine("Cached: False");
+                SharedData.SharedArticle = i_Article;
+                SharedData.HTML = await HTMLSupplier.GetHTMLAsync(i_Article.URL);
             }
 
             await Shell.Current.GoToAsync(nameof(TestView), true);
@@ -281,7 +273,7 @@ public partial class MainViewModel : BaseViewModel
 
     private bool isOnlineSelected()
     {
-        return OnlineBorderColor == Colors.LightGreen;
+        return OnlineBorderColor.Equals(Colors.LightGreen);
     }
 
     private void removeDuplicateArticles(ref List<Article> io_Articles)
@@ -333,7 +325,7 @@ public partial class MainViewModel : BaseViewModel
         return foundArticle;
     }
 
-    public void loadMoreArticlesCommand()
+    private void loadMoreArticlesCommand()
     {
         if (IsBusy)
             return;

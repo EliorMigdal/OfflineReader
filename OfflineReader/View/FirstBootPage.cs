@@ -14,9 +14,9 @@ public partial class FirstBootPage : ContentPage
     private void OnSwitchToggled(object sender, ToggledEventArgs e)
     {
         var switchControl = sender as Switch;
-        var website = (SupportedWebsite)switchControl.BindingContext;
+        var website = (SupportedWebsite)switchControl?.BindingContext;
         var viewModel = BindingContext as FirstBootViewModel;
 
-        viewModel.OnToggleSwitch(website);
+        viewModel?.OnToggleSwitch(website);
     }
 }

@@ -13,6 +13,8 @@ public class ImageDownloadService
             return m_Instance;
         }
     }
+    
+    private ImageDownloadService() {}
 
     public async Task DownloadImageAsync(string imageUrl, string localPath)
     {

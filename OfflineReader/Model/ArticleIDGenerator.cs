@@ -20,9 +20,9 @@ public class ArticleIDGenerator
     public string GenerateArticleID(Article i_Article)
     {
         int timeNumber = generateTimeNumber(i_Article.LastUpdated);
-        //string authorID = generateAuthorID(i_Article.Author.Name);
+        string titleID = generateTitleID(i_Article.OuterTitle);
         Debug.WriteLine($"Got unique ID {timeNumber} with date {i_Article.LastUpdated}");
-        return $"{timeNumber}";
+        return $"{timeNumber}{titleID}";
     }
 
     private int generateTimeNumber(DateTime i_DateTime)
@@ -30,11 +30,11 @@ public class ArticleIDGenerator
         return int.Parse(i_DateTime.ToString("HHmm"));
     }
 
-    private string generateAuthorID(string i_AuthorName)
+    private string generateTitleID(string i_Title)
     {
         using (SHA256 sha256 = SHA256.Create())
         {
-            byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(i_AuthorName));
+            byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(i_Title));
             int hashInt = BitConverter.ToInt32(hashBytes, 0);
             return Math.Abs(hashInt).ToString();
         }

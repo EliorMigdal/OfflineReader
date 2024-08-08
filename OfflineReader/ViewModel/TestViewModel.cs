@@ -7,9 +7,10 @@ namespace OfflineReader.ViewModel;
 
 public class TestViewModel : BaseViewModel
 {
-    private ArticleParserFactory ParserFactory { get; set; } = new ArticleParserFactory();
-    private ArticleContentGenerator ContentGenerator { get; set; } = new ArticleContentGenerator();
+    private ArticleParserFactory ParserFactory { get; } = new();
+    private ArticleContentGenerator ContentGenerator { get; } = new();
     private CacheService CacheService { get; } = CacheService.Instance;
+    private OfflineContentService OfflineContentService { get; } = OfflineContentService.Instance;
     private StackLayout _articleLayout;
     public StackLayout ArticleLayout
     {
@@ -17,19 +18,21 @@ public class TestViewModel : BaseViewModel
         set => SetProperty(ref _articleLayout, value);
     }
 
+    public bool ButtonIsEnabled { get; set; } = true;
+
     public TestViewModel()
     {
-        _ = InitializeAsync();
+        _ = initializeAsync();
     }
 
-    public async Task InitializeAsync()
+    private async Task initializeAsync()
     {
         string website = SharedData.SharedArticle.Website;
         Article article;
 
         if (SharedData.Cached)
         {
-            article = SharedData.SharedArticle;
+            article = SharedData.ParsedArticle;
         }
 
         else
@@ -37,9 +40,15 @@ public class TestViewModel : BaseViewModel
             string html = SharedData.HTML;
             IArticleParser articleParser = ParserFactory.GenerateParser(website);
             article = articleParser.ParseHTML(html);
+            SharedData.ParsedArticle = article;
             _ = Task.Run(() => CacheService.CacheArticle(article));
         }
         
         ArticleLayout = ContentGenerator.generateAView(article);
+    }
+
+    public async void SaveArticle(Article i_Article)
+    {
+        _ = Task.Run(() => OfflineContentService.StoreArticle(i_Article));
     }
 }

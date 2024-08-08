@@ -6,11 +6,37 @@
     <ContentPage.BindingContext>
         <viewmodel:TestViewModel/>
     </ContentPage.BindingContext>
-    <ScrollView>
-        <StackLayout Padding="20" Margin="10"
-                     HorizontalOptions="FillAndExpand"
-                     VerticalOptions="FillAndExpand">
-            <ContentView Content="{Binding ArticleLayout}" />
-        </StackLayout>
-    </ScrollView>
+    <Grid RowDefinitions="Auto, *">
+        <Grid ColumnDefinitions="Auto, Auto, *, Auto"
+              Grid.Row="0">
+            <Slider Margin="20, 0,0,0"
+                    Grid.Column="0"
+                    ValueChanged="Slider_OnValueChanged"
+                    Minimum="-5"
+                    Maximum="5"
+                    FlowDirection="LeftToRight"
+                    Value="0"/>
+            <Label Text="Text"
+                   Grid.Column="1"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   Margin="5,0,0,5"
+                   FontSize="Large"/>
+            <Button Margin="5, 5, 20, 5"
+                    Padding="5"
+                    Grid.Column="3"
+                    Clicked="Button_OnClicked"
+                    IsEnabled="{Binding ButtonIsEnabled}"/>
+        </Grid>
+        <ScrollView Grid.Row="1"
+                    VerticalOptions="FillAndExpand">
+            <StackLayout Padding="20"
+                         Margin="10"
+                         HorizontalOptions="FillAndExpand"
+                         VerticalOptions="FillAndExpand">
+                <ContentView Content="{Binding ArticleLayout}"
+                             x:Name="Content"/>
+            </StackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

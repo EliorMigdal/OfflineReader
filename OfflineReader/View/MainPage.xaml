@@ -8,10 +8,10 @@
     <Grid RowDefinitions="Auto, Auto, *, Auto"
           RowSpacing="0">
         <Frame Grid.Row="0"
-               StyleClass="Header"
-               Padding="0"
-               CornerRadius="0"
-               BorderColor="Transparent">
+                    StyleClass="Header"
+                    Padding="0"
+                    CornerRadius="0"
+                    BorderColor="Transparent">
             <Grid ColumnDefinitions="Auto, *, Auto">
                 <Border x:Name="OnlineBorder"
                         BackgroundColor="{Binding OnlineBorderColor}"
@@ -44,8 +44,7 @@
                 </Border>
             </Grid>
         </Frame>
-        <Border Grid.Row="0"
-                StrokeShape="RoundRectangle 90"
+        <Border StrokeShape="RoundRectangle 90"
                 Stroke="White"
                 StrokeThickness="5"
                 Padding="0"
@@ -58,8 +57,7 @@
                     FontSize="Header"
                     FontAttributes="Bold"
                     TextColor="DarkBlue"
-                    Margin="50, 0, 50, 0"
-                    Padding="5"/>
+                    Padding="40, 5, 40, 5"/>
         </Border>
         <RefreshView Command="{Binding GetArticlesCommand}"
                      IsRefreshing="{Binding IsRefreshing}"
@@ -104,12 +102,12 @@
                                             Margin="5"
                                             StrokeShape="RoundRectangle 80"
                                             Stroke="{StaticResource Gray100}"
-                                            StrokeThickness="5"
+                                            StrokeThickness="2"
                                             HeightRequest="105"
                                             Padding="1">
-                                        <Grid ColumnDefinitions="Auto, *"
+                                        <Grid ColumnDefinitions="*, Auto"
                                                 IsClippedToBounds="True">
-                                            <Frame Grid.Column="0"
+                                            <Frame Grid.Column="1"
                                                     VerticalOptions="Center"
                                                     HorizontalOptions="Center"
                                                     CornerRadius="45"
@@ -122,7 +120,7 @@
                                                         WidthRequest="100"
                                                         Source="{Binding MainImage.Content}"/>
                                             </Frame>
-                                            <Grid Grid.Column="1"
+                                            <Grid Grid.Column="0"
                                                     RowDefinitions="Auto"
                                                     IsClippedToBounds="True">
                                                 <Label Grid.Row="0"
@@ -134,8 +132,9 @@
                                                         VerticalTextAlignment="Center"
                                                         VerticalOptions="Center"
                                                         HorizontalOptions="Center"
-                                                        MaxLines="2"
-                                                        Padding="10"/>
+                                                        MaxLines="3"
+                                                        Padding="0"
+                                                        Margin="7"/>
                                             </Grid>
                                         </Grid>
                                         <Border.GestureRecognizers>

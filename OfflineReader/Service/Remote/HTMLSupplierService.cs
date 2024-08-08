@@ -13,6 +13,8 @@ public class HTMLSupplierService
             return m_Instance;
         }
     }
+    
+    private HTMLSupplierService() {}
 
     public async Task<string> GetHTMLAsync(string i_URL)
     {

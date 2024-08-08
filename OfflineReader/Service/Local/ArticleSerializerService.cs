@@ -6,7 +6,7 @@ namespace OfflineReader.Service.Local;
 
 public class ArticleSerializerService
 {
-    private XmlSerializer m_XMLSerializer = new XmlSerializer(typeof(Article));
+    private readonly XmlSerializer m_XMLSerializer = new XmlSerializer(typeof(Article));
     private static ArticleSerializerService m_Instance;
     public static ArticleSerializerService Instance
     {
