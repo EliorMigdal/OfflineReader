@@ -1,4 +1,4 @@
-﻿namespace OfflineReader.Model.ArticleContent.TextType;
+namespace OfflineReader.Model.ArticleContent.TextType;
 
 public class RegularText : TextContent
 {

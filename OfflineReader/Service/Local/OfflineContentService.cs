@@ -1,13 +1,11 @@
+using System.Collections.ObjectModel;
 using OfflineReader.Model;
 
 namespace OfflineReader.Service.Local;
 
 public class OfflineContentService
 {
-    private static string OfflineContentPath => Path.Combine(FileSystem.AppDataDirectory, "OfflineContent");
-    private readonly ArticleSaverService m_ArticleSaver = ArticleSaverService.Instance;
-    private readonly ArticleFinderService m_ArticleFinder = ArticleFinderService.Instance;
-    private static OfflineContentService m_Instance;
+    private static OfflineContentService? m_Instance;
     public static OfflineContentService Instance
     {
         get
@@ -17,16 +15,45 @@ public class OfflineContentService
             return m_Instance;
         }
     }
+    private static string OfflineContentPath => Path.Combine(FileSystem.AppDataDirectory, "OfflineContent");
+    private readonly ArticleModifierService m_ArticleModifier = ArticleModifierService.Instance;
+    private readonly ArticleFinderService m_ArticleFinder = ArticleFinderService.Instance;
+    private readonly ArticleSerializerService m_ArticleSerializer = ArticleSerializerService.Instance;
+    public ObservableCollection<Article> LocallyStoredArticles { get; } = new();
+
+    private OfflineContentService()
+    {
+        Task.Run(initializeOfflineArticles);
+    }
     
-    private OfflineContentService() {}
-    
-    public Article FindStoredArticle(Article i_Article)
+    public Article? FindStoredArticle(Article i_Article)
     {
         return m_ArticleFinder.SearchForArticle(i_Article, OfflineContentPath);
     }
 
-    public async Task StoreArticle(Article i_Article)
+    public async Task<bool> StoreArticle(Article i_Article)
     {
-        await m_ArticleSaver.SaveArticle(i_Article, OfflineContentPath);
+        Article? stored = await m_ArticleModifier.SaveArticle(i_Article, OfflineContentPath);
+        
+        if (stored is not null)
+            LocallyStoredArticles.Add(stored);
+
+        return stored is not null;
+    }
+
+    public bool RemoveArticle(Article i_Article)
+    {
+        return m_ArticleModifier.RemoveArticle(i_Article, OfflineContentPath);
+    }
+
+    private void initializeOfflineArticles()
+    {
+        string[] xmlFiles = Directory.GetFiles(OfflineContentPath, "*.xml", SearchOption.AllDirectories);
+
+        foreach (string file in xmlFiles)
+        {
+            Article? article = m_ArticleSerializer.DeserializeArticle(file);
+            if (article != null) LocallyStoredArticles.Add(article);
+        }
     }
 }

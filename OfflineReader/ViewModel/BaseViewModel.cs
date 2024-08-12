@@ -1,11 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace OfflineReader.ViewModel;
 
 public partial class BaseViewModel : ObservableObject
 {
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsNotBusy))]
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotBusy))]
     private bool isBusy;
 
     public bool IsNotBusy => !IsBusy;

@@ -20,28 +20,25 @@ public static class MauiProgram
         #if DEBUG
         builder.Logging.AddDebug();
         #endif
-
+        
         builder.Services.AddSingleton(Connectivity.Current);
 
-        Routing.RegisterRoute(nameof(TestView), typeof(TestView));
-        builder.Services.AddTransient<TestViewModel>();
-        builder.Services.AddTransient<TestView>();
+        Routing.RegisterRoute(nameof(ReadingPage), typeof(ReadingPage));
+        builder.Services.AddTransient<ReaderViewModel>();
+        builder.Services.AddTransient<ReadingPage>();
 
-        Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
-        builder.Services.AddSingleton<MainViewModel>();
-        builder.Services.AddSingleton<MainPage>();
-
-        Routing.RegisterRoute(nameof(ReaderPage), typeof(ReaderPage));
-        builder.Services.AddSingleton<ReaderPage>();
-
-        Routing.RegisterRoute(nameof(WebSelectionPage), typeof(WebSelectionPage));
-        builder.Services.AddSingleton<WebSelectionViewModel>();
-        builder.Services.AddSingleton<WebSelectionPage>();
-
-        Routing.RegisterRoute(nameof(SavedArticlesPage), typeof(SavedArticlesPage));
-        builder.Services.AddSingleton<SavedArticlesViewModel>();
-        builder.Services.AddSingleton<SavedArticlesPage>();
-
+        Routing.RegisterRoute(nameof(TrendingPage), typeof(TrendingPage));
+        builder.Services.AddSingleton<TrendingViewModel>();
+        builder.Services.AddSingleton<TrendingPage>();
+        
+        Routing.RegisterRoute(nameof(HistoryPage), typeof(HistoryPage));
+        builder.Services.AddSingleton<HistoryViewModel>();
+        builder.Services.AddSingleton<HistoryPage>();
+        
+        Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
+        builder.Services.AddSingleton<SettingsViewModel>();
+        builder.Services.AddSingleton<SettingsPage>();
+        
         return builder.Build();
     }
 }

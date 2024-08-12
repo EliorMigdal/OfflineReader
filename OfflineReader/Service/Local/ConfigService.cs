@@ -49,15 +49,14 @@ public class ConfigService
 
     public static List<string> LoadSupportedWebsites()
     {
+        Debug.WriteLine("At LoadSupportedWebsites!");
+        
         if (File.Exists(ConfigFilePath))
         {
             string json = File.ReadAllText(ConfigFilePath);
             return JsonConvert.DeserializeObject<List<string>>(json);
         }
 
-        else
-        {
-            return new List<string>();
-        }
+        return ["https://www.mako.co.il"];
     }
 }

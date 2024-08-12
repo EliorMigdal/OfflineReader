@@ -1,4 +1,4 @@
-﻿namespace OfflineReader.Model.ArticleContent;
+namespace OfflineReader.Model.ArticleContent;
 
 public class TextContent : BodyContent
 {

@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+using System.Diagnostics;
+using System.Xml.Serialization;
 using OfflineReader.Model.ArticleContent;
 using OfflineReader.Model.ArticleContent.TextType;
 
@@ -14,27 +15,29 @@ namespace OfflineReader.Model;
 [XmlInclude(typeof(TextListItem))]
 public class Article
 {
-    public string OuterTitle { get; set; }
-    public string Date { get; set; }
-    public string Website { get; set; }
-    public ImageContent MainImage { get; set; }
-    public string Category { get; set; }
-    public string URL { get; set; }
-    public string ID { get; set; }
+    public string OuterTitle { get; set; } = string.Empty;
+    public string Date { get; set; } = string.Empty;
+    public string Website { get; set; } = string.Empty;
+    public ImageContent MainImage { get; set; } = new();
+    public string Category { get; set; } = string.Empty;
+    public string URL { get; set; } = string.Empty;
+    public string ID { get; set; } = string.Empty;
 
-    public string InnerTitle { get; set; }
-    public string SubTitle { get; set; }
-    public string Description { get; set; }
-    public Author Author { get; set; }
+    public string InnerTitle { get; set; } = string.Empty;
+    public string SubTitle { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public Author Author { get; set; } = new();
     public List<BodyContent> ArticleBody { get; set; } = new();
     public DateTime PublishedDate { get; set; }
     public DateTime LastUpdated { get; set; }
 
-    public static Article MergeInnerAndOuterObjects(Article i_ArticleA, Article i_ArticleB)
+    public static Article MergeInnerAndOuterObjects(Article? i_ArticleA, Article i_ArticleB)
     {
-        Article innerArticle, outerArticle;
+        Article? innerArticle;
+        Article outerArticle;
         ArticleIDGenerator articleIDGenerator = ArticleIDGenerator.Instance;
 
+        Debug.Assert(i_ArticleA != null, nameof(i_ArticleA) + " != null");
         if (i_ArticleA.OuterTitle.Equals(string.Empty))
         {
             outerArticle = i_ArticleB;

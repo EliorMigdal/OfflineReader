@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using HtmlAgilityPack;
 using OfflineReader.Model.ArticleContent;
 using OfflineReader.Model.ArticleContent.TextType;
@@ -55,45 +56,36 @@ public class MakoArticleParser : IArticleParser
     private void extractArticleAuthorInfo(Article io_Article, HtmlDocument i_HTML)
     {
         HtmlNode authorInfoNode = i_HTML.DocumentNode.SelectSingleNode("//div[@class='writer-data']");
+        Debug.WriteLine("About to parse author info!");
 
-        if (authorInfoNode != null)
+        if (authorInfoNode == null) return;
+        
+        Debug.WriteLine("Author info is not null!");
+        io_Article.Author = new Author();
+        HtmlNode authorImageNode = authorInfoNode.SelectSingleNode(".//img[@src]");
+        HtmlNodeCollection authorNameNodes = authorInfoNode.SelectNodes(".//a[contains(@href, 'Editor-')] | .//span[@itemprop='author' and @content] | .//span[@class='source']");
+
+        if (authorNameNodes != null)
         {
-            io_Article.Author = new Author();
-            HtmlNode authorImageNode = authorInfoNode.SelectSingleNode(".//img[@src]");
-            HtmlNodeCollection authorNameNodes = authorInfoNode.SelectNodes(".//a[contains(@href, 'Editor-')] | .//span[@itemprop='author' and @content] | .//span[@class='source']");
+            string authorName = string.Empty;
 
-            if (authorNameNodes != null)
+            foreach (HtmlNode nameNode in authorNameNodes)
             {
-                string authorName = string.Empty;
+                authorName = HtmlEntity.DeEntitize(nameNode.Attributes.Contains("content") ? 
+                    nameNode.GetAttributeValue("content", string.Empty) : nameNode.InnerText);
 
-                foreach (HtmlNode nameNode in authorNameNodes)
-                {
-                    if (nameNode.Attributes.Contains("content"))
-                    {
-                        authorName = HtmlEntity.DeEntitize(nameNode.GetAttributeValue("content", string.Empty));
-                    }
-
-                    else
-                    {
-                        authorName = HtmlEntity.DeEntitize(nameNode.InnerText);
-                    }
-
-                    if (!string.IsNullOrEmpty(authorName))
-                    {
-                        break;
-                    }
-                }
-
-                io_Article.Author.Name = authorName;
+                if (!string.IsNullOrEmpty(authorName))
+                    break;
             }
 
-            if (authorImageNode != null)
-            {
-                string authorImageSrc = authorImageNode.GetAttributeValue("src", string.Empty);
-
-                io_Article.Author.Image = authorImageSrc;
-            }
+            io_Article.Author.Name = authorName;
         }
+
+        if (authorImageNode is null) 
+            return;
+        
+        string authorImageSrc = authorImageNode.GetAttributeValue("src", string.Empty);
+        io_Article.Author.Image = authorImageSrc;
     }
 
     private void extractArticleDatesInfo(Article io_Article, HtmlDocument i_HTML)
@@ -118,26 +110,26 @@ public class MakoArticleParser : IArticleParser
     {
         HtmlNode initialImageNode = i_HTML.DocumentNode.SelectSingleNode("//section[contains(@class, 'article-header')]/figure");
 
-        if (initialImageNode != null)
+        if (initialImageNode is null)
+            return;
+        
+        HtmlNode imgNode = initialImageNode.SelectSingleNode(".//img");
+        HtmlNode captionNode = initialImageNode.SelectSingleNode(".//figcaption");
+
+        if (imgNode is null)
+            return;
+        
+        string src = imgNode.GetAttributeValue("src", null);
+        string description = captionNode != null ? HtmlEntity.DeEntitize(captionNode.InnerText) : string.Empty;
+
+        if (string.IsNullOrEmpty(src))
+            return;
+        
+        io_Article.ArticleBody.Add(new ImageContent(src, i_NumOfImages++));
+
+        if (!string.IsNullOrEmpty(description))
         {
-            HtmlNode imgNode = initialImageNode.SelectSingleNode(".//img");
-            HtmlNode captionNode = initialImageNode.SelectSingleNode(".//figcaption");
-
-            if (imgNode != null)
-            {
-                string src = imgNode.GetAttributeValue("src", null);
-                string description = captionNode != null ? HtmlEntity.DeEntitize(captionNode.InnerText) : string.Empty;
-
-                if (!string.IsNullOrEmpty(src))
-                {
-                    io_Article.ArticleBody.Add(new ImageContent(src, i_NumOfImages++));
-
-                    if (!string.IsNullOrEmpty(description))
-                    {
-                        io_Article.ArticleBody.Add(new ImageCredit(description));
-                    }
-                }
-            }
+            io_Article.ArticleBody.Add(new ImageCredit(description));
         }
     }
 
@@ -145,63 +137,72 @@ public class MakoArticleParser : IArticleParser
     {
         HtmlNode articleBodyNode = i_HTML.DocumentNode.SelectSingleNode("//section[contains(@class, 'article-body')]");
 
-        if (articleBodyNode != null)
+        if (articleBodyNode is null) 
+            return;
+        
+        var contentNodes = articleBodyNode.SelectNodes(".//*[not(ancestor::blockquote[@class='twitter-tweet'])]");
+
+        if (contentNodes is null)
+            return;
+        
+        foreach (HtmlNode node in contentNodes)
         {
-            var contentNodes = articleBodyNode.SelectNodes(".//*[not(ancestor::blockquote[@class='twitter-tweet'])]");
-
-            if (contentNodes != null)
+            switch (node.Name)
             {
-                foreach (HtmlNode node in contentNodes)
+                case "p" when node.SelectSingleNode(".//blockquote[@class='twitter-tweet']") is null:
                 {
-                    if (node.Name == "p" && node.SelectSingleNode(".//blockquote[@class='twitter-tweet']") == null)
-                    {
-                        StringBuilder builder = new();
-                        extractTextWithFormatting(node, builder);
-                        string text = builder.ToString();
-                        io_Article.ArticleBody.Add(new RegularText(text));
-                    }
+                    StringBuilder builder = new();
+                    extractTextWithFormatting(node, builder);
+                    string text = builder.ToString();
+                    io_Article.ArticleBody.Add(new RegularText(text));
+                    break;
+                }
+                
+                case "h4":
+                {
+                    string text = HtmlEntity.DeEntitize(node.InnerText);
+                    io_Article.ArticleBody.Add(new SubHeader(text));
+                    break;
+                }
+                
+                case "ul" when node.GetAttributeValue("class", "") != "tags":
+                {
+                    HtmlNodeCollection listItems = node.SelectNodes(".//li[normalize-space()]");
 
-                    else if (node.Name == "h4")
+                    if (listItems != null)
                     {
-                        string text = HtmlEntity.DeEntitize(node.InnerText);
-                        io_Article.ArticleBody.Add(new SubHeader(text));
-                    }
-
-                    else if (node.Name == "ul" && node.GetAttributeValue("class", "") != "tags")
-                    {
-                        HtmlNodeCollection listItems = node.SelectNodes(".//li[normalize-space()]");
-
-                        if (listItems != null)
+                        foreach (HtmlNode listItem in listItems)
                         {
-                            foreach (HtmlNode listItem in listItems)
+                            string text = HtmlEntity.DeEntitize(listItem.InnerText);
+                            io_Article.ArticleBody.Add(new TextListItem("• " + text));
+                        }
+                    }
+
+                    break;
+                }
+                
+                case "figure":
+                {
+                    HtmlNode imgNode = node.SelectSingleNode(".//img");
+                    HtmlNode captionNode = node.SelectSingleNode(".//figcaption");
+
+                    if (imgNode != null)
+                    {
+                        string src = imgNode.GetAttributeValue("src", null);
+                        string description = captionNode != null ? HtmlEntity.DeEntitize(captionNode.InnerText) : string.Empty;
+
+                        if (!string.IsNullOrEmpty(src))
+                        {
+                            io_Article.ArticleBody.Add(new ImageContent(src, i_NumOfImages++));
+
+                            if (!string.IsNullOrEmpty(description))
                             {
-                                string text = HtmlEntity.DeEntitize(listItem.InnerText);
-                                io_Article.ArticleBody.Add(new TextListItem("• " + text));
+                                io_Article.ArticleBody.Add(new ImageCredit(description));
                             }
                         }
                     }
 
-                    else if (node.Name == "figure")
-                    {
-                        HtmlNode imgNode = node.SelectSingleNode(".//img");
-                        HtmlNode captionNode = node.SelectSingleNode(".//figcaption");
-
-                        if (imgNode != null)
-                        {
-                            string src = imgNode.GetAttributeValue("src", null);
-                            string description = captionNode != null ? HtmlEntity.DeEntitize(captionNode.InnerText) : string.Empty;
-
-                            if (!string.IsNullOrEmpty(src))
-                            {
-                                io_Article.ArticleBody.Add(new ImageContent(src, i_NumOfImages++));
-
-                                if (!string.IsNullOrEmpty(description))
-                                {
-                                    io_Article.ArticleBody.Add(new ImageCredit(description));
-                                }
-                            }
-                        }
-                    }
+                    break;
                 }
             }
         }
@@ -211,29 +212,33 @@ public class MakoArticleParser : IArticleParser
     {
         foreach (HtmlNode child in i_Node.ChildNodes)
         {
-            if (child.Name == "script")
+            switch (child.Name)
             {
-                continue;
-            }
+                case "script":
+                    continue;
+                
+                case "strong":
+                    io_Builder.Append(HtmlEntity.DeEntitize(child.InnerText).Replace("\u00A0", " "));
+                    break;
+                
+                case "br":
+                    io_Builder.Append(Environment.NewLine);
+                    break;
+                
+                default:
+                {
+                    if (child.HasChildNodes)
+                    {
+                        extractTextWithFormatting(child, io_Builder);
+                    }
 
-            if (child.Name == "strong")
-            {
-                io_Builder.Append(HtmlEntity.DeEntitize(child.InnerText).Replace("\u00A0", " "));
-            }
+                    else
+                    {
+                        io_Builder.Append(HtmlEntity.DeEntitize(child.InnerText).Replace("\u00A0", " "));
+                    }
 
-            else if (child.Name == "br")
-            {
-                io_Builder.Append(Environment.NewLine);
-            }
-
-            else if (child.HasChildNodes)
-            {
-                extractTextWithFormatting(child, io_Builder);
-            }
-
-            else
-            {
-                io_Builder.Append(HtmlEntity.DeEntitize(child.InnerText).Replace("\u00A0", " "));
+                    break;
+                }
             }
         }
     }

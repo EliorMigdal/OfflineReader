@@ -5,9 +5,9 @@ namespace OfflineReader.Service.Local;
 public class CacheService
 {
     private static string CachePath => Path.Combine(FileSystem.AppDataDirectory, "Cache");
-    private readonly ArticleSaverService m_ArticleSaver = ArticleSaverService.Instance;
+    private readonly ArticleModifierService m_ArticleModifier = ArticleModifierService.Instance;
     private readonly ArticleFinderService m_ArticleFinder = ArticleFinderService.Instance;
-    private static CacheService m_Instance;
+    private static CacheService? m_Instance;
     public static CacheService Instance
     {
         get
@@ -20,14 +20,14 @@ public class CacheService
 
     private CacheService() { }
 
-    public Article FindCachedArticle(Article i_Article)
+    public Article? FindCachedArticle(Article i_Article)
     {
         return m_ArticleFinder.SearchForArticle(i_Article, CachePath);
     }
 
     public async Task CacheArticle(Article i_Article)
     {
-        await m_ArticleSaver.SaveArticle(i_Article, CachePath);
+        await m_ArticleModifier.SaveArticle(i_Article, CachePath);
         SharedData.Cached = true;
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace OfflineReader.Model;
+namespace OfflineReader.Model;
 
 public class SupportedWebsite
 {

@@ -1,27 +1,25 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Shell
     x:Class="OfflineReader.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:OfflineReader.View"
-    Shell.FlyoutBehavior="Flyout">
-
-    <ShellContent ContentTemplate="{DataTemplate local:MainPage}"/>
-
-    <FlyoutItem Title="Main Page">
-        <ShellContent ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage"/>
-    </FlyoutItem>
-
-    <FlyoutItem Title="Reader Mode">
-        <ShellContent ContentTemplate="{DataTemplate local:ReaderPage}" Route="ReaderPage"/>
-    </FlyoutItem>
-
-    <FlyoutItem Title="Web Selection">
-        <ShellContent ContentTemplate="{DataTemplate local:WebSelectionPage}" Route="WebSelectionPage"/>
-    </FlyoutItem>
-
-    <FlyoutItem Title="Saved Articles">
-        <ShellContent ContentTemplate="{DataTemplate local:SavedArticlesPage}" Route="SavedArticlesPage"/>
-    </FlyoutItem>
-
+    FlyoutBehavior="Disabled"
+    Title="OfflineReader">
+    
+    <TabBar>
+        <Tab Title="Trending"
+             Icon="trending.png">
+            <ShellContent ContentTemplate="{DataTemplate local:TrendingPage}"/>
+        </Tab>
+        <Tab Title="History"
+             Icon="history.png">
+            <ShellContent ContentTemplate="{DataTemplate local:HistoryPage}"/>
+        </Tab>
+        <Tab Title="Settings"
+             Icon="settings.png">
+            <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}"/>
+        </Tab>
+    </TabBar>
+    
 </Shell>

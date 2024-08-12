@@ -7,7 +7,7 @@ namespace OfflineReader.Service.Local;
 public class ArticleSerializerService
 {
     private readonly XmlSerializer m_XMLSerializer = new XmlSerializer(typeof(Article));
-    private static ArticleSerializerService m_Instance;
+    private static ArticleSerializerService? m_Instance;
     public static ArticleSerializerService Instance
     {
         get
@@ -24,11 +24,9 @@ public class ArticleSerializerService
     {
         try
         {
-            using (StreamWriter writer = new StreamWriter(i_Path + i_Article.ID + ".xml"))
-            {
-                Debug.WriteLine($"Serializing at: {i_Path + i_Article.ID + ".xml"}");
-                m_XMLSerializer.Serialize(writer, i_Article);
-            }
+            using StreamWriter writer = new StreamWriter(i_Path + i_Article.ID + ".xml");
+            Debug.WriteLine($"Serializing at: {i_Path + i_Article.ID + ".xml"}");
+            m_XMLSerializer.Serialize(writer, i_Article);
         }
 
         catch (Exception exception)
@@ -37,11 +35,9 @@ public class ArticleSerializerService
         }
     }
 
-    public Article DeserializeArticle(string i_Path)
+    public Article? DeserializeArticle(string i_Path)
     {
-        using (StreamReader reader = new StreamReader(i_Path))
-        {
-            return m_XMLSerializer.Deserialize(reader) as Article;
-        }
+        using StreamReader reader = new StreamReader(i_Path);
+        return m_XMLSerializer.Deserialize(reader) as Article;
     }
 }

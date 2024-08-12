@@ -1,4 +1,4 @@
-﻿namespace OfflineReader.Model.ArticleContent;
+namespace OfflineReader.Model.ArticleContent;
 
 [Serializable]
 public class ImageContent : BodyContent

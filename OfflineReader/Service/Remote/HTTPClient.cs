@@ -2,7 +2,7 @@
 
 public class HTTPClient
 {
-    private static HttpClient m_Instance;
+    private static HttpClient? m_Instance;
     public static HttpClient Instance
     {
         get

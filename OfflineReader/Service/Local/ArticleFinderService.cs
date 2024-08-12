@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using OfflineReader.Model;
 
 namespace OfflineReader.Service.Local;
@@ -8,7 +7,7 @@ public class ArticleFinderService
     private readonly ArticleIDGenerator m_ArticleIDGenerator = ArticleIDGenerator.Instance;
     private readonly PathGenerator m_PathGenerator = PathGenerator.Instance;
     private readonly ArticleSerializerService m_ArticleSerializer = ArticleSerializerService.Instance;
-    private static ArticleFinderService m_Instance;
+    private static ArticleFinderService? m_Instance;
 
     public static ArticleFinderService Instance
     {
@@ -22,9 +21,9 @@ public class ArticleFinderService
     
     private ArticleFinderService() {}
 
-    public Article SearchForArticle(Article i_Article, string i_Path)
+    public Article? SearchForArticle(Article i_Article, string i_Path)
     {
-        Article article = null;
+        Article? article = null;
         string articleID = m_ArticleIDGenerator.GenerateArticleID(i_Article);
         string articlePath = i_Path + m_PathGenerator.GenerateArticlePath(i_Article) + articleID + ".xml";
 

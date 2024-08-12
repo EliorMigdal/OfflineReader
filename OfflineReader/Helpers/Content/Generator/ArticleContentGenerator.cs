@@ -6,7 +6,7 @@ namespace OfflineReader.Helpers.Content.Generator;
 
 public class ArticleContentGenerator
 {
-    public StackLayout generateAView(Article i_Article)
+    public StackLayout GenerateAView(Article i_Article)
     {
         StackLayout articleLayout = new();
 

@@ -19,7 +19,7 @@ public class PathGenerator
 
     private PathGenerator() { }
 
-    public string GenerateArticlePath(Article i_Article)
+    public string GenerateArticlePath(Article? i_Article)
     {
         StringBuilder pathBuilder = new();
 
