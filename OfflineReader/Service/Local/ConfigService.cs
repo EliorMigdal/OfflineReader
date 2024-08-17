@@ -6,8 +6,8 @@ namespace OfflineReader.Service.Local;
 
 public class ConfigService
 {
-    public static string ConfigFilePath => Path.Combine(FileSystem.AppDataDirectory, "Config.json");
-    private static ConfigService m_Instance;
+    private static string ConfigFilePath => Path.Combine(FileSystem.AppDataDirectory, "Config.json");
+    private static ConfigService? m_Instance;
     public static ConfigService Instance
     {
         get
@@ -47,16 +47,13 @@ public class ConfigService
 
     }
 
-    public static List<string> LoadSupportedWebsites()
+    public List<string>? LoadSupportedWebsites()
     {
         Debug.WriteLine("At LoadSupportedWebsites!");
-        
-        if (File.Exists(ConfigFilePath))
-        {
-            string json = File.ReadAllText(ConfigFilePath);
-            return JsonConvert.DeserializeObject<List<string>>(json);
-        }
 
-        return ["https://www.mako.co.il"];
+        if (!File.Exists(ConfigFilePath)) return ["https://www.mako.co.il"];
+        
+        string json = File.ReadAllText(ConfigFilePath);
+        return JsonConvert.DeserializeObject<List<string>>(json);
     }
 }

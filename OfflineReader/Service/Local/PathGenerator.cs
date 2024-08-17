@@ -5,7 +5,7 @@ namespace OfflineReader.Service.Local;
 
 public class PathGenerator
 {
-    private static PathGenerator m_Instance;
+    private static PathGenerator? m_Instance;
     public static PathGenerator Instance
     {
         get
@@ -15,11 +15,11 @@ public class PathGenerator
             return m_Instance;
         }
     }
-    private ArticleIDGenerator m_ArticleIDGenerator = ArticleIDGenerator.Instance;
+    private readonly ArticleIDGenerator m_ArticleIDGenerator = ArticleIDGenerator.Instance;
 
     private PathGenerator() { }
 
-    public string GenerateArticlePath(Article? i_Article)
+    public string GenerateArticlePath(Article i_Article)
     {
         StringBuilder pathBuilder = new();
 

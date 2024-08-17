@@ -17,8 +17,8 @@ public class OfflineContentService
     }
     private static string OfflineContentPath => Path.Combine(FileSystem.AppDataDirectory, "OfflineContent");
     private readonly ArticleModifierService m_ArticleModifier = ArticleModifierService.Instance;
-    private readonly ArticleFinderService m_ArticleFinder = ArticleFinderService.Instance;
     private readonly ArticleSerializerService m_ArticleSerializer = ArticleSerializerService.Instance;
+    private readonly ArticleFinderService m_ArticleFinder = ArticleFinderService.Instance;
     public ObservableCollection<Article> LocallyStoredArticles { get; } = new();
 
     private OfflineContentService()
@@ -43,6 +43,15 @@ public class OfflineContentService
 
     public bool RemoveArticle(Article i_Article)
     {
+        foreach (Article article in LocallyStoredArticles)
+        {
+            if (!article.OuterTitle.Equals(i_Article.OuterTitle))
+                continue;
+            
+            LocallyStoredArticles.Remove(article);
+            break;
+        }
+        
         return m_ArticleModifier.RemoveArticle(i_Article, OfflineContentPath);
     }
 
@@ -53,7 +62,9 @@ public class OfflineContentService
         foreach (string file in xmlFiles)
         {
             Article? article = m_ArticleSerializer.DeserializeArticle(file);
-            if (article != null) LocallyStoredArticles.Add(article);
+            
+            if (article is not null)
+                LocallyStoredArticles.Add(article);
         }
     }
 }

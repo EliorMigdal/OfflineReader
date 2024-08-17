@@ -37,7 +37,7 @@ public sealed class ArticleModifierService
         {
             await saveArticleImages(merged, articlePath);
             m_ArticleSerializer.SerializeArticle(merged, articlePath);
-            Debug.WriteLine($"Serialized at {articlePath}");
+            SharedData.ParsedArticle = merged;
         }
 
         catch (Exception error)
@@ -59,7 +59,7 @@ public sealed class ArticleModifierService
         
         try
         {
-            File.Delete(articlePath);
+            Directory.Delete(articlePath, true);
         }
             
         catch (Exception e)

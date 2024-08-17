@@ -1,13 +1,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using OfflineReader.Service.Local;
 using OfflineReader.Service.Remote;
 using OfflineReader.Model;
-using OfflineReader.Model.HTMLParser.MainPageParser;
-using System.Diagnostics;
 using AsyncAwaitBestPractices.MVVM;
+using OfflineReader.Helpers;
 using OfflineReader.View;
 
 namespace OfflineReader.ViewModel;
@@ -18,39 +16,18 @@ public partial class TrendingViewModel : BaseViewModel
     public ICommand OfflineClickedCommand { get; private set; } = null!;
     public ICommand ArticleSelectedCommand { get; private set; } = null!;
     public ICommand LoadMoreArticlesCommand { get; private set; } = null!;
+    public ICommand RefreshCommand { get; private set; } = null!;
 
     private HTMLSupplierService HTMLSupplier { get; } = HTMLSupplierService.Instance;
     private CacheService CacheService { get; } = CacheService.Instance;
+    private OnlineContentService OnlineService { get; } = OnlineContentService.Instance;
     private OfflineContentService OfflineService { get; } = OfflineContentService.Instance;
-    private readonly IConnectivity m_Connectivity;
+    private ConnectivityManager ConnectivityManager { get; } = ConnectivityManager.Instance;
 
     public ObservableCollection<Article> Articles { get; set; } = new();
-    private readonly ObservableCollection<Article> m_OnlineArticles = new();
+    private readonly ObservableCollection<Article> m_OnlineArticles;
     private readonly ObservableCollection<Article> m_OfflineArticles;
-    private ObservableCollection<Article> m_ArticlesSource;
-    
-    private MainPageParserFactory MainPageParserFactory { get; } = new();
-    
-    private Article? _selectedArticle;
-    public Article? SelectedArticle
-    {
-        get => _selectedArticle;
-
-        set
-        {
-            if (_selectedArticle != value)
-            {
-                _selectedArticle = value;
-
-                OnPropertyChanged();
-
-                if (_selectedArticle != null)
-                {
-                    ReadArticleCommand(_selectedArticle);
-                }
-            }
-        }
-    }
+    private ObservableCollection<Article> m_ArticlesSource = new();
 
     private Color _onlineBorderColor = Colors.LightGreen;
     public Color OnlineBorderColor
@@ -91,54 +68,43 @@ public partial class TrendingViewModel : BaseViewModel
     [ObservableProperty]
     private bool isRefreshing;
     
-    public TrendingViewModel(IConnectivity i_Connectivity)
+    public TrendingViewModel()
     {
         initializeCommands();
-        m_Connectivity = i_Connectivity;
+        
+        m_OnlineArticles = OnlineService.OnlineArticlesList;
         m_OfflineArticles = OfflineService.LocallyStoredArticles;
-        m_ArticlesSource = m_OnlineArticles;
+
+        initializeOnStartup();
     }
 
     private void initializeCommands()
     {
-        OnlineClickedCommand = new AsyncCommand(OnOnlineTapped);
-        OfflineClickedCommand = new Command(OnOfflineTapped);
-        ArticleSelectedCommand = new Command<Article>(ReadArticleCommand);
-        LoadMoreArticlesCommand = new Command(loadMoreArticlesCommand);
+        OnlineClickedCommand = new AsyncCommand(onOnlineTappedCommand);
+        OfflineClickedCommand = new Command(onOfflineTappedCommand);
+        ArticleSelectedCommand = new Command<Article>(onReadArticleCommand);
+        LoadMoreArticlesCommand = new Command(onLoadMoreArticlesCommand);
+        RefreshCommand = new AsyncCommand(onRefreshCommand);
     }
 
-    [RelayCommand]
-    public async Task GetArticlesAsync()
+    private async void initializeOnStartup()
     {
-        if (IsBusy) return;
+        if (ConnectivityManager.IsDeviceConnected())
+        {
+            await OnlineService.UpdateArticlesList();
+            m_ArticlesSource = m_OnlineArticles;
+        }
+
+        else
+        {
+            m_ArticlesSource = m_OfflineArticles;
+        }
         
-        try
-        {
-            if (!IsRefreshing)
-            {
-                IsBusy = true;
-            }
-            
-            List<Article> articles = await loadOnlineArticles();
-
-            removeDuplicateArticles(ref articles);
-
-            if (areArticlesDifferent(articles))
-            {
-                updateArticlesSource(articles);
-                updateMainCollection();
-            }
-        }
-
-        finally
-        {
-            IsRefreshing = false;
-            IsBusy = false;
-            AnyArticlesToLoad = m_ArticlesSource.Count > Articles.Count;
-        }
+        updateMainCollection();
+        handleButtonsColors();
     }
 
-    private async void ReadArticleCommand(Article i_Article)
+    private async void onReadArticleCommand(Article i_Article)
     {
         if (IsBusy)
             return;
@@ -159,7 +125,10 @@ public partial class TrendingViewModel : BaseViewModel
                 
                 else if (SharedData.Stored) 
                     SharedData.ParsedArticle = storedArticle;
-
+                
+                else if (!ConnectivityManager.IsDeviceConnected())
+                    await ConnectivityManager.AlertConnectivityIssue();
+                
                 else
                 {
                     SharedData.SharedArticle = i_Article;
@@ -174,83 +143,61 @@ public partial class TrendingViewModel : BaseViewModel
                 SharedData.ParsedArticle = storedArticle;
                 SharedData.Stored = true;
             }
-
-
+            
             await Shell.Current.GoToAsync(nameof(ReadingPage), true);
         }
 
         finally
         {
-            SelectedArticle = null;
             IsBusy = false;
         }
     }
 
-    private async void readArticleFromOnlineSection(Article i_Article)
+    private async Task onRefreshCommand()
     {
-        Article? cachedArticle = CacheService.FindCachedArticle(i_Article);
-        SharedData.Cached = cachedArticle is not null;
-        
-        if (cachedArticle is not null)
+        if (IsBusy) return;
+
+        try
         {
-            Debug.WriteLine("Article is cached!");
-            SharedData.ParsedArticle = cachedArticle;
+            IsRefreshing = true;
+
+            if (isOnlineSelected() && ConnectivityManager.IsDeviceConnected())
+            {
+                await OnlineService.UpdateArticlesList();
+            }
+            
+            else if (!ConnectivityManager.IsDeviceConnected())
+            {
+                await ConnectivityManager.AlertConnectivityIssue();
+            }
+
+            updateMainCollection();
         }
         
-        else
+        finally
         {
-            Debug.WriteLine("Article is not cached!");
-            SharedData.SharedArticle = i_Article;
-            SharedData.HTML = await HTMLSupplier.GetHTMLAsync(i_Article.URL);
-            Debug.WriteLine($"Got HTML: {SharedData.HTML.Length}");
-        }
-
-        SharedData.Stored = false;
-    }
-
-    private void readArticleFromOfflineSection(Article i_Article)
-    {
-        Article? storedArticle = OfflineService.FindStoredArticle(i_Article);
-        
-        if (storedArticle is null)
-            return;
-        
-        SharedData.ParsedArticle = storedArticle;
-        SharedData.Stored = true;
-    }
-
-    private async void handleConnectivity()
-    {
-        if (Articles.Count == 0 && m_Connectivity.NetworkAccess != NetworkAccess.Internet)
-        {
-            await Shell.Current.DisplayAlert("No connectivity!",
-                $"Please check internet and try again.", "OK");
-            return;
-        }
-
-        else if (m_Connectivity.NetworkAccess != NetworkAccess.Internet)
-        {
-            await Shell.Current.DisplayAlert("No connectivity!",
-                $"Please check internet and try again.", "OK");
-            return;
+            IsRefreshing = false;
         }
     }
 
-    private async Task OnOnlineTapped()
+    private async Task onOnlineTappedCommand()
     {
         try
         {
             if (!IsBusy && !isOnlineSelected())
             {
                 IsBusy = true;
-                OnlineBorderColor = Colors.LightGreen;
-                OfflineBorderColor = Colors.LightGray;
                 m_ArticlesSource = m_OnlineArticles;
+                handleButtonsColors();
 
-                if (m_OnlineArticles.Count == 0)
+                if (m_OnlineArticles.Count == 0 && ConnectivityManager.IsDeviceConnected())
                 {
-                    IsBusy = false;
-                    await GetArticlesAsync();
+                    await OnlineService.UpdateArticlesList();
+                }
+                
+                else if (!ConnectivityManager.IsDeviceConnected())
+                {
+                    await ConnectivityManager.AlertConnectivityIssue();
                 }
 
                 else
@@ -267,18 +214,16 @@ public partial class TrendingViewModel : BaseViewModel
 
     }
 
-    private void OnOfflineTapped()
+    private void onOfflineTappedCommand()
     {
         try
         {
-            if (!IsBusy && isOnlineSelected())
-            {
-                IsBusy = true;
-                OfflineBorderColor = Colors.LightGreen;
-                OnlineBorderColor = Colors.LightGray;
-                m_ArticlesSource = m_OfflineArticles;
-                updateMainCollection();
-            }
+            if (IsBusy || !isOnlineSelected()) return;
+            
+            IsBusy = true;
+            m_ArticlesSource = m_OfflineArticles;
+            handleButtonsColors();
+            updateMainCollection();
         }
         
         finally
@@ -291,57 +236,8 @@ public partial class TrendingViewModel : BaseViewModel
     {
         return OnlineBorderColor.Equals(Colors.LightGreen);
     }
-
-    private void removeDuplicateArticles(ref List<Article> io_Articles)
-    {
-        List<Article> distinctArticles = io_Articles
-            .GroupBy(article => article.OuterTitle)
-            .Select(group => group.First())
-            .ToList();
-
-        io_Articles.Clear();
-        io_Articles.AddRange(distinctArticles);
-    }
-
-    private bool areArticlesDifferent(List<Article> i_Articles)
-    {
-        bool areDifferent = false;
-
-        if (Articles.Count == 0 || Articles.Count != i_Articles.Count)
-        {
-            areDifferent = true;
-        }
-
-        else
-        {
-            for (int i = 0; i < i_Articles.Count && !areDifferent; i++)
-            {
-                if (!isArticleInCollection(i_Articles[i]))
-                {
-                    areDifferent = true;
-                }
-            }
-        }
-
-        return areDifferent;
-    }
-
-    private bool isArticleInCollection(Article i_Article)
-    {
-        bool foundArticle = false;
-
-        for (int i = 0; i < Articles.Count && !foundArticle; i++)
-        {
-            if (i_Article.OuterTitle.Equals(m_ArticlesSource[i].OuterTitle))
-            {
-                foundArticle = true;
-            }
-        }
-
-        return foundArticle;
-    }
-
-    private void loadMoreArticlesCommand()
+    
+    private void onLoadMoreArticlesCommand()
     {
         if (IsBusy) return;
 
@@ -363,34 +259,7 @@ public partial class TrendingViewModel : BaseViewModel
             IsBusy = false;
         }
     }
-
-    private async Task<List<Article>> loadOnlineArticles()
-    {
-        Debug.WriteLine("At loadOnlineArticles!");
-        handleConnectivity();
-        Debug.WriteLine("At loadOnlineArticles!");
-        List<Article> articles = new List<Article>();
-        List<string> selectedURLs = ConfigService.LoadSupportedWebsites();
-        Debug.WriteLine("At loadOnlineArticles!");
-
-        foreach (string webURL in selectedURLs)
-        {
-            string htmlCode = await HTMLSupplier.GetHTMLAsync(webURL);
-            IMainPageParser mainPageParser = MainPageParserFactory.GenerateMainPageParser
-                (SharedData.Pairs.FirstOrDefault(x => x.Value == webURL).Key);
-            List<Article> websiteArticles = mainPageParser.ParseHTML(htmlCode);
-
-            foreach (Article article in websiteArticles)
-            {
-                articles.Add(article);
-            }
-        }
-
-        removeDuplicateArticles(ref articles);
-
-        return articles;
-    }
-
+    
     private void updateMainCollection()
     {
         Articles.Clear();
@@ -404,13 +273,18 @@ public partial class TrendingViewModel : BaseViewModel
         OnPropertyChanged(nameof(Articles));
     }
 
-    private void updateArticlesSource(List<Article> i_Articles)
+    private void handleButtonsColors()
     {
-        m_ArticlesSource.Clear();
-
-        foreach (Article article in i_Articles)
+        if (m_ArticlesSource == m_OnlineArticles)
         {
-            m_ArticlesSource.Add(article);
+            OnlineBorderColor = Colors.LightGreen;
+            OfflineBorderColor = Colors.LightGray;
+        }
+
+        else
+        {
+            OfflineBorderColor = Colors.LightGreen;
+            OnlineBorderColor = Colors.LightGray;
         }
     }
 }

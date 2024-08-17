@@ -27,8 +27,7 @@
                            Text="Online"
                            HorizontalOptions="Center"
                            VerticalOptions="Center"
-                           Padding="0"
-                           TextColor="Indigo">
+                           Padding="0">
                     </Label>
                 </Border>
                 <Border BackgroundColor="{Binding OfflineBorderColor}"
@@ -63,7 +62,7 @@
                     TextColor="DarkBlue"
                     Padding="40, 5, 40, 5"/>
         </Border>
-        <RefreshView Command="{Binding GetArticlesCommand}"
+        <RefreshView Command="{Binding RefreshCommand}"
                      IsRefreshing="{Binding IsRefreshing}"
                      Grid.Row="2">
             <ContentView>

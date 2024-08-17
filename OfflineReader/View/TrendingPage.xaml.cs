@@ -8,6 +8,5 @@ public partial class TrendingPage
     {
         InitializeComponent();
         BindingContext = i_ViewModel;
-        _ = i_ViewModel.GetArticlesAsync();
     }
 }

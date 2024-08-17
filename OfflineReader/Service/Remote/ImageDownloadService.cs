@@ -3,7 +3,7 @@
 public class ImageDownloadService
 {
     private HttpClient Client { get; } = HTTPClient.Instance;
-    private static ImageDownloadService m_Instance;
+    private static ImageDownloadService? m_Instance;
     public static ImageDownloadService Instance
     {
         get
