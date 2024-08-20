@@ -8,45 +8,38 @@
              x:DataType="viewmodel:TrendingViewModel">
     <Grid RowDefinitions="Auto, Auto, *, Auto"
           RowSpacing="0">
-        <Frame Grid.Row="0"
-               StyleClass="Header"
-               Padding="0"
-               CornerRadius="0"
-               BorderColor="LightGrey"
-               BackgroundColor="Transparent">
-            <Grid ColumnDefinitions="Auto, *, Auto">
-                <Border BackgroundColor="{Binding OnlineBorderColor}"
-                        Padding="0"
-                        StrokeShape="RoundRectangle 0,0,0,50"
-                        StrokeThickness="1.5"
-                        Grid.Column="0">
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding OnlineClickedCommand}"/>
-                    </Border.GestureRecognizers>
-                    <Label Margin="20"
-                           Text="Online"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center"
-                           Padding="0">
-                    </Label>
-                </Border>
-                <Border BackgroundColor="{Binding OfflineBorderColor}"
-                        Padding="0"
-                        HorizontalOptions="EndAndExpand"
-                        Grid.Column="2"
-                        StrokeShape="RoundRectangle 0,0,50,0"
-                        StrokeThickness="1.5">
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding OfflineClickedCommand}"/>
-                    </Border.GestureRecognizers>
-                    <Label Margin="20"
-                           Text="Offline"
-                           HorizontalOptions="End"
-                           VerticalOptions="Center">
-                    </Label>
-                </Border>
-            </Grid>
-        </Frame>
+        <Grid ColumnDefinitions="Auto, *, Auto">
+            <Border BackgroundColor="{Binding OnlineBorderColor}"
+                    Padding="0"
+                    StrokeShape="RoundRectangle 0,0,0,50"
+                    StrokeThickness="1.5"
+                    Grid.Column="0">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding OnlineClickedCommand}"/>
+                </Border.GestureRecognizers>
+                <Label Margin="20"
+                        Text="Online"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        Padding="0">
+                </Label>
+            </Border>
+            <Border BackgroundColor="{Binding OfflineBorderColor}"
+                    Padding="0"
+                    HorizontalOptions="EndAndExpand"
+                    Grid.Column="2"
+                    StrokeShape="RoundRectangle 0,0,50,0"
+                    StrokeThickness="1.5">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding OfflineClickedCommand}"/>
+                </Border.GestureRecognizers>
+                <Label Margin="20"
+                        Text="Offline"
+                        HorizontalOptions="End"
+                        VerticalOptions="Center">
+                </Label>
+            </Border>
+        </Grid>
         <Border StrokeShape="RoundRectangle 90"
                 Stroke="White"
                 StrokeThickness="0"
@@ -79,26 +72,27 @@
                                       Margin="0">
                                     <Border Grid.Row="0"
                                             WidthRequest="225"
-                                            HeightRequest="30"
+                                            HeightRequest="40"
                                             Margin="-8"
                                             Background="PaleVioletRed"
                                             StrokeShape="RoundRectangle 80">
-                                        <Grid ColumnDefinitions="Auto, *, Auto">
-                                            <Label Grid.Column="0"
+                                        <Grid ColumnDefinitions="*, Auto, Auto, *">
+                                            <Label Grid.Column="1"
                                                     Text="{Binding Website}"
                                                     TextColor="Black"
-                                                    FontSize="Body"
+                                                    FontSize="Header"
                                                     FontAttributes="Bold"
+                                                    HorizontalOptions="CenterAndExpand"
                                                     Margin="4"
-                                                    Padding="10"/>
-                                            <Label Grid.Column="2"
+                                                    Padding="4"/>
+                                            <Label  Grid.Column="2"
                                                     Text="{Binding Date}"
                                                     TextColor="Black"
-                                                    FontSize="Body"
+                                                    FontSize="Header"
                                                     FontAttributes="Bold"
                                                     Margin="4"
-                                                    HorizontalOptions="End"
-                                                    Padding="10"/>
+                                                    HorizontalOptions="CenterAndExpand"
+                                                    Padding="4"/>
                                         </Grid>
                                     </Border>
                                     <Border Grid.Row="1"
@@ -128,7 +122,7 @@
                                                   IsClippedToBounds="True">
                                                 <Label Grid.Row="0"
                                                        Text="{Binding OuterTitle}"
-                                                       FontSize="Large"
+                                                       FontSize="Medium"
                                                        TextColor="Black"
                                                        FlowDirection="RightToLeft"
                                                        HorizontalTextAlignment="Center"
