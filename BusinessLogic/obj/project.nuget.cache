@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "61hXMKVdwIvBI657EJWqw73oZyJ+mGf3SCF4NJE1PmRf4VLeBeEOwUJeU8U5kR7wUMcJAjHuEHnjx+VkBlToLA==",
+  "success": true,
+  "projectFilePath": "/Users/elior/RiderProjects/OfflineReader/BusinessLogic/BusinessLogic.csproj",
+  "expectedPackageFiles": [
+    "/Users/elior/.nuget/packages/htmlagilitypack/1.11.64/htmlagilitypack.1.11.64.nupkg.sha512"
+  ],
+  "logs": []
+}

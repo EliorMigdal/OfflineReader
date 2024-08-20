@@ -1,0 +1,12 @@
+/Users/elior/RiderProjects/OfflineReader/BusinessLogic/bin/Debug/net8.0/BusinessLogic.deps.json
+/Users/elior/RiderProjects/OfflineReader/BusinessLogic/bin/Debug/net8.0/BusinessLogic.dll
+/Users/elior/RiderProjects/OfflineReader/BusinessLogic/bin/Debug/net8.0/BusinessLogic.pdb
+/Users/elior/RiderProjects/OfflineReader/BusinessLogic/obj/Debug/net8.0/BusinessLogic.csproj.AssemblyReference.cache
+/Users/elior/RiderProjects/OfflineReader/BusinessLogic/obj/Debug/net8.0/BusinessLogic.GeneratedMSBuildEditorConfig.editorconfig
+/Users/elior/RiderProjects/OfflineReader/BusinessLogic/obj/Debug/net8.0/BusinessLogic.AssemblyInfoInputs.cache
+/Users/elior/RiderProjects/OfflineReader/BusinessLogic/obj/Debug/net8.0/BusinessLogic.AssemblyInfo.cs
+/Users/elior/RiderProjects/OfflineReader/BusinessLogic/obj/Debug/net8.0/BusinessLogic.csproj.CoreCompileInputs.cache
+/Users/elior/RiderProjects/OfflineReader/BusinessLogic/obj/Debug/net8.0/BusinessLogic.dll
+/Users/elior/RiderProjects/OfflineReader/BusinessLogic/obj/Debug/net8.0/refint/BusinessLogic.dll
+/Users/elior/RiderProjects/OfflineReader/BusinessLogic/obj/Debug/net8.0/BusinessLogic.pdb
+/Users/elior/RiderProjects/OfflineReader/BusinessLogic/obj/Debug/net8.0/ref/BusinessLogic.dll
