@@ -36,7 +36,8 @@ public class DBService
             var website = new SupportedWebsite
             {
                 Name = reader.GetString(reader.GetOrdinal("name")),
-                URL = reader.GetString(reader.GetOrdinal("url"))
+                URL = reader.GetString(reader.GetOrdinal("url")),
+                ImageURL = reader.GetString(reader.GetOrdinal("imageurl"))
             };
             
             supportedWebsites.Add(website);

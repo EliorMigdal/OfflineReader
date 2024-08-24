@@ -5,7 +5,7 @@ namespace Application.Service.Remote;
 
 public sealed class ServerAPI
 {
-    private readonly string r_BaseURL = "http://localhost:5000/offlineReader";
+    private readonly string r_BaseURL = "http://localhost:5119/offlineReader";
     private static readonly object rm_CreationLock = new();
     private static ServerAPI? m_Instance;
     public static ServerAPI Instance

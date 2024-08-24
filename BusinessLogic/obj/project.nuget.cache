@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "61hXMKVdwIvBI657EJWqw73oZyJ+mGf3SCF4NJE1PmRf4VLeBeEOwUJeU8U5kR7wUMcJAjHuEHnjx+VkBlToLA==",
+  "dgSpecHash": "6s9JfF3hjCE=",
   "success": true,
-  "projectFilePath": "/Users/elior/RiderProjects/OfflineReader/BusinessLogic/BusinessLogic.csproj",
+  "projectFilePath": "/Users/elior/GitHub/OfflineReader/BusinessLogic/BusinessLogic.csproj",
   "expectedPackageFiles": [
     "/Users/elior/.nuget/packages/htmlagilitypack/1.11.64/htmlagilitypack.1.11.64.nupkg.sha512"
   ],
