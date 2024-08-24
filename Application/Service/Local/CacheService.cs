@@ -4,19 +4,25 @@ using BusinessLogic.Article.Partials;
 
 namespace Application.Service.Local;
 
-public class CacheService
+public sealed class CacheService
 {
     private static string CachePath => Path.Combine(FileSystem.AppDataDirectory, "Cache");
     private readonly ArticleModifierService m_ArticleModifier = ArticleModifierService.Instance;
     private readonly ArticleFinderService m_ArticleFinder = ArticleFinderService.Instance;
+    private static readonly object rm_CreationLock = new();
     private static CacheService? m_Instance;
     public static CacheService Instance
     {
         get
         {
-            m_Instance ??= new CacheService();
-
-            return m_Instance;
+            if (m_Instance is not null) return m_Instance;
+            
+            lock (rm_CreationLock)
+            {
+                m_Instance ??= new CacheService();
+                
+                return m_Instance;
+            }
         }
     }
 

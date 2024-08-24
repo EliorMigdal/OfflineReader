@@ -18,7 +18,7 @@ public class ReaderViewModel : BaseViewModel
     public ICommand DownloadButtonCommand { get; private set; }
     public ICommand DeleteButtonCommand { get; private set; }
     private ArticleParserFactory ParserFactory { get; } = ArticleParserFactory.Instance;
-    private ArticleContentGenerator ContentGenerator { get; } = new();
+    private ArticleContentGenerator ContentGenerator { get; } = ArticleContentGenerator.Instance;
     private InnerArticle? m_ParsedArticle = new();
     private CacheService CacheService { get; } = CacheService.Instance;
     private ConnectivityManager ConnectivityManager { get; } = ConnectivityManager.Instance;

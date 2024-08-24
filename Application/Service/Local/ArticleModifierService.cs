@@ -9,14 +9,20 @@ namespace Application.Service.Local;
 
 public sealed class ArticleModifierService
 {
+    private static readonly object rm_CreationLock = new();
     private static ArticleModifierService? m_Instance;
     public static ArticleModifierService Instance
     {
         get
         {
-            m_Instance ??= new ArticleModifierService();
+            if (m_Instance is not null) return m_Instance;
 
-            return m_Instance;
+            lock (rm_CreationLock)
+            {
+                m_Instance ??= new ArticleModifierService();
+
+                return m_Instance;
+            }
         }
     }
     private readonly ImageDownloadService m_ImageService = ImageDownloadService.Instance;

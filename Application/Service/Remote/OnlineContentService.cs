@@ -6,16 +6,22 @@ using BusinessLogic.SupportedWebsite;
 
 namespace Application.Service.Remote;
 
-public class OnlineContentService
+public sealed class OnlineContentService
 {
+    private static readonly object rm_CreationLock = new();
     private static OnlineContentService? m_Instance;
     public static OnlineContentService Instance
     {
         get
         {
-            m_Instance ??= new OnlineContentService();
+            if (m_Instance is not null) return m_Instance;
 
-            return m_Instance;
+            lock (rm_CreationLock)
+            {
+                m_Instance ??= new OnlineContentService();
+
+                return m_Instance;
+            }
         }
     }
     private ConfigService ConfigService { get; } = ConfigService.Instance;

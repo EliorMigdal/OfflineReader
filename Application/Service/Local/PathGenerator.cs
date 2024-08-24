@@ -3,16 +3,22 @@ using BusinessLogic.Article.Partials;
 
 namespace Application.Service.Local;
 
-public class PathGenerator
+public sealed class PathGenerator
 {
+    private static readonly object rm_CreationLock = new();
     private static PathGenerator? m_Instance;
     public static PathGenerator Instance
     {
         get
         {
-            m_Instance ??= new PathGenerator();
+            if (m_Instance is not null) return m_Instance;
 
-            return m_Instance;
+            lock (rm_CreationLock)
+            {
+                m_Instance ??= new PathGenerator();
+
+                return m_Instance;
+            }
         }
     }
 

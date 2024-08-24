@@ -1,15 +1,21 @@
 ﻿namespace Application.Service.Remote;
 
-public class HTMLSupplierService
+public sealed class HTMLSupplierService
 {
+    private static readonly object rm_CreationLock = new();
     private static HTMLSupplierService? m_Instance;
     public static HTMLSupplierService Instance
     {
         get
         {
-            m_Instance ??= new HTMLSupplierService();
+            if (m_Instance is not null) return m_Instance;
 
-            return m_Instance;
+            lock (rm_CreationLock)
+            {
+                m_Instance ??= new HTMLSupplierService();
+
+                return m_Instance;
+            }
         }
     }
     

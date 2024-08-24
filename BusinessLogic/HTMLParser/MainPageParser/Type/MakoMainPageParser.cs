@@ -5,8 +5,10 @@ using HtmlAgilityPack;
 
 namespace BusinessLogic.HTMLParser.MainPageParser.Type;
 
-public class MakoMainPageParser : IMainPageParser
+public sealed class MakoMainPageParser : IMainPageParser
 {
+    private static readonly object rm_CreationLock = new();
+    private readonly object rm_ParsingLock = new();
     private readonly string k_BaseURL = "https://www.mako.co.il";
     private readonly string k_Website = "mako";
     private static MakoMainPageParser? m_Instance;
@@ -14,9 +16,14 @@ public class MakoMainPageParser : IMainPageParser
     {
         get
         {
-            m_Instance ??= new MakoMainPageParser();
+            if (m_Instance is not null) return m_Instance;
 
-            return m_Instance;
+            lock (rm_CreationLock)
+            {
+                m_Instance ??= new MakoMainPageParser();
+
+                return m_Instance;
+            }
         }
     }
     
@@ -24,12 +31,15 @@ public class MakoMainPageParser : IMainPageParser
 
     public List<OuterArticle> ParseMainPageHTML(string i_HTML)
     {
-        List<OuterArticle> articles = new List<OuterArticle>();
-        HtmlDocument HTMLDocument = new HtmlDocument();
-        HTMLDocument.LoadHtml(i_HTML);
-        readSpotlightArticles(ref articles, HTMLDocument);
+        lock (rm_ParsingLock)
+        {
+            List<OuterArticle> articles = new List<OuterArticle>();
+            HtmlDocument HTMLDocument = new HtmlDocument();
+            HTMLDocument.LoadHtml(i_HTML);
+            readSpotlightArticles(ref articles, HTMLDocument);
 
-        return articles;
+            return articles;
+        }
     }
 
     private void readSpotlightArticles(ref List<OuterArticle> io_Articles, HtmlDocument i_HTML)

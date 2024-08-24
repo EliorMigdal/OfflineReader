@@ -5,18 +5,24 @@ using Newtonsoft.Json;
 
 namespace Application.Service.Local;
 
-public class ConfigService
+public sealed class ConfigService
 {
     private static string ConfigFilePath => Path.Combine(FileSystem.AppDataDirectory, "Config.json");
     private readonly ServerAPI r_ServerAPI = ServerAPI.Instance;
+    private static readonly object rm_CreationLock = new();
     private static ConfigService? m_Instance;
     public static ConfigService Instance
     {
         get
         {
-            m_Instance ??= new ConfigService();
+            if (m_Instance is not null) return m_Instance;
 
-            return m_Instance;
+            lock (rm_CreationLock)
+            {
+                m_Instance ??= new ConfigService();
+
+                return m_Instance;
+            }
         }
     }
     

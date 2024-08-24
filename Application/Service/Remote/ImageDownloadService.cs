@@ -1,15 +1,21 @@
 ﻿namespace Application.Service.Remote;
 
-public class ImageDownloadService
+public sealed class ImageDownloadService
 {
+    private static readonly object rm_CreationLock = new();
     private static ImageDownloadService? m_Instance;
     public static ImageDownloadService Instance
     {
         get
         {
-            m_Instance ??= new ImageDownloadService();
+            if (m_Instance is not null) return m_Instance;
 
-            return m_Instance;
+            lock (rm_CreationLock)
+            {
+                m_Instance ??= new ImageDownloadService();
+
+                return m_Instance;
+            }
         }
     }
     

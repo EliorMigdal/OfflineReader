@@ -3,17 +3,23 @@ using BusinessLogic.SupportedWebsite;
 
 namespace Application.Service.Remote;
 
-public class ServerAPI
+public sealed class ServerAPI
 {
     private readonly string r_BaseURL = "http://localhost:5000/offlineReader";
+    private static readonly object rm_CreationLock = new();
     private static ServerAPI? m_Instance;
     public static ServerAPI Instance
     {
         get
         {
-            m_Instance ??= new ServerAPI();
+            if (m_Instance is not null) return m_Instance;
 
-            return m_Instance;
+            lock (rm_CreationLock)
+            {
+                m_Instance ??= new ServerAPI();
+
+                return m_Instance;
+            }
         }
     }
 

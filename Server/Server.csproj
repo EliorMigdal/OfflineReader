@@ -15,6 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="HtmlAgilityPack" Version="1.11.64" />
       <PackageReference Include="Npgsql" Version="8.0.3" />
     </ItemGroup>
 

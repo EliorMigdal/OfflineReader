@@ -6,6 +6,25 @@ namespace Application.Helpers.Content.Generator;
 
 public class ArticleContentGenerator
 {
+    private static readonly object rm_CreationLock = new();
+    private static ArticleContentGenerator? m_Instance;
+    public static ArticleContentGenerator Instance
+    {
+        get
+        {
+            if (m_Instance is not null) return m_Instance;
+
+            lock (rm_CreationLock)
+            {
+                m_Instance ??= new ArticleContentGenerator();
+
+                return m_Instance;
+            }
+        }
+    }
+    
+    private ArticleContentGenerator() {}
+    
     public StackLayout GenerateAView(InnerArticle i_Article)
     {
         StackLayout articleLayout = new();

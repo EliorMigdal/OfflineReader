@@ -4,16 +4,22 @@ using BusinessLogic.Article.Partials;
 
 namespace Application.Service.Local;
 
-public class OfflineContentService
+public sealed class OfflineContentService
 {
+    private static readonly object rm_CreationLock = new();
     private static OfflineContentService? m_Instance;
     public static OfflineContentService Instance
     {
         get
         {
-            m_Instance ??= new OfflineContentService();
+            if (m_Instance is not null) return m_Instance;
 
-            return m_Instance;
+            lock (rm_CreationLock)
+            {
+                m_Instance ??= new OfflineContentService();
+
+                return m_Instance;
+            }
         }
     }
     private static string OfflineContentPath => Path.Combine(FileSystem.AppDataDirectory, "OfflineContent");
