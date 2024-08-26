@@ -4,7 +4,7 @@ using BusinessLogic.Article.Content.TextType;
 
 namespace Application.Helpers.Content.Generator;
 
-public class ArticleContentGenerator
+public sealed class ArticleContentGenerator
 {
     private static readonly object rm_CreationLock = new();
     private static ArticleContentGenerator? m_Instance;

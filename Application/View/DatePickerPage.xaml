@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Application.View.DatePickerPage"
+             xmlns:viewmodel="clr-namespace:Application.ViewModel"
+             x:DataType="viewmodel:DatePickerViewModel">
+    <ContentPage.Resources>
+        <Style TargetType="Grid">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor"
+                                        Value="Transparent" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+    </ContentPage.Resources>
+    <Grid Padding="5">
+        <CollectionView ItemsSource="{Binding AvailableDates}"
+                        SelectionMode="Single"
+                        ItemsLayout="VerticalGrid, 2"
+                        SelectedItem="{Binding SelectedDate}"
+                        SelectionChangedCommand="{Binding DateSelectedCommand}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid HeightRequest="60"
+                          WidthRequest="60"
+                          Margin="10">
+                        <Frame BorderColor="Gray"
+                               BackgroundColor="DarkGray"
+                               IsClippedToBounds="True"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               HeightRequest="70"
+                               WidthRequest="150">
+                            <Label Text="{Binding .}" 
+                                   FontSize="20" 
+                                   VerticalOptions="Center" 
+                                   HorizontalOptions="Center"/>
+                        </Frame>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

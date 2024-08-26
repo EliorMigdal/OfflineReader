@@ -1,12 +1,17 @@
-using System.Diagnostics;
+using System.Text.Json;
+using BusinessLogic.Article.Partials;
 using BusinessLogic.SupportedWebsite;
 
 namespace Application.Service.Remote;
 
 public sealed class ServerAPI
 {
-    private readonly string r_BaseURL = "http://localhost:5000/offlineReader";
+    private readonly string r_BaseURL = "http://localhost:5119/offlineReader";
     private static readonly object rm_CreationLock = new();
+    private readonly JsonSerializerOptions rm_CaseInsensitiveOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
     private static ServerAPI? m_Instance;
     public static ServerAPI Instance
     {
@@ -28,17 +33,30 @@ public sealed class ServerAPI
         string url = r_BaseURL + "/supportedWebsites/getWebsites";
         using HttpClient client = new HttpClient();
         var jsonResponse = await client.GetStringAsync(url);
-
-        var options = new System.Text.Json.JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
         
         List<SupportedWebsite>? supportedWebsites = 
-            System.Text.Json.JsonSerializer.Deserialize<List<SupportedWebsite>>(jsonResponse, options);
-        
-        Debug.WriteLine($"Got JSON: {jsonResponse}");
+            JsonSerializer.Deserialize<List<SupportedWebsite>>(jsonResponse, rm_CaseInsensitiveOptions);
         
         return supportedWebsites ?? new List<SupportedWebsite>();
+    }
+
+    public async Task<List<string>> GetAvailableDates(string i_Website)
+    {
+        string url = r_BaseURL + $"/articlesHistory/getDates?website={i_Website}";
+        using HttpClient client = new HttpClient();
+        var jsonResponse = await client.GetStringAsync(url);
+        List<string>? dates = JsonSerializer.Deserialize<List<string>>(jsonResponse);
+
+        return dates ?? new List<string>();
+    }
+
+    public async Task<List<OuterArticle>> GetDatedArticles(string i_Website, string i_Date)
+    {
+        string url = r_BaseURL + $"/articlesHistory/getArticles?website={i_Website}&date={i_Date}";
+        using HttpClient client = new HttpClient();
+        var jsonResponse = await client.GetStringAsync(url);
+        List<OuterArticle>? articles = JsonSerializer.Deserialize<List<OuterArticle>>(jsonResponse, rm_CaseInsensitiveOptions);
+        
+        return articles ?? new List<OuterArticle>();
     }
 }

@@ -1,26 +1,25 @@
-using System.Diagnostics;
 using System.Windows.Input;
 using Application.Helpers;
 using Application.Helpers.Content.Generator;
-using BusinessLogic.HTMLParser.ArticleParser;
 using Application.Service.Local;
 using AsyncAwaitBestPractices.MVVM;
-using BusinessLogic.Article.Partials;
+using BusinessLogic.Article;
 
 namespace Application.ViewModel;
 
-public class ReaderViewModel : BaseViewModel
+public class ReaderViewModel : BaseViewModel, IQueryAttributable
 {
     private readonly string k_VerifiedImage = "verified.png";
     private readonly string k_ErrorImage = "error.png";
     private readonly string k_DownloadImage = "download.png";
     private readonly string k_DeleteImage = "delete.png";
+    
     public ICommand DownloadButtonCommand { get; private set; }
     public ICommand DeleteButtonCommand { get; private set; }
-    private ArticleParserFactory ParserFactory { get; } = ArticleParserFactory.Instance;
+    
+    private Article? Article { get; set; }
+    private bool IsArticleStored { get; set; }
     private ArticleContentGenerator ContentGenerator { get; } = ArticleContentGenerator.Instance;
-    private InnerArticle? m_ParsedArticle = new();
-    private CacheService CacheService { get; } = CacheService.Instance;
     private ConnectivityManager ConnectivityManager { get; } = ConnectivityManager.Instance;
     private OfflineContentService OfflineContentService { get; } = OfflineContentService.Instance;
     private StackLayout _articleLayout = new();
@@ -71,44 +70,20 @@ public class ReaderViewModel : BaseViewModel
     {
         DownloadButtonImage = k_DownloadImage;
         DeleteButtonImage = k_DeleteImage;
-        IsDownloadButtonEnabled = !SharedData.IsCurrentArticleStored;
-        IsDeleteButtonEnabled = SharedData.IsCurrentArticleStored;
         DownloadButtonCommand = new AsyncCommand(saveArticle);
         DeleteButtonCommand = new Command(deleteArticle);
         ConnectivityManager.ConnectivityChanged += OnConnectivityChanged!;
-        initialize();
+        initializeLayout();
     }
 
-    private void initialize()
+    private void initializeLayout()
     {
-        if (SharedData.IsCurrentArticleCached || SharedData.IsCurrentArticleStored)
+        if (Article is not null)
         {
-            m_ParsedArticle = SharedData.WholeArticle?.InnerArticle;
+            ArticleLayout = ContentGenerator.GenerateAView(Article.InnerArticle);
         }
-
-        else
-        {
-            m_ParsedArticle = getParsedArticle();
-            Task.Run(() => CacheService.CacheArticle(m_ParsedArticle));
-        }
-
-        Debug.Assert(m_ParsedArticle != null, nameof(m_ParsedArticle) + " != null");
-        ArticleLayout = ContentGenerator.GenerateAView(m_ParsedArticle);
     }
-
-    private InnerArticle? getParsedArticle()
-    {
-        string html = SharedData.HTML;
-        Debug.Assert(SharedData.OuterArticle != null, "SharedData.SharedArticle != null");
-        string website = SharedData.OuterArticle.Website;
-        Debug.WriteLine($"Got website {website}");
-        IArticleParser? articleParser = ParserFactory.GenerateParser(website);
-        InnerArticle? article = articleParser?.ParseArticleHTML(html);
-        SharedData.InnerArticle = article;
-
-        return article;
-    }
-
+    
     private async Task saveArticle()
     {
         if (IsBusy)
@@ -124,12 +99,14 @@ public class ReaderViewModel : BaseViewModel
 
         bool successfullyStored = false;
         
-        await Task.Run(async () =>
+        await Task.Run(() =>
         {
             try
             {
-                Debug.Assert(m_ParsedArticle is not null, "m_ParsedArticle != null");
-                successfullyStored = await OfflineContentService.StoreArticle(m_ParsedArticle);
+                if (Article is not null)
+                {
+                    successfullyStored = OfflineContentService.StoreArticle(Article);
+                }
             }
             
             finally
@@ -153,8 +130,10 @@ public class ReaderViewModel : BaseViewModel
         {
             try
             {
-                Debug.Assert(SharedData.WholeArticle != null, "SharedData.WholeArticle != null");
-                successfullyRemoved = OfflineContentService.RemoveArticle(SharedData.WholeArticle);
+                if (Article is not null)
+                {
+                    successfullyRemoved = OfflineContentService.RemoveArticle(Article);
+                }
             }
 
             finally
@@ -170,5 +149,19 @@ public class ReaderViewModel : BaseViewModel
     private void OnConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
     {
         IsDownloadButtonEnabled = e.NetworkAccess == NetworkAccess.Internet;
+    }
+
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        Article = query["Article"] as Article;
+        IsArticleStored = (bool) query["IsStored"];
+        initializeButtons();
+        initializeLayout();
+    }
+
+    private void initializeButtons()
+    {
+        IsDownloadButtonEnabled = !IsArticleStored;
+        IsDeleteButtonEnabled = IsArticleStored;
     }
 }

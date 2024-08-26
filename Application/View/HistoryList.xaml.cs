@@ -2,9 +2,9 @@ using Application.ViewModel;
 
 namespace Application.View;
 
-public partial class HistoryPage
+public partial class HistoryList
 {
-    public HistoryPage(HistoryViewModel i_ViewModel)
+    public HistoryList(HistoryListViewModel i_ViewModel)
     {
         InitializeComponent();
         BindingContext = i_ViewModel;

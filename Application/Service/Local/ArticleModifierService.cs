@@ -1,15 +1,14 @@
 using System.Diagnostics;
 using BusinessLogic.Article;
-using Application.Helpers;
 using BusinessLogic.Article.Content;
 using Application.Service.Remote;
-using BusinessLogic.Article.Partials;
 
 namespace Application.Service.Local;
 
 public sealed class ArticleModifierService
 {
     private static readonly object rm_CreationLock = new();
+    private static readonly object rm_SaveArticleLockContext = new();
     private static ArticleModifierService? m_Instance;
     public static ArticleModifierService Instance
     {
@@ -30,33 +29,28 @@ public sealed class ArticleModifierService
     
     private ArticleModifierService() {}
 
-    public async Task<Article?> SaveArticle(InnerArticle? i_Article, string i_Path)
+    public void SaveArticle(Article i_Article, string i_Path)
     {
-        Debug.Assert(SharedData.OuterArticle != null, "SharedData.OuterArticle != null");
-        Debug.Assert(i_Article != null, nameof(i_Article) + " != null");
-        Article? wholeArticle = new Article(i_Article, SharedData.OuterArticle);
-        string articlePath = i_Path + m_PathGenerator.GenerateArticlePath(wholeArticle.OuterArticle);
+        lock (rm_SaveArticleLockContext)
+        {
+            string articlePath = i_Path + m_PathGenerator.GenerateArticlePath(i_Article.OuterArticle);
         
-        if (!Directory.Exists(articlePath))
-        {
-            Directory.CreateDirectory(articlePath);
-        }
+            if (!Directory.Exists(articlePath))
+            {
+                Directory.CreateDirectory(articlePath);
+            }
 
-        try
-        {
-            await saveArticleImages(wholeArticle, articlePath);
-            wholeArticle.SaveArticle(articlePath);
-            SharedData.InnerArticle = wholeArticle.InnerArticle;
-            SharedData.WholeArticle = wholeArticle;
-        }
+            try
+            {
+                _ = saveArticleImages(i_Article, articlePath);
+                i_Article.SaveArticle(articlePath);
+            }
 
-        catch (Exception error)
-        {
-            Debug.WriteLine(error);
-            wholeArticle = null;
+            catch (Exception error)
+            {
+                Debug.WriteLine(error);
+            }
         }
-
-        return wholeArticle;
     }
 
     public bool RemoveArticle(Article i_Article, string i_Path)
@@ -83,31 +77,23 @@ public sealed class ArticleModifierService
     
     private async Task saveArticleImages(Article i_Article, string i_ArticlePath)
     {
-        if (SharedData.IsCurrentArticleCached)
+        string filePath = i_ArticlePath + i_Article.OuterArticle.MainImage.ImageID + ".jpg";
+        await m_ImageService.DownloadImageAsync(i_Article.OuterArticle.MainImage.Content, filePath);
+        i_Article.OuterArticle.MainImage.Content = filePath;
+
+        if (i_Article.InnerArticle.Author.ImageSource.Length > 0)
         {
-            copyArticleImages(i_Article, i_ArticlePath);
+            await m_ImageService.DownloadImageAsync(i_Article.InnerArticle.Author.ImageSource,
+                i_ArticlePath + "author.jpg");
+            i_Article.InnerArticle.Author.ImageSource = i_ArticlePath + "author.jpg";
         }
-
-        else
-        {
-            string filePath = i_ArticlePath + i_Article.OuterArticle.MainImage.ImageID + ".jpg";
-            await m_ImageService.DownloadImageAsync(i_Article.OuterArticle.MainImage.Content, filePath);
-            i_Article.OuterArticle.MainImage.Content = filePath;
-
-            if (i_Article.InnerArticle.Author.ImageSource.Length > 0)
-            {
-                await m_ImageService.DownloadImageAsync(i_Article.InnerArticle.Author.ImageSource,
-                    i_ArticlePath + "author.jpg");
-                i_Article.InnerArticle.Author.ImageSource = i_ArticlePath + "author.jpg";
-            }
             
-            foreach (BodyContent bodyContent in i_Article.InnerArticle.BodyContents)
-            {
-                if (bodyContent is not ImageContent image) continue;
-                filePath = i_ArticlePath + image.ImageID + ".jpg";
-                await m_ImageService.DownloadImageAsync(image.Content, filePath);
-                image.Content = filePath;
-            }
+        foreach (BodyContent bodyContent in i_Article.InnerArticle.BodyContents)
+        {
+            if (bodyContent is not ImageContent image) continue;
+            filePath = i_ArticlePath + image.ImageID + ".jpg";
+            await m_ImageService.DownloadImageAsync(image.Content, filePath);
+            image.Content = filePath;
         }
     }
 

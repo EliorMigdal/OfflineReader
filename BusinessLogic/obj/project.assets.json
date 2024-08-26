@@ -78,11 +78,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/elior/RiderProjects/OfflineReader/BusinessLogic/BusinessLogic.csproj",
+      "projectUniqueName": "/Users/elior/GitHub/OfflineReader/BusinessLogic/BusinessLogic.csproj",
       "projectName": "BusinessLogic",
-      "projectPath": "/Users/elior/RiderProjects/OfflineReader/BusinessLogic/BusinessLogic.csproj",
+      "projectPath": "/Users/elior/GitHub/OfflineReader/BusinessLogic/BusinessLogic.csproj",
       "packagesPath": "/Users/elior/.nuget/packages/",
-      "outputPath": "/Users/elior/RiderProjects/OfflineReader/BusinessLogic/obj/",
+      "outputPath": "/Users/elior/GitHub/OfflineReader/BusinessLogic/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/elior/.nuget/NuGet/NuGet.Config"
