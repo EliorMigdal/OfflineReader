@@ -16,10 +16,29 @@ public class ArticlesHistoryController : ControllerBase
         {
             if (string.IsNullOrEmpty(website) || string.IsNullOrEmpty(date))
             {
-                return BadRequest("Missing required query parameters: 'name' and 'url'.");
+                return BadRequest("Missing required query parameters: 'website' and 'date'.");
             }
             
             return Ok(m_DBService.GetArticlesList(website, date));
+        }
+        
+        catch (Exception e)
+        {
+            return BadRequest(e);
+        }
+    }
+
+    [HttpGet("getDates")]
+    public IActionResult GetArticlesDates([FromQuery] string website)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(website))
+            {
+                return BadRequest("Missing required query parameter: 'website'.");
+            }
+
+            return Ok(m_DBService.GetAvailableDates(website));
         }
         
         catch (Exception e)

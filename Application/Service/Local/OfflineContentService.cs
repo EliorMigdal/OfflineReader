@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using BusinessLogic.Article;
 using BusinessLogic.Article.Partials;
 
@@ -35,15 +36,24 @@ public sealed class OfflineContentService
         return m_ArticleFinder.SearchForArticle(i_Article, OfflineContentPath);
     }
 
-    public async Task<bool> StoreArticle(InnerArticle i_Article)
+    public bool StoreArticle(Article i_Article)
     {
-        Article? stored = await m_ArticleModifier.SaveArticle(i_Article, OfflineContentPath);
+        bool successfullyStored = false;
+        
+        try
+        {
+            m_ArticleModifier.SaveArticle(i_Article, OfflineContentPath);
+            LocallyStoredArticles.Add(i_Article);
+            LocallyStoredOuterArticles.Add(i_Article.OuterArticle);
+            successfullyStored = true;
+        }
+        
+        catch (Exception e)
+        {
+            Debug.WriteLine(e);
+        }
 
-        if (stored is null) return stored is not null;
-        LocallyStoredArticles.Add(stored);
-        LocallyStoredOuterArticles.Add(stored.OuterArticle);
-
-        return true;
+        return successfullyStored;
     }
 
     public bool RemoveArticle(Article i_Article)

@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Application.Helpers;
+using Application.Service.Hybrid;
 using Application.Service.Local;
 using Application.Service.Remote;
 using Application.View;
@@ -18,12 +19,13 @@ public partial class TrendingViewModel : BaseViewModel
     public ICommand ArticleSelectedCommand { get; private set; } = null!;
     public ICommand LoadMoreArticlesCommand { get; private set; } = null!;
     public ICommand RefreshCommand { get; private set; } = null!;
+    
+    public OuterArticle? SelectedArticle { get; set; }
 
-    private HTMLSupplierService HTMLSupplier { get; } = HTMLSupplierService.Instance;
-    private CacheService CacheService { get; } = CacheService.Instance;
     private OnlineContentService OnlineService { get; } = OnlineContentService.Instance;
     private OfflineContentService OfflineService { get; } = OfflineContentService.Instance;
     private ConnectivityManager ConnectivityManager { get; } = ConnectivityManager.Instance;
+    private readonly ArticleProviderService rm_ArticleProvider = ArticleProviderService.Instance;
 
     public ObservableCollection<OuterArticle> Articles { get; set; } = new();
     private readonly ObservableCollection<OuterArticle> m_OnlineArticles;
@@ -83,7 +85,7 @@ public partial class TrendingViewModel : BaseViewModel
     {
         OnlineClickedCommand = new AsyncCommand(onOnlineTappedCommand);
         OfflineClickedCommand = new Command(onOfflineTappedCommand);
-        ArticleSelectedCommand = new Command<OuterArticle>(onReadArticleCommand);
+        ArticleSelectedCommand = new AsyncCommand(onReadArticleCommand);
         LoadMoreArticlesCommand = new Command(onLoadMoreArticlesCommand);
         RefreshCommand = new AsyncCommand(onRefreshCommand);
     }
@@ -92,8 +94,17 @@ public partial class TrendingViewModel : BaseViewModel
     {
         if (ConnectivityManager.IsDeviceConnected())
         {
-            await OnlineService.UpdateArticlesList();
-            m_ArticlesSource = m_OnlineArticles;
+            try
+            {
+                await OnlineService.UpdateArticlesList();
+                m_ArticlesSource = m_OnlineArticles;
+            }
+            
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error",
+                    "Fetching articles has failed.", "OK");
+            }
         }
 
         else
@@ -106,60 +117,47 @@ public partial class TrendingViewModel : BaseViewModel
         handleButtonsColors();
     }
 
-    private async void onReadArticleCommand(OuterArticle i_Article)
+    private async Task onReadArticleCommand()
     {
-        if (IsBusy)
+        if (IsBusy || SelectedArticle is null)
             return;
 
         try
         {
             IsBusy = true;
+            Article? article;
+            bool isStored;
             
             if (isOnlineSelected())
             {
-                Article? cachedArticle = CacheService.FindCachedArticle(i_Article);
-                Article? storedArticle = OfflineService.FindStoredArticle(i_Article);
-                SharedData.IsCurrentArticleCached = cachedArticle is not null;
-                SharedData.IsCurrentArticleStored = storedArticle is not null;
-
-                if (SharedData.IsCurrentArticleCached)
-                {
-                    SharedData.WholeArticle = cachedArticle;
-                }
-                
-                else if (SharedData.IsCurrentArticleStored)
-                {
-                    SharedData.WholeArticle = storedArticle;
-                }
-                
-                else if (!ConnectivityManager.IsDeviceConnected())
-                {
-                    await ConnectivityManager.AlertConnectivityIssue();
-                    return;
-                }
-                
-                else
-                {
-                    SharedData.OuterArticle = i_Article;
-                    SharedData.HTML = await HTMLSupplier.GetHTMLAsync(i_Article.URL);
-                }
+                (article, isStored) = await rm_ArticleProvider.ProvideArticle(SelectedArticle);
             }
 
             else
             {
-                Article? storedArticle = OfflineService.FindStoredArticle(i_Article);
-                if (storedArticle is null) return;
-                SharedData.WholeArticle = storedArticle;
-                SharedData.InnerArticle = storedArticle.InnerArticle;
-                SharedData.IsCurrentArticleStored = true;
+                article = OfflineService.FindStoredArticle(SelectedArticle);
+                isStored = true;
+            }
+
+            if (article is not null)
+            {
+                await Shell.Current.GoToAsync(nameof(ReadingPage), true, new Dictionary<string, object>
+                {
+                    {"Article", article}, {"IsStored", isStored}
+                });
             }
             
-            await Shell.Current.GoToAsync(nameof(ReadingPage), true);
+            else
+            {
+                await Shell.Current.DisplayAlert("Error",
+                    "Fetching article has failed.", "OK");
+            }
         }
 
         finally
         {
             IsBusy = false;
+            clearSelectedArticle();
         }
     }
 
@@ -173,7 +171,16 @@ public partial class TrendingViewModel : BaseViewModel
 
             if (isOnlineSelected() && ConnectivityManager.IsDeviceConnected())
             {
-                await OnlineService.UpdateArticlesList();
+                try
+                {
+                    await OnlineService.UpdateArticlesList();
+                }
+                
+                catch (Exception)
+                {
+                    await Shell.Current.DisplayAlert("Error",
+                        "Fetching articles has failed.", "OK");
+                }
             }
             
             else if (isOnlineSelected() && !ConnectivityManager.IsDeviceConnected())
@@ -207,8 +214,21 @@ public partial class TrendingViewModel : BaseViewModel
                 {
                     m_ArticlesSource = m_OnlineArticles;
                     handleButtonsColors();
+
+                    if (m_OnlineArticles.Count == 0)
+                    {
+                        try
+                        {
+                            await OnlineService.UpdateArticlesList();
+                        }
+                        
+                        catch (Exception)
+                        {
+                            await Shell.Current.DisplayAlert("Error",
+                                "Fetching articles has failed.", "OK");
+                        }
+                    }
                     
-                    if (m_OnlineArticles.Count == 0) await OnlineService.UpdateArticlesList();
                     updateMainCollection();
                 }
             }
@@ -294,5 +314,11 @@ public partial class TrendingViewModel : BaseViewModel
             OfflineBorderColor = Colors.LightGreen;
             OnlineBorderColor = Colors.LightGray;
         }
+    }
+
+    private void clearSelectedArticle()
+    {
+        SelectedArticle = null;
+        OnPropertyChanged(nameof(SelectedArticle));
     }
 }

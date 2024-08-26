@@ -4,8 +4,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Application.View.TrendingPage"
              xmlns:viewmodel="clr-namespace:Application.ViewModel"
-             xmlns:model="clr-namespace:BusinessLogic.Article.Partials;assembly=BusinessLogic"
              x:DataType="viewmodel:TrendingViewModel">
+    <ContentPage.Resources>
+        <Style TargetType="Grid">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor"
+                                        Value="Transparent" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+    </ContentPage.Resources>
     <Grid RowDefinitions="Auto, Auto, *, Auto"
           RowSpacing="0">
         <Grid ColumnDefinitions="Auto, *, Auto">
@@ -18,10 +34,10 @@
                     <TapGestureRecognizer Command="{Binding OnlineClickedCommand}"/>
                 </Border.GestureRecognizers>
                 <Label Margin="20"
-                       Text="Online"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center"
-                       Padding="0">
+                        Text="Online"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        Padding="0">
                 </Label>
             </Border>
             <Border BackgroundColor="{Binding OfflineBorderColor}"
@@ -34,9 +50,9 @@
                     <TapGestureRecognizer Command="{Binding OfflineClickedCommand}"/>
                 </Border.GestureRecognizers>
                 <Label Margin="20"
-                       Text="Offline"
-                       HorizontalOptions="End"
-                       VerticalOptions="Center">
+                        Text="Offline"
+                        HorizontalOptions="End"
+                        VerticalOptions="Center">
                 </Label>
             </Border>
         </Grid>
@@ -52,108 +68,18 @@
                     Text="Trending News"
                     FontSize="Header"
                     FontAttributes="Bold"
-                    TextColor="DarkBlue"
                     Padding="40, 5, 40, 5"/>
         </Border>
         <RefreshView Command="{Binding RefreshCommand}"
                      IsRefreshing="{Binding IsRefreshing}"
                      Grid.Row="2">
             <ContentView>
-                <CollectionView BackgroundColor="Transparent"
+                <CollectionView ItemTemplate="{StaticResource OuterArticleTemplate}" 
                                 ItemsSource="{Binding Articles}"
-                                SelectionMode="None">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="model:OuterArticle">
-                            <Grid RowDefinitions="Auto, Auto"
-                                  Margin="0"
-                                  Padding="10">
-                                <Grid RowDefinitions="Auto, Auto"
-                                      Grid.Row="0"
-                                      Margin="0">
-                                    <Border Grid.Row="0"
-                                            WidthRequest="225"
-                                            HeightRequest="30"
-                                            Margin="-8"
-                                            Background="PaleVioletRed"
-                                            StrokeShape="RoundRectangle 80">
-                                        <Grid ColumnDefinitions="Auto, *, Auto">
-                                            <Label Grid.Column="0"
-                                                    Text="{Binding Website}"
-                                                    TextColor="Black"
-                                                    FontSize="Body"
-                                                    FontAttributes="Bold"
-                                                    Margin="4"
-                                                    Padding="10"/>
-                                            <Label Grid.Column="2"
-                                                    Text="{Binding Date}"
-                                                    TextColor="Black"
-                                                    FontSize="Body"
-                                                    FontAttributes="Bold"
-                                                    Margin="4"
-                                                    HorizontalOptions="End"
-                                                    Padding="10"/>
-                                        </Grid>
-                                    </Border>
-                                    <Border Grid.Row="1"
-                                            Margin="5"
-                                            StrokeShape="RoundRectangle 80"
-                                            Stroke="{StaticResource Gray100}"
-                                            StrokeThickness="2"
-                                            HeightRequest="105"
-                                            Padding="1">
-                                        <Grid ColumnDefinitions="*, Auto"
-                                                IsClippedToBounds="True">
-                                            <Frame Grid.Column="1"
-                                                    VerticalOptions="Center"
-                                                    HorizontalOptions="Center"
-                                                    CornerRadius="45"
-                                                    IsClippedToBounds="True"
-                                                    Margin="5,8,10,5"
-                                                    HeightRequest="90"
-                                                    WidthRequest="100">
-                                                <Image Aspect="AspectFill"
-                                                       HeightRequest="90"
-                                                       WidthRequest="100"
-                                                       Source="{Binding MainImage.Content}"/>
-                                            </Frame>
-                                            <Grid Grid.Column="0"
-                                                  RowDefinitions="Auto"
-                                                  IsClippedToBounds="True">
-                                                <Label Grid.Row="0"
-                                                       Text="{Binding Title}"
-                                                       FontSize="Large"
-                                                       TextColor="Black"
-                                                       FlowDirection="RightToLeft"
-                                                       HorizontalTextAlignment="Center"
-                                                       VerticalTextAlignment="Center"
-                                                       VerticalOptions="Center"
-                                                       HorizontalOptions="Center"
-                                                       MaxLines="3"
-                                                       Padding="0"
-                                                       Margin="7"/>
-                                            </Grid>
-                                        </Grid>
-                                        <Border.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource 
-                                            AncestorType={x:Type viewmodel:TrendingViewModel}}, 
-                                            Path=ArticleSelectedCommand}"
-                                                  CommandParameter="{Binding .}"/>
-                                        </Border.GestureRecognizers>
-                                    </Border>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                    <CollectionView.Footer>
-                        <Button Text="Load more articles..."
-                                FontSize="Header"
-                                Command="{Binding LoadMoreArticlesCommand}"
-                                IsVisible="{Binding AnyArticlesToLoad}"
-                                HorizontalOptions="Center"
-                                VerticalOptions="End"
-                                BackgroundColor="LightBlue"/>
-                    </CollectionView.Footer>
-                </CollectionView>
+                                SelectionMode="Single"
+                                SelectedItem="{Binding SelectedArticle}"
+                                SelectionChangedCommand="{Binding ArticleSelectedCommand}"
+                                Margin="5"/>
             </ContentView>
         </RefreshView>
         <ActivityIndicator Grid.Row="1"

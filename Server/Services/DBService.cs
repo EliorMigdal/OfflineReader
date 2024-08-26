@@ -6,7 +6,7 @@ using BusinessLogic.SupportedWebsite;
 
 namespace Server.Services;
 
-public class DBService
+public sealed class DBService
 {
     private static DBService? m_Instance;
     public static DBService Instance
@@ -25,7 +25,8 @@ public class DBService
     {
         List<SupportedWebsite> supportedWebsites = new List<SupportedWebsite>();
         using NpgsqlConnection connection = connectToDatabase();
-        string query = "SELECT * FROM SupportedWebsites";
+        string query = "SELECT * " +
+                       "FROM SupportedWebsites";
         using var command = new NpgsqlCommand(query, connection);
         
         connection.Open();
@@ -49,7 +50,8 @@ public class DBService
     public void AddSupportedWebsite(string i_Name, string i_URL)
     {
         using NpgsqlConnection connection = connectToDatabase();
-        string query = "INSERT INTO SupportedWebsites (name, url) VALUES (@name, @url)";
+        string query = "INSERT INTO SupportedWebsites (name, url) " +
+                       "VALUES (@name, @url)";
         using var command = new NpgsqlCommand(query, connection);
         
         command.Parameters.AddWithValue("@name", i_Name);
@@ -68,7 +70,9 @@ public class DBService
     {
         List<OuterArticle> articles = new List<OuterArticle>();
         using NpgsqlConnection connection = connectToDatabase();
-        string query = "SELECT * FROM articles WHERE website = @website and date = @date";
+        string query = "SELECT * " +
+                       "FROM articles " +
+                       "WHERE website = @website and date = @date";
         using var command = new NpgsqlCommand(query, connection);
         
         command.Parameters.AddWithValue("@website", i_Website);
@@ -79,16 +83,17 @@ public class DBService
 
         while (reader.Read())
         {
-            OuterArticle website = new OuterArticle
+            OuterArticle article = new OuterArticle
             {
-                Website = reader.GetString(reader.GetOrdinal("name")),
+                Website = reader.GetString(reader.GetOrdinal("website")),
                 Date = reader.GetString(reader.GetOrdinal("date")),
                 Title = reader.GetString(reader.GetOrdinal("title")),
                 URL = reader.GetString(reader.GetOrdinal("url")),
-                MainImage = new ImageContent(reader.GetString(reader.GetOrdinal("date")), 0)
+                MainImage = new ImageContent(reader.GetString(reader.GetOrdinal("image")), 0),
+                ID = reader.GetString(reader.GetOrdinal("id"))
             };
 
-            articles.Add(website);
+            articles.Add(article);
         }
 
         return articles;
@@ -131,6 +136,28 @@ public class DBService
         
         connection.Open();
         command.ExecuteNonQuery();
+    }
+
+    public List<string> GetAvailableDates(string i_Website)
+    {
+        List<string> dates = new List<string>();
+        using NpgsqlConnection connection = connectToDatabase();
+        string query = "SELECT date " +
+                       "FROM articles " +
+                       "WHERE website = @website " +
+                       "GROUP BY date";
+        using var command = new NpgsqlCommand(query, connection);
+        command.Parameters.AddWithValue("@website", i_Website);
+        
+        connection.Open();
+        using var reader = command.ExecuteReader();
+
+        while (reader.Read())
+        {
+            dates.Add(reader.GetString(reader.GetOrdinal("date")));
+        }
+        
+        return dates;
     }
     
     private NpgsqlConnection connectToDatabase()

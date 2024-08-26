@@ -35,6 +35,14 @@ public static class MauiProgram
         builder.Services.AddSingleton<HistoryViewModel>();
         builder.Services.AddSingleton<HistoryPage>();
         
+        Routing.RegisterRoute(nameof(DatePickerPage), typeof(DatePickerPage));
+        builder.Services.AddTransient<DatePickerViewModel>();
+        builder.Services.AddTransient<DatePickerPage>();
+        
+        Routing.RegisterRoute(nameof(HistoryList), typeof(HistoryList));
+        builder.Services.AddTransient<HistoryListViewModel>();
+        builder.Services.AddTransient<HistoryList>();
+        
         Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
         builder.Services.AddSingleton<SettingsViewModel>();
         builder.Services.AddSingleton<SettingsPage>();

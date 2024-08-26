@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Application.View.HistoryList"
+             xmlns:viewmodel="clr-namespace:Application.ViewModel"
+             x:DataType="viewmodel:HistoryListViewModel"
+             xmlns:model="clr-namespace:BusinessLogic.Article.Partials;assembly=BusinessLogic">
+    <ContentPage.Resources>
+        <Style TargetType="Grid">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor"
+                                        Value="Transparent" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <Grid>
+            <CollectionView ItemTemplate="{StaticResource OuterArticleTemplate}" 
+                            ItemsSource="{Binding Articles}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedArticle}"
+                            SelectionChangedCommand="{Binding SelectedArticleCommand}"
+                            Margin="5"/>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

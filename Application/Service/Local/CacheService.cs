@@ -1,5 +1,4 @@
-﻿using Application.Helpers;
-using BusinessLogic.Article;
+﻿using BusinessLogic.Article;
 using BusinessLogic.Article.Partials;
 
 namespace Application.Service.Local;
@@ -33,9 +32,8 @@ public sealed class CacheService
         return m_ArticleFinder.SearchForArticle(i_Article, CachePath);
     }
 
-    public async Task CacheArticle(InnerArticle? i_Article)
+    public void CacheArticle(Article i_Article)
     {
-        await m_ArticleModifier.SaveArticle(i_Article, CachePath);
-        SharedData.IsCurrentArticleCached = true;
+        m_ArticleModifier.SaveArticle(i_Article, CachePath);
     }
 }

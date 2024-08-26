@@ -26,7 +26,9 @@
     <Grid Padding="5">
         <CollectionView ItemsSource="{Binding SupportedWebsites}"
                         SelectionMode="Single"
-                        ItemsLayout="VerticalGrid, 2">
+                        ItemsLayout="VerticalGrid, 2"
+                        SelectedItem="{Binding SelectedWebsite}"
+                        SelectionChangedCommand="{Binding SelectedWebsiteCommand}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:SupportedWebsite">
                     <Grid HeightRequest="60"
