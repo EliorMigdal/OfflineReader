@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: server
+        image: offlinereadercr.azurecr.io/server:latest
+        env:
+        - name: DB_CONNECTION_STRING
+          value: "Host=db-service;Database=postgres;Username=postgres;Password=docker"
+        - name: ID
+          value: "31345532"
+        ports:
+        - containerPort: 8080
+          name: server
+        resources:
+          requests:
+            cpu: 1m
+            memory: 200Mi
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          failureThreshold: 3
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          failureThreshold: 5
+          initialDelaySeconds: 3
+          periodSeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: server
+  type: LoadBalancer
