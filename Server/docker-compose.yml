@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  db:
+    image: eliormigdal/kaplat-postgres:latest
+    environment:
+      POSTGRES_PASSWORD: docker
+    ports:
+      - "5432:5432"
+
+  server:
+    build:
+      context: .
+      args:
+        DB_CONNECTION_STRING: "Host=db;Username=postgres;Password=docker;Database=postgres;Port=5432"
+    environment:
+      DB_CONNECTION_STRING: "Host=db;Username=postgres;Password=docker;Database=postgres;Port=5432"
+    ports:
+      - "3769:8080"
+    depends_on:
+      - db
