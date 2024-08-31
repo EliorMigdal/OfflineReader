@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using BusinessLogic.Article.Partials;
 
 namespace Application.Service.Local;
@@ -29,7 +30,7 @@ public sealed class PathGenerator
         StringBuilder pathBuilder = new();
 
         string webSiteName = i_Article.Website.ToLower();
-        string articleDate = i_Article.Date.Replace("-", "");
+        string articleDate = i_Article.Date.ToString(CultureInfo.CurrentCulture).Replace("-", "");
         string articleID = i_Article.ID;
 
         pathBuilder.Append('/').Append(webSiteName).Append('/').Append(articleDate).Append('/').Append(articleID).Append('/');

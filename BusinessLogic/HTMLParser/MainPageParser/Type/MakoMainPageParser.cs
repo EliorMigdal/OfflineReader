@@ -46,18 +46,19 @@ public sealed class MakoMainPageParser : IMainPageParser
     {
         HtmlNode spotlightNode = i_HTML.DocumentNode.SelectSingleNode("//div[contains(@class, 'Spotlight_root')]");
 
-        if (spotlightNode != null)
-        {
-            HtmlNodeCollection articleNodes = i_HTML.DocumentNode.SelectNodes(".//article");
+        if (spotlightNode == null) return;
+        HtmlNodeCollection articleNodes = i_HTML.DocumentNode.SelectNodes(".//article");
 
-            foreach (HtmlNode articleNode in articleNodes)
+        foreach (HtmlNode articleNode in articleNodes)
+        {
+            try
             {
                 string articleTitle = extractArticleTitle(articleNode);
                 string articleURL = extractArticleURL(articleNode);
                 string articleImage = extractArticleImage(articleNode);
-                string articleDate = extractArticleDate(articleNode);
+                DateTime articleDate = extractArticleDate(articleNode);
 
-                if (articleURL.Length <= 0 || articleTitle.Length <= 0 || articleDate.Length <= 0 || articleImage.Length <= 0)
+                if (articleURL.Length <= 0 || articleTitle.Length <= 0 || articleImage.Length <= 0)
                 {
                     continue;
                 }
@@ -68,13 +69,17 @@ public sealed class MakoMainPageParser : IMainPageParser
                     URL = articleURL,
                     MainImage = new ImageContent(articleImage, 0),
                     Website = k_Website,
-                    Date = articleDate[..10],
-                    LastUpdated = DateTime.Parse(articleNode.SelectSingleNode(".//time")
-                        .GetAttributeValue("dateTime", string.Empty))
+                    Date = articleDate,
+                    LastUpdated = articleDate
                 };
                 
                 article.GenerateArticleID();
                 io_Articles.Add(article);
+            }
+
+            catch (Exception)
+            {
+                // ignored
             }
         }
     }
@@ -128,20 +133,15 @@ public sealed class MakoMainPageParser : IMainPageParser
         return articleImageURLs;
     }
 
-    private string extractArticleDate(HtmlNode i_ArticleNode)
+    private DateTime extractArticleDate(HtmlNode i_ArticleNode)
     {
-        string articleDate = string.Empty;
         HtmlNode dateNode = i_ArticleNode.SelectSingleNode(".//time");
 
-        if (dateNode != null)
-        {
-            articleDate = dateNode.GetAttributeValue("dateTime", "");
-
-            if (articleDate.Length > 0)
-            {
-                articleDate = articleDate[..10];
-            }
-        }
+        if (dateNode is null ||
+            !DateTime.TryParse(dateNode.GetAttributeValue("dateTime", string.Empty), out DateTime o_Date))
+            throw new Exception();
+        
+        var articleDate = DateTime.Parse(o_Date.ToString("dd-MM-yyyy HH:mm"));
 
         return articleDate;
     }

@@ -6,7 +6,7 @@ using BusinessLogic.Article.Partials;
 
 namespace Application.Service.Hybrid;
 
-public class ArticleProviderService
+public sealed class ArticleProviderService
 {
     private static readonly object rm_CreationLock = new();
     private static ArticleProviderService? m_Instance;
@@ -28,6 +28,8 @@ public class ArticleProviderService
     private readonly OfflineContentService rm_OfflineService = OfflineContentService.Instance;
     private readonly ArticleDownloadService rm_ArticleDownload = ArticleDownloadService.Instance;
     private readonly ConnectivityManager rm_ConnectivityManager = ConnectivityManager.Instance;
+    
+    private ArticleProviderService() {}
 
     public async Task<(Article?, bool)> ProvideArticle(OuterArticle i_OuterArticle)
     {

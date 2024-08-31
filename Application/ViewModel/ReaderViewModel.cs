@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Windows.Input;
 using Application.Helpers;
 using Application.Helpers.Content.Generator;
@@ -9,10 +10,11 @@ namespace Application.ViewModel;
 
 public class ReaderViewModel : BaseViewModel, IQueryAttributable
 {
+    private AppTheme m_CurrentTheme;
     private readonly string k_VerifiedImage = "verified.png";
     private readonly string k_ErrorImage = "error.png";
-    private readonly string k_DownloadImage = "download.png";
-    private readonly string k_DeleteImage = "delete.png";
+    private string m_DownloadImage = string.Empty;
+    private string m_DeleteImage = string.Empty;
     
     public ICommand DownloadButtonCommand { get; private set; }
     public ICommand DeleteButtonCommand { get; private set; }
@@ -68,12 +70,31 @@ public class ReaderViewModel : BaseViewModel, IQueryAttributable
 
     public ReaderViewModel()
     {
-        DownloadButtonImage = k_DownloadImage;
-        DeleteButtonImage = k_DeleteImage;
+        initializeButtonImages();
         DownloadButtonCommand = new AsyncCommand(saveArticle);
         DeleteButtonCommand = new Command(deleteArticle);
         ConnectivityManager.ConnectivityChanged += OnConnectivityChanged!;
+        
         initializeLayout();
+        initializeAppThemeListener();
+    }
+
+    private void initializeAppThemeListener()
+    {
+        Microsoft.Maui.Controls.Application.Current!.RequestedThemeChanged += (_, _) =>
+        {
+            initializeButtonImages();
+        };
+    }
+
+    private void initializeButtonImages()
+    {
+        m_CurrentTheme = Microsoft.Maui.Controls.Application.Current!.RequestedTheme;
+        m_DownloadImage = m_CurrentTheme == AppTheme.Light ? "downloadlight.png" : "downloaddark.png";
+        m_DeleteImage = m_CurrentTheme == AppTheme.Light ? "deletelight.png" : "deletedark.png";
+        
+        DownloadButtonImage = m_DownloadImage;
+        DeleteButtonImage = m_DeleteImage;
     }
 
     private void initializeLayout()
@@ -114,7 +135,7 @@ public class ReaderViewModel : BaseViewModel, IQueryAttributable
                 IsDownloadButtonEnabled = !successfullyStored;
                 IsDeleteButtonEnabled = successfullyStored;
                 DownloadButtonImage = successfullyStored ? k_VerifiedImage : k_ErrorImage;
-                DeleteButtonImage = k_DeleteImage;
+                DeleteButtonImage = m_DeleteImage;
             }
         });
     }
@@ -141,7 +162,7 @@ public class ReaderViewModel : BaseViewModel, IQueryAttributable
                 IsDownloadButtonEnabled = successfullyRemoved;
                 IsDeleteButtonEnabled = !successfullyRemoved;
                 DeleteButtonImage = successfullyRemoved ? k_VerifiedImage : k_ErrorImage;
-                DownloadButtonImage = k_DownloadImage;
+                DownloadButtonImage = m_DownloadImage;
             }
         });
     }

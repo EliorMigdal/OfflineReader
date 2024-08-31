@@ -107,12 +107,12 @@ public sealed class MakoArticleParser : IArticleParser
         if (datePublishedNode != null)
         {
             DateTime datePublished = DateTime.Parse(datePublishedNode.GetAttributeValue("content", string.Empty));
-            io_Article.PublishedDate = datePublished;
+            io_Article.PublishedDate = DateTime.Parse(datePublished.ToString("dd-MM-yyyy HH:mm"));
         }
 
         if (dateModifiedNode == null) return;
         DateTime dateModified = DateTime.Parse(dateModifiedNode.GetAttributeValue("content", string.Empty));
-        io_Article.LastUpdated = dateModified;
+        io_Article.LastUpdated = DateTime.Parse(dateModified.ToString("dd-MM-yyyy HH:mm"));
     }
 
     private void extractHeaderImage(InnerArticle io_Article, HtmlDocument i_HTML, ref int i_NumOfImages)
