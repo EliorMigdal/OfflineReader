@@ -15,7 +15,7 @@ public class TimedHostedService : IHostedService, IDisposable
     {
         _logger.LogInformation("Timed Hosted Service running.");
 
-        var nextRunTime = DateTime.Today.AddHours(20);
+        var nextRunTime = DateTime.Today.AddHours(20).AddMinutes(00);
         if (DateTime.Now > nextRunTime)
         {
             nextRunTime = nextRunTime.AddDays(1);

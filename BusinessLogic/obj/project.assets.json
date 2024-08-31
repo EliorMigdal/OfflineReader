@@ -15,6 +15,21 @@
           }
         }
       }
+    },
+    "net8.0/iossimulator-arm64": {
+      "HtmlAgilityPack/1.11.64": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/HtmlAgilityPack.dll": {
+            "related": ".deps.json;.pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/HtmlAgilityPack.dll": {
+            "related": ".deps.json;.pdb;.xml"
+          }
+        }
+      }
     }
   },
   "libraries": {
@@ -104,6 +119,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -132,6 +152,11 @@
           }
         },
         "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.303/PortableRuntimeIdentifierGraph.json"
+      }
+    },
+    "runtimes": {
+      "iossimulator-arm64": {
+        "#import": []
       }
     }
   }

@@ -103,7 +103,7 @@ public sealed class ArticleContentGenerator
     {
         io_StackLayout.Children.Add(new Label
         {
-            Text = $"Published: {i_Article.PublishedDate:yyyy-MM-dd HH:mm}",
+            Text = $"Published: {i_Article.PublishedDate:dd-MM-yyyy HH:mm}",
             FontSize = 14,
             TextColor = Colors.Gray,
             Margin = new Thickness(0, 0, 0, 5),
@@ -115,7 +115,7 @@ public sealed class ArticleContentGenerator
         {
             io_StackLayout.Children.Add(new Label
             {
-                Text = $"Updated: {i_Article.LastUpdated:yyyy-MM-dd HH:mm}",
+                Text = $"Updated: {i_Article.LastUpdated:dd-MM-yyyy HH:mm}",
                 FontSize = 14,
                 TextColor = Colors.Gray,
                 Margin = new Thickness(0, 0, 0, 5),

@@ -7,47 +7,49 @@
     <ContentPage.BindingContext>
         <viewmodel:ReaderViewModel/>
     </ContentPage.BindingContext>
-    <Grid RowDefinitions="Auto, *">
-        <Grid ColumnDefinitions="*, Auto, *, Auto, Auto"
-              Grid.Row="0">
-            <Slider Margin="20, 0,0,0"
-                    Grid.Column="0"
-                    ValueChanged="Slider_OnValueChanged"
-                    Minimum="-5"
-                    Maximum="5"
-                    FlowDirection="LeftToRight"
-                    Value="0"/>
-            <Label Text="Text"
-                   Grid.Column="1"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center"
-                   Margin="5,0,0,5"
-                   FontSize="Large"/>
-            <ImageButton Margin="5, 5, 20, 5"
-                         Padding="5"
-                         Grid.Column="3"
-                         Command="{Binding DownloadButtonCommand}"
-                         IsEnabled="{Binding IsDownloadButtonEnabled}"
-                         Source="{Binding DownloadButtonImage}"
-                         BackgroundColor="Transparent"/>
-            <ImageButton x:Name="DeleteButton"
-                    Margin="5, 5, 20, 5"
-                    Padding="5"
-                    Grid.Column="4"
-                    Command="{Binding DeleteButtonCommand}"
-                    IsEnabled="{Binding IsDeleteButtonEnabled}"
-                    Source="{Binding DeleteButtonImage}"
-                    BackgroundColor="Transparent"/>
+    <ContentPage.Content>
+        <Grid RowDefinitions="Auto, *">
+            <Grid ColumnDefinitions="*, Auto, *, Auto, Auto"
+                  Grid.Row="0">
+                <Slider Margin="20, 0,0,0"
+                        Grid.Column="0"
+                        ValueChanged="Slider_OnValueChanged"
+                        Minimum="-5"
+                        Maximum="5"
+                        FlowDirection="LeftToRight"
+                        Value="0"/>
+                <Label Text="Text"
+                       Grid.Column="1"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       Margin="5,0,0,5"
+                       FontSize="Large"/>
+                <ImageButton Margin="5, 5, 20, 5"
+                             Padding="5"
+                             Grid.Column="3"
+                             Command="{Binding DownloadButtonCommand}"
+                             IsEnabled="{Binding IsDownloadButtonEnabled}"
+                             Source="{Binding DownloadButtonImage}"
+                             BackgroundColor="Transparent"/>
+                <ImageButton x:Name="DeleteButton"
+                        Margin="5, 5, 20, 5"
+                        Padding="5"
+                        Grid.Column="4"
+                        Command="{Binding DeleteButtonCommand}"
+                        IsEnabled="{Binding IsDeleteButtonEnabled}"
+                        Source="{Binding DeleteButtonImage}"
+                        BackgroundColor="Transparent"/>
+            </Grid>
+            <ScrollView Grid.Row="1"
+                        VerticalOptions="FillAndExpand">
+                <StackLayout Padding="20"
+                             Margin="10"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand">
+                    <ContentView Content="{Binding ArticleLayout}"
+                                 x:Name="Content"/>
+                </StackLayout>
+            </ScrollView>
         </Grid>
-        <ScrollView Grid.Row="1"
-                    VerticalOptions="FillAndExpand">
-            <StackLayout Padding="20"
-                         Margin="10"
-                         HorizontalOptions="FillAndExpand"
-                         VerticalOptions="FillAndExpand">
-                <ContentView Content="{Binding ArticleLayout}"
-                             x:Name="Content"/>
-            </StackLayout>
-        </ScrollView>
-    </Grid>
+    </ContentPage.Content>
 </ContentPage>

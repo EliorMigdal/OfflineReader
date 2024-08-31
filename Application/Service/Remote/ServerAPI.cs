@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json;
 using BusinessLogic.Article.Partials;
 using BusinessLogic.SupportedWebsite;
@@ -6,7 +7,7 @@ namespace Application.Service.Remote;
 
 public sealed class ServerAPI
 {
-    private readonly string r_BaseURL = "http://localhost:5119/offlineReader";
+    private readonly string r_BaseURL = "http://20.217.168.73/offlineReader";
     private static readonly object rm_CreationLock = new();
     private readonly JsonSerializerOptions rm_CaseInsensitiveOptions = new()
     {
@@ -30,14 +31,25 @@ public sealed class ServerAPI
 
     public async Task<List<SupportedWebsite>> LoadSupportedWebsites()
     {
-        string url = r_BaseURL + "/supportedWebsites/getWebsites";
-        using HttpClient client = new HttpClient();
-        var jsonResponse = await client.GetStringAsync(url);
+        try
+        {
+            string url = r_BaseURL + "/supportedWebsites/getWebsites";
+            Debug.WriteLine($"About to reach API: {url}");
+            using HttpClient client = new HttpClient();
+            var jsonResponse = await client.GetStringAsync(url);
+            Debug.WriteLine($"Got JSON response: {jsonResponse}");
         
-        List<SupportedWebsite>? supportedWebsites = 
-            JsonSerializer.Deserialize<List<SupportedWebsite>>(jsonResponse, rm_CaseInsensitiveOptions);
+            List<SupportedWebsite>? supportedWebsites = 
+                JsonSerializer.Deserialize<List<SupportedWebsite>>(jsonResponse, rm_CaseInsensitiveOptions);
         
-        return supportedWebsites ?? new List<SupportedWebsite>();
+            return supportedWebsites ?? new List<SupportedWebsite>();
+        }
+        
+        catch (Exception e)
+        {
+            Debug.WriteLine($"Got error: {e.Message}");
+            throw;
+        }
     }
 
     public async Task<List<string>> GetAvailableDates(string i_Website)

@@ -35,6 +35,7 @@
                 </Border.GestureRecognizers>
                 <Label Margin="20"
                         Text="Online"
+                        TextColor="Black"
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
                         Padding="0">
@@ -51,6 +52,7 @@
                 </Border.GestureRecognizers>
                 <Label Margin="20"
                         Text="Offline"
+                        TextColor="Black"
                         HorizontalOptions="End"
                         VerticalOptions="Center">
                 </Label>
@@ -79,7 +81,17 @@
                                 SelectionMode="Single"
                                 SelectedItem="{Binding SelectedArticle}"
                                 SelectionChangedCommand="{Binding ArticleSelectedCommand}"
-                                Margin="5"/>
+                                Margin="5">
+                    <CollectionView.Footer>
+                        <Button Text="Load more articles..."
+                                FontSize="Header"
+                                Command="{Binding LoadMoreArticlesCommand}"
+                                IsVisible="{Binding AnyArticlesToLoad}"
+                                HorizontalOptions="Center"
+                                VerticalOptions="End"
+                                BackgroundColor="LightBlue"/>
+                    </CollectionView.Footer>
+                </CollectionView>
             </ContentView>
         </RefreshView>
         <ActivityIndicator Grid.Row="1"

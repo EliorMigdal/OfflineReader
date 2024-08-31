@@ -51,11 +51,13 @@
         <MauiImage Update="Resources\Images\trending.png" BaseSize="30,30" />
         <MauiImage Update="Resources\Images\settings.png" BaseSize="30,30" />
         <MauiImage Update="Resources\Images\history.png" BaseSize="30,30" />
-        <MauiImage Update="Resources\Images\download.png" BaseSize="30,30" />
         <MauiImage Update="Resources\Images\verified.png" BaseSize="30,30" />
         <MauiImage Update="Resources\Images\slider.png" BaseSize="30,30" />
         <MauiImage Update="Resources\Images\error.png" BaseSize="30,30" />
-        <MauiImage Update="Resources\Images\delete.png" BaseSize="30,30" />
+        <MauiImage Update="Resources\Images\deletelight.png" BaseSize="30,30" />
+        <MauiImage Update="Resources\Images\deletedark.png" BaseSize="30,30" />
+        <MauiImage Update="Resources\Images\downloadlight.png" BaseSize="30,30" />
+        <MauiImage Update="Resources\Images\downloaddark.png" BaseSize="30,30" />
 
         <!-- Custom Fonts -->
         <MauiFont Include="Resources\Fonts\*"/>

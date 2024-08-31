@@ -1,3 +1,4 @@
+using BusinessLogic.Article.Partials;
 using Microsoft.AspNetCore.Mvc;
 using Server.Services;
 
@@ -14,17 +15,12 @@ public class ArticlesHistoryController : ControllerBase
     {
         try
         {
-            if (string.IsNullOrEmpty(website) || string.IsNullOrEmpty(date))
-            {
-                return BadRequest("Missing required query parameters: 'website' and 'date'.");
-            }
-            
             return Ok(m_DBService.GetArticlesList(website, date));
         }
         
         catch (Exception e)
         {
-            return BadRequest(e);
+            return BadRequest(new {error = e.Message});
         }
     }
 
@@ -33,17 +29,28 @@ public class ArticlesHistoryController : ControllerBase
     {
         try
         {
-            if (string.IsNullOrEmpty(website))
-            {
-                return BadRequest("Missing required query parameter: 'website'.");
-            }
-
             return Ok(m_DBService.GetAvailableDates(website));
         }
         
         catch (Exception e)
         {
-            return BadRequest(e);
+            return BadRequest(new {error = e.Message});
+        }
+    }
+
+    [HttpPost("postArticle")]
+    public IActionResult PostArticleHistoryEntry([FromBody] OuterArticle article)
+    {
+        try
+        {
+            m_DBService.InsertArticleToTable(article);
+            
+            return Ok();
+        }
+        
+        catch (Exception e)
+        {
+            return BadRequest(new {error = e.Message});
         }
     }
 }

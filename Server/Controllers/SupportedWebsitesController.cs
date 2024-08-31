@@ -1,3 +1,4 @@
+using BusinessLogic.SupportedWebsite;
 using Microsoft.AspNetCore.Mvc;
 using Server.Services;
 
@@ -12,27 +13,53 @@ public class SupportedWebsitesController : ControllerBase
     [HttpGet("getWebsites")]
     public IActionResult GetSupportedWebsites()
     {
-        return Ok(m_DBService.GetSupportedWebsites());
+        try
+        {
+            return Ok(m_DBService.GetSupportedWebsites());
+        }
+        
+        catch (Exception e)
+        {
+            return BadRequest(new { error = e.Message });
+        }
     }
 
     [HttpPost("postWebsite")]
-    public IActionResult PostSupportedWebsite([FromQuery] string name, [FromQuery] string url)
+    public IActionResult PostSupportedWebsite([FromBody] SupportedWebsite website)
     {
         try
         {
-            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(url))
+            m_DBService.AddSupportedWebsite(website.Name, website.URL, website.ImageURL);
+
+            return Ok();
+        }
+        
+        catch (Exception e)
+        {
+            return BadRequest(new { error = e.Message });
+        }
+    }
+    
+    [HttpDelete("deleteWebsite")]
+    public IActionResult DeleteSupportedWebsite([FromQuery] string name, [FromQuery] string code)
+    {
+        try
+        {
+            string? connectionString = Environment.GetEnvironmentVariable("ID");
+
+            if (!code.Equals(connectionString))
             {
-                return BadRequest("Missing required query parameters: 'name' and 'url'.");
+                return BadRequest("Wrong code for website deletion.");
             }
             
-            m_DBService.AddSupportedWebsite(name, url);
+            m_DBService.RemoveSupportedWebsite(name);
             
             return Ok();
         }
         
         catch (Exception e)
         {
-            return BadRequest(e);
+            return BadRequest(new { error = e.Message });
         }
     }
 }
