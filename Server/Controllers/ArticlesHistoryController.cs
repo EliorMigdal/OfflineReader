@@ -1,4 +1,5 @@
-using BusinessLogic.Article.Partials;
+using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Server.Services;
 
@@ -37,13 +38,13 @@ public class ArticlesHistoryController : ControllerBase
             return BadRequest(new {error = e.Message});
         }
     }
-
-    [HttpPost("postArticle")]
-    public IActionResult PostArticleHistoryEntry([FromBody] OuterArticle article)
+    
+    [HttpPost("updateHistory")]
+    public async Task<IActionResult> UpdateArticlesHistory()
     {
         try
         {
-            m_DBService.InsertArticleToTable(article);
+            await m_DBService.UpdateArticlesHistory();
             
             return Ok();
         }

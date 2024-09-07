@@ -99,7 +99,6 @@
                            VerticalOptions="Center"
                            IsRunning="{Binding IsBusy}"
                            IsVisible="{Binding IsBusy}"
-                           Color="Black"
                            Margin="2"/>
     </Grid>
 </ContentPage>

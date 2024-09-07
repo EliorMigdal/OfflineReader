@@ -21,7 +21,7 @@ spec:
         - name: DB_CONNECTION_STRING
           value: "Host=db-service;Database=postgres;Username=postgres;Password=docker"
         - name: ID
-          value: "31345532"
+          value: "313455321"
         ports:
         - containerPort: 8080
           name: server

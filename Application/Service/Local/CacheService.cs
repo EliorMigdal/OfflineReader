@@ -6,21 +6,21 @@ namespace Application.Service.Local;
 public sealed class CacheService
 {
     private static string CachePath => Path.Combine(FileSystem.AppDataDirectory, "Cache");
-    private readonly ArticleModifierService m_ArticleModifier = ArticleModifierService.Instance;
-    private readonly ArticleFinderService m_ArticleFinder = ArticleFinderService.Instance;
-    private static readonly object rm_CreationLock = new();
-    private static CacheService? m_Instance;
+    private readonly ArticleModifierService r_ArticleModifier = ArticleModifierService.Instance;
+    private readonly ArticleFinderService r_ArticleFinder = ArticleFinderService.Instance;
+    private static readonly object sr_CreationLock = new();
+    private static CacheService? s_Instance;
     public static CacheService Instance
     {
         get
         {
-            if (m_Instance is not null) return m_Instance;
+            if (s_Instance is not null) return s_Instance;
             
-            lock (rm_CreationLock)
+            lock (sr_CreationLock)
             {
-                m_Instance ??= new CacheService();
+                s_Instance ??= new CacheService();
                 
-                return m_Instance;
+                return s_Instance;
             }
         }
     }
@@ -29,11 +29,11 @@ public sealed class CacheService
 
     public Article? FindCachedArticle(OuterArticle i_Article)
     {
-        return m_ArticleFinder.SearchForArticle(i_Article, CachePath);
+        return r_ArticleFinder.SearchForArticle(i_Article, CachePath);
     }
 
     public void CacheArticle(Article i_Article)
     {
-        m_ArticleModifier.SaveArticle(i_Article, CachePath);
+        r_ArticleModifier.SaveArticle(i_Article, CachePath);
     }
 }

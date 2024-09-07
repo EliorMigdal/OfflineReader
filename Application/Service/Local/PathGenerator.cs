@@ -6,19 +6,19 @@ namespace Application.Service.Local;
 
 public sealed class PathGenerator
 {
-    private static readonly object rm_CreationLock = new();
-    private static PathGenerator? m_Instance;
+    private static readonly object sr_CreationLock = new();
+    private static PathGenerator? s_Instance;
     public static PathGenerator Instance
     {
         get
         {
-            if (m_Instance is not null) return m_Instance;
+            if (s_Instance is not null) return s_Instance;
 
-            lock (rm_CreationLock)
+            lock (sr_CreationLock)
             {
-                m_Instance ??= new PathGenerator();
+                s_Instance ??= new PathGenerator();
 
-                return m_Instance;
+                return s_Instance;
             }
         }
     }

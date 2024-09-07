@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.RegularExpressions;
 using BusinessLogic.Article.Content;
 using BusinessLogic.Article.Partials;
 using HtmlAgilityPack;
@@ -8,7 +9,6 @@ namespace BusinessLogic.HTMLParser.MainPageParser.Type;
 public sealed class MakoMainPageParser : IMainPageParser
 {
     private static readonly object rm_CreationLock = new();
-    private readonly object rm_ParsingLock = new();
     private readonly string k_BaseURL = "https://www.mako.co.il";
     private readonly string k_Website = "mako";
     private static MakoMainPageParser? m_Instance;
@@ -31,24 +31,19 @@ public sealed class MakoMainPageParser : IMainPageParser
 
     public List<OuterArticle> ParseMainPageHTML(string i_HTML)
     {
-        lock (rm_ParsingLock)
-        {
-            List<OuterArticle> articles = new List<OuterArticle>();
-            HtmlDocument HTMLDocument = new HtmlDocument();
-            HTMLDocument.LoadHtml(i_HTML);
-            readSpotlightArticles(ref articles, HTMLDocument);
+        List<OuterArticle> articles = new List<OuterArticle>();
+        HtmlDocument HTMLDocument = new HtmlDocument();
+        HTMLDocument.LoadHtml(i_HTML);
+        readSpotlightArticles(ref articles, HTMLDocument);
 
-            return articles;
-        }
+        return articles;
     }
 
     private void readSpotlightArticles(ref List<OuterArticle> io_Articles, HtmlDocument i_HTML)
     {
-        HtmlNode spotlightNode = i_HTML.DocumentNode.SelectSingleNode("//div[contains(@class, 'Spotlight_root')]");
+        var articleNodes = i_HTML.DocumentNode.SelectNodes("//article");
 
-        if (spotlightNode == null) return;
-        HtmlNodeCollection articleNodes = i_HTML.DocumentNode.SelectNodes(".//article");
-
+        if (articleNodes is null) return;
         foreach (HtmlNode articleNode in articleNodes)
         {
             try
@@ -72,8 +67,8 @@ public sealed class MakoMainPageParser : IMainPageParser
                     Date = articleDate,
                     LastUpdated = articleDate
                 };
-                
-                article.GenerateArticleID();
+
+                GenerateArticleID(article);
                 io_Articles.Add(article);
             }
 
@@ -141,9 +136,7 @@ public sealed class MakoMainPageParser : IMainPageParser
             !DateTime.TryParse(dateNode.GetAttributeValue("dateTime", string.Empty), out DateTime o_Date))
             throw new Exception();
         
-        var articleDate = DateTime.Parse(o_Date.ToString("dd-MM-yyyy HH:mm"));
-
-        return articleDate;
+        return o_Date;
     }
 
     private string findFirstImage(string i_ImageURL)
@@ -165,5 +158,21 @@ public sealed class MakoMainPageParser : IMainPageParser
         }
 
         return builder.ToString()[..(builder.Length - 3)].Replace("amp;", string.Empty);
+    }
+    
+    public void GenerateArticleID(OuterArticle io_Article)
+    {
+        string regularExpression = @"Article-([a-zA-Z0-9]+)\.htm";
+        Match match = Regex.Match(io_Article.URL, regularExpression);
+
+        if (match.Success)
+        {
+            io_Article.ID = match.Groups[1].Value;
+        }
+
+        else
+        {
+            io_Article.ID = io_Article.URL;
+        }
     }
 }

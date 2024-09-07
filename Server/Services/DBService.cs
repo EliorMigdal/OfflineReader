@@ -8,14 +8,14 @@ namespace Server.Services;
 
 public sealed class DBService
 {
-    private static DBService? m_Instance;
+    private static DBService? s_Instance;
     public static DBService Instance
     {
         get
         {
-            m_Instance ??= new DBService();
+            s_Instance ??= new DBService();
             
-            return m_Instance;
+            return s_Instance;
         }
     }
     
@@ -25,7 +25,7 @@ public sealed class DBService
     {
         List<SupportedWebsite> supportedWebsites = new List<SupportedWebsite>();
         using NpgsqlConnection connection = connectToDatabase();
-        string query = "SELECT * " +
+        const string query = "SELECT * " +
                        "FROM SupportedWebsites";
         using var command = new NpgsqlCommand(query, connection);
         
@@ -50,7 +50,7 @@ public sealed class DBService
     public void AddSupportedWebsite(string i_Name, string i_URL, string i_Logo)
     {
         using NpgsqlConnection connection = connectToDatabase();
-        string query = "INSERT INTO SupportedWebsites (name, url, imageurl) " +
+        const string query = "INSERT INTO SupportedWebsites (name, url, imageurl) " +
                        "VALUES (@name, @url, @imageurl)";
         using var command = new NpgsqlCommand(query, connection);
         
@@ -65,7 +65,7 @@ public sealed class DBService
     public void RemoveSupportedWebsite(string i_Name)
     {
         using NpgsqlConnection connection = connectToDatabase();
-        string query = @" DELETE FROM SupportedWebsites 
+        const string query = @" DELETE FROM SupportedWebsites 
                             WHERE name = @name";
     
         using var command = new NpgsqlCommand(query, connection);
@@ -86,7 +86,7 @@ public sealed class DBService
             throw new ArgumentException("Invalid date format");
         }
 
-        string query = "SELECT * " +
+        const string query = "SELECT * " +
                        "FROM articles " +
                        "WHERE website = @website AND date::date = @date";
         using var command = new NpgsqlCommand(query, connection);
@@ -129,32 +129,26 @@ public sealed class DBService
     private async Task insertNewArticles()
     {
         List<SupportedWebsite> supportedWebsites = GetSupportedWebsites();
-        MainPageParserFactory factory = MainPageParserFactory.Instance;
-
+        using HttpClient client = new HttpClient();
+        
         foreach (SupportedWebsite supportedWebsite in supportedWebsites)
         {
-            IMainPageParser? parser = factory.GenerateMainPageParser(supportedWebsite.Name);
-            if (parser is null) return;
-            using HttpClient client = new HttpClient();
+            IMainPageParser? parser = MainPageParserFactory.GenerateMainPageParser(supportedWebsite.Name);
+            if (parser is null) continue;
             string HTML = await client.GetStringAsync(supportedWebsite.URL);
             List<OuterArticle> parsedList = parser.ParseMainPageHTML(HTML);
 
             foreach (OuterArticle article in parsedList)
             {
-                article.GenerateArticleID();
                 InsertArticleToTable(article);
             }
         }
     }
 
-    public void InsertArticleToTable(OuterArticle i_Article)
+    private void InsertArticleToTable(OuterArticle i_Article)
     {
-        DateTime oneWeekAgo = DateTime.Now.AddDays(-7);
-        DateTime yesterday = DateTime.Now.AddDays(-1);
-
-        if (i_Article.Date < oneWeekAgo || i_Article.Date > yesterday) return;
         using NpgsqlConnection connection = connectToDatabase();
-        string query = @"
+        const string query = @"
                 INSERT INTO articles (website, date, title, id, image, url, time) 
                 VALUES (@website, @date, @title, @id, @image, @url, @time)
                 ON CONFLICT (id) 
@@ -175,7 +169,7 @@ public sealed class DBService
         command.Parameters.AddWithValue("@image", i_Article.MainImage.Content);
         command.Parameters.AddWithValue("@url", i_Article.URL);
         command.Parameters.AddWithValue("@time", i_Article.Date);
-            
+        
         connection.Open();
         command.ExecuteNonQuery();
     }
@@ -183,18 +177,15 @@ public sealed class DBService
     private void deleteOldArticles()
     {
         DateTime oneWeekAgo = DateTime.Now.AddDays(-8);
-        DateTime yesterday = DateTime.Now.AddDays(-1);
 
         using NpgsqlConnection connection = connectToDatabase();
-        string query = @"
+        const string query = @"
         DELETE FROM articles 
-        WHERE date < @oneWeekAgo::date or
-              date > @yesterday::date";
+        WHERE date < @oneWeekAgo";
     
         using var command = new NpgsqlCommand(query, connection);
+        
         command.Parameters.AddWithValue("@oneWeekAgo", oneWeekAgo);
-        command.Parameters.AddWithValue("@yesterday", yesterday);
-    
         connection.Open(); 
         command.ExecuteNonQuery();
     }
@@ -202,23 +193,25 @@ public sealed class DBService
     public List<string> GetAvailableDates(string i_Website)
     {
         List<string> dates = new List<string>();
+        DateTime yesterday = DateTime.Now.AddDays(-1);
         using NpgsqlConnection connection = connectToDatabase();
-        string query = "SELECT date::date as date " +
-                       "FROM articles " +
-                       "WHERE website = @website " +
-                       "GROUP BY date::date " +
-                       "ORDER BY date";
+
+        const string query = "SELECT to_char(date, 'DD-MM-YYYY') as formatted_date " +
+                        "FROM articles " +
+                       "WHERE (website = @website and date <= @yesterday)" +
+                       "GROUP BY formatted_date " +
+                       "ORDER BY formatted_date";
         using var command = new NpgsqlCommand(query, connection);
         
         command.Parameters.AddWithValue("@website", i_Website);
+        command.Parameters.AddWithValue("@yesterday", yesterday);
         connection.Open();
+        
         using var reader = command.ExecuteReader();
 
         while (reader.Read())
         {
-            DateTime dateValue = reader.GetDateTime(reader.GetOrdinal("date"));
-            string formattedDate = dateValue.ToString("dd-MM-yyyy");
-            dates.Add(formattedDate);
+            dates.Add(reader.GetString(reader.GetOrdinal("formatted_date")));
         }
     
         return dates;
@@ -233,7 +226,7 @@ public sealed class DBService
 
     public void InitializeDatabase()
     {
-        NpgsqlConnection connection = connectToDatabase();
+        using NpgsqlConnection connection = connectToDatabase();
         
         createWebsitesTable(connection);
         createArticlesTable(connection);
@@ -241,7 +234,7 @@ public sealed class DBService
 
     private void createWebsitesTable(NpgsqlConnection i_Connection)
     {
-        string query = @"CREATE TABLE IF NOT EXISTS SupportedWebsites (
+        const string query = @"CREATE TABLE IF NOT EXISTS SupportedWebsites (
                             Name VARCHAR(15) PRIMARY KEY,
                             URL VARCHAR(50),
                             ImageURL VARCHAR);";
@@ -253,7 +246,7 @@ public sealed class DBService
 
     private void createArticlesTable(NpgsqlConnection i_Connection)
     {
-        string query = @"CREATE TABLE IF NOT EXISTS Articles (
+        const string query = @"CREATE TABLE IF NOT EXISTS Articles (
                             ID VARCHAR PRIMARY KEY,
                             URL VARCHAR,
                             Image VARCHAR,

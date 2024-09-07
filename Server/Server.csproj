@@ -21,7 +21,7 @@
 
     <ItemGroup>
       <Reference Include="BusinessLogic">
-        <HintPath>..\BusinessLogic\bin\Debug\net8.0\BusinessLogic.dll</HintPath>
+        <HintPath>BusinessLogic.dll</HintPath>
       </Reference>
     </ItemGroup>
 

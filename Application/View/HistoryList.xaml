@@ -4,8 +4,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Application.View.HistoryList"
              xmlns:viewmodel="clr-namespace:Application.ViewModel"
-             x:DataType="viewmodel:HistoryListViewModel"
-             xmlns:model="clr-namespace:BusinessLogic.Article.Partials;assembly=BusinessLogic">
+             x:DataType="viewmodel:HistoryListViewModel">
     <ContentPage.Resources>
         <Style TargetType="Grid">
             <Setter Property="VisualStateManager.VisualStateGroups">
