@@ -2,39 +2,16 @@
 
 namespace BusinessLogic.HTMLParser.ArticleParser;
 
-public sealed class ArticleParserFactory
+public static class ArticleParserFactory
 {
-    private static readonly object rm_CreationLock = new();
-    private readonly object rm_GenerationLock = new();
-    private static ArticleParserFactory? m_Instance;
-    public static ArticleParserFactory Instance
+    public static IArticleParser? GenerateParser(string i_Website)
     {
-        get
+        IArticleParser? parser = i_Website switch
         {
-            if (m_Instance is not null) return m_Instance;
-            
-            lock (rm_CreationLock)
-            {
-                m_Instance ??= new ArticleParserFactory();
+            "mako" => MakoArticleParser.Instance,
+            _ => null,
+        };
 
-                return m_Instance;
-            }
-        }
-    }
-    
-    private ArticleParserFactory() {}
-    
-    public IArticleParser? GenerateParser(string i_Website)
-    {
-        lock (rm_GenerationLock)
-        {
-            IArticleParser? parser = i_Website switch
-            {
-                "mako" => MakoArticleParser.Instance,
-                _ => null,
-            };
-
-            return parser; 
-        }
+        return parser; 
     }
 }

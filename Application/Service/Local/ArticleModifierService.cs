@@ -7,8 +7,8 @@ namespace Application.Service.Local;
 
 public sealed class ArticleModifierService
 {
-    private static readonly object rm_CreationLock = new();
-    private static readonly object rm_SaveArticleLockContext = new();
+    private static readonly object sr_CreationLock = new();
+    private static readonly object sr_SaveArticleLockContext = new();
     private static ArticleModifierService? m_Instance;
     public static ArticleModifierService Instance
     {
@@ -16,7 +16,7 @@ public sealed class ArticleModifierService
         {
             if (m_Instance is not null) return m_Instance;
 
-            lock (rm_CreationLock)
+            lock (sr_CreationLock)
             {
                 m_Instance ??= new ArticleModifierService();
 
@@ -31,7 +31,7 @@ public sealed class ArticleModifierService
 
     public void SaveArticle(Article i_Article, string i_Path)
     {
-        lock (rm_SaveArticleLockContext)
+        lock (sr_SaveArticleLockContext)
         {
             string articlePath = i_Path + m_PathGenerator.GenerateArticlePath(i_Article.OuterArticle);
         

@@ -30,18 +30,17 @@
                         SelectionChangedCommand="{Binding DateSelectedCommand}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid HeightRequest="60"
-                          WidthRequest="60"
-                          Margin="10">
+                    <Grid Margin="10">
                         <Frame BorderColor="Gray"
                                BackgroundColor="DarkGray"
                                IsClippedToBounds="True"
                                HorizontalOptions="Center"
                                VerticalOptions="Center"
-                               HeightRequest="70"
-                               WidthRequest="150">
+                               HeightRequest="50"
+                               WidthRequest="120"
+                               Padding="5">
                             <Label Text="{Binding .}" 
-                                   FontSize="20" 
+                                   FontSize="14" 
                                    VerticalOptions="Center" 
                                    HorizontalOptions="Center"/>
                         </Frame>
