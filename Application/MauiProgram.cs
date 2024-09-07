@@ -46,7 +46,15 @@ public static class MauiProgram
         Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
         builder.Services.AddSingleton<SettingsViewModel>();
         builder.Services.AddSingleton<SettingsPage>();
-        
+
+        Routing.RegisterRoute(nameof(ChooseSitesPage), typeof(ChooseSitesPage));
+        builder.Services.AddSingleton<ChooseSitesViewModel>();
+        builder.Services.AddSingleton<ChooseSitesPage>();
+
+        Routing.RegisterRoute(nameof(AutoDownloadConfigPage), typeof(AutoDownloadConfigPage));
+        builder.Services.AddSingleton<AutoDownloadConfigViewModel>();
+        builder.Services.AddSingleton<AutoDownloadConfigPage>();
+
         return builder.Build();
     }
 }

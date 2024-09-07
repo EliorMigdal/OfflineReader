@@ -2,8 +2,16 @@
 
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Application.View.SettingsPage">
-    <ContentPage.Content>
-        
-    </ContentPage.Content>
+             x:Class="Application.View.SettingsPage"
+			 xmlns:viewmodel="clr-namespace:Application.ViewModel">
+    <ContentPage.BindingContext>
+        <viewmodel:SettingsViewModel/>
+    </ContentPage.BindingContext>
+    
+    <StackLayout Padding="10">
+        <Button Text="Choose Sites" Command="{Binding ChooseSitesClickedCommand}" Margin="10" />
+        <Button Text="Auto Download" Command="{Binding AutoDownloadClickedCommand}" Margin="10" />
+        <Button Text="Notifications" Command="{Binding NotificationsClickedCommand}" Margin="10" />
+    </StackLayout>
+
 </ContentPage>

@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Application.View.AutoDownloadConfigPage"
+             xmlns:viewmodel="clr-namespace:Application.ViewModel">
+    <ContentPage.BindingContext>
+        <viewmodel:AutoDownloadConfigViewModel/>
+    </ContentPage.BindingContext>
+
+    <StackLayout Padding="20">
+        <!-- Auto Download Switch -->
+        <Label Text="Enable Auto Download" />
+        <Switch IsToggled="{Binding IsAutoDownloadEnabled}" />
+
+        <!-- Time Lapse Picker with Hardcoded Items -->
+        <Label Text="Select when to auto-download articles to device"
+               FontSize="Small"
+               Margin="10"
+               HorizontalOptions="Center"/>
+        <Picker Title="Time lapse options" 
+                SelectedItem="{Binding SelectedHour}" 
+                IsEnabled="{Binding IsAutoDownloadEnabled}">
+            <Picker.Items>
+                <x:String>Every 6 hours</x:String>
+                <x:String>Every 12 hours</x:String>
+                <x:String>Every 24 hours</x:String>
+                <x:String>Every 2 days</x:String>
+                <x:String>Every 3 days</x:String>
+                <x:String>Every 4 days</x:String>
+                <x:String>Every 5 days</x:String>
+                <x:String>Every 1 week</x:String>
+                <x:String>Every 2 weeks</x:String>
+            </Picker.Items>
+        </Picker>
+
+        <!-- Time Lapse Picker with Hardcoded Items -->
+        <Label Text="Select the starting hour of auto-download" 
+               FontSize="Small"
+               Margin="10"
+               HorizontalOptions="Center"/>
+        <Picker Title="Starting hour options">
+            <!--SelectedItem="{Binding SelectedHour}" 
+        IsEnabled="{Binding IsAutoDownloadEnabled}">-->
+            <Picker.Items>
+                <x:String>06:00 A.M.</x:String>
+                <x:String>07:00 A.M.</x:String>
+                <x:String>08:00 A.M.</x:String>
+                <x:String>09:00 A.M.</x:String>
+                <x:String>06:00 P.M.</x:String>
+                <x:String>07:00 P.M.</x:String>
+                <x:String>08:00 P.M.</x:String>
+                <x:String>09:00 P.M.</x:String>
+            </Picker.Items>
+        </Picker>
+    </StackLayout>
+</ContentPage>
+
+
+
+
+
+
+<!--<?xml version="1.0" encoding="utf-8"?>
+    
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Application.View.AutoDownloadConfigPage"
+             xmlns:viewmodel="clr-namespace:Application.ViewModel">
+    <ContentPage.BindingContext>
+        <viewmodel:AutoDownloadConfigViewModel/>
+    </ContentPage.BindingContext>
+
+    <StackLayout Padding="20">
+        --><!-- Auto Download Switch --><!--
+        <Label Text="Enable Auto Download" />
+        <Switch IsToggled="{Binding IsAutoDownloadEnabled}" />
+
+        --><!-- Only on WiFi Switch --><!--
+        <Label Text="Download Only on WiFi" />
+        <Switch IsToggled="{Binding IsOnlyOnWifiOptionEnbaled}" 
+                IsEnabled="{Binding IsAutoDownloadEnabled}" />
+
+        --><!-- Time Unit Picker --><!--
+        <Label Text="Select Time Unit" />
+        <Picker ItemsSource="{Binding TimeUnits}" 
+                SelectedItem="{Binding SelectedTimeUnit}" 
+                IsEnabled="{Binding IsAutoDownloadEnabled}" />
+
+        --><!-- Max Number of Articles Picker --><!--
+        <Label Text="Max Number of Articles to Save" />
+        <Picker ItemsSource="{Binding PossibleMaxNumOfArticlesToSave}" 
+                SelectedItem="{Binding MaxNumOfArticlesToSave}" 
+                IsEnabled="{Binding IsAutoDownloadEnabled}" />
+
+        --><!-- Time Lapse Pickers --><!--
+        <Label Text="Time Lapse for Updates" />
+        <Picker Title="Select Hours" 
+                ItemsSource="{Binding HoursList}" 
+                SelectedItem="{Binding SelectedHour}" 
+                IsVisible="{Binding IsHoursSelected}" 
+                IsEnabled="{Binding IsAutoDownloadEnabled}" />
+        <Picker Title="Select Days" 
+                ItemsSource="{Binding DaysList}" 
+                SelectedItem="{Binding SelectedDay}" 
+                IsVisible="{Binding IsDaysSelected}" 
+                IsEnabled="{Binding IsAutoDownloadEnabled}" />
+        <Picker Title="Select Weeks" 
+                ItemsSource="{Binding WeeksList}" 
+                SelectedItem="{Binding SelectedWeek}" 
+                IsVisible="{Binding IsWeeksSelected}" 
+                IsEnabled="{Binding IsAutoDownloadEnabled}" />
+
+        --><!-- Save Button --><!--
+        <Button Text="Save Configuration" 
+                Command="{Binding SaveTimeLapseCommand}" 
+                IsEnabled="{Binding IsAutoDownloadEnabled}" />
+    </StackLayout>
+</ContentPage>
+
+
+
+
+
+--><!--<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Application.View.AutoDownloadConfig"
+			 xmlns:viewmodel="clr-namespace:Application.ViewModel">
+    <ContentPage.BindingContext>
+        <viewmodel:AutoDownloadConfigViewModel/>
+	</ContentPage.BindingContext>
+
+
+
+</ContentPage>-->
