@@ -9,6 +9,8 @@ public static class MainPageParserFactory
         IMainPageParser? parser = i_Website switch
         {
             "mako" => MakoMainPageParser.Instance,
+            "ynet" => YnetMainPageParser.Instance,
+            "walla" => WallaMainPageParser.Instance,
             _ => null
         };
 

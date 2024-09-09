@@ -9,8 +9,8 @@ namespace BusinessLogic.HTMLParser.MainPageParser.Type;
 public sealed class MakoMainPageParser : IMainPageParser
 {
     private static readonly object rm_CreationLock = new();
-    private readonly string k_BaseURL = "https://www.mako.co.il";
-    private readonly string k_Website = "mako";
+    private const string k_BaseURL = "https://www.mako.co.il";
+    private const string k_Website = "mako";
     private static MakoMainPageParser? m_Instance;
     public static MakoMainPageParser Instance
     {
@@ -41,7 +41,7 @@ public sealed class MakoMainPageParser : IMainPageParser
 
     private void readSpotlightArticles(ref List<OuterArticle> io_Articles, HtmlDocument i_HTML)
     {
-        var articleNodes = i_HTML.DocumentNode.SelectNodes("//article");
+        HtmlNodeCollection articleNodes = i_HTML.DocumentNode.SelectNodes("//article");
 
         if (articleNodes is null) return;
         foreach (HtmlNode articleNode in articleNodes)
@@ -53,10 +53,7 @@ public sealed class MakoMainPageParser : IMainPageParser
                 string articleImage = extractArticleImage(articleNode);
                 DateTime articleDate = extractArticleDate(articleNode);
 
-                if (articleURL.Length <= 0 || articleTitle.Length <= 0 || articleImage.Length <= 0)
-                {
-                    continue;
-                }
+                if (articleURL.Length <= 0 || articleTitle.Length <= 0 || articleImage.Length <= 0) continue;
 
                 OuterArticle article = new OuterArticle
                 {
@@ -64,8 +61,7 @@ public sealed class MakoMainPageParser : IMainPageParser
                     URL = articleURL,
                     MainImage = new ImageContent(articleImage, 0),
                     Website = k_Website,
-                    Date = articleDate,
-                    LastUpdated = articleDate
+                    Date = articleDate
                 };
 
                 GenerateArticleID(article);
@@ -84,7 +80,7 @@ public sealed class MakoMainPageParser : IMainPageParser
         string articleTitle = string.Empty;
         HtmlNode titleNode = i_ArticleNode.SelectSingleNode(".//h4 | .//h2");
 
-        if (titleNode != null)
+        if (titleNode is not null)
         {
             articleTitle = HtmlEntity.DeEntitize(titleNode.InnerText);
         }
@@ -97,14 +93,12 @@ public sealed class MakoMainPageParser : IMainPageParser
         string articleURL = string.Empty;
         HtmlNode URLNode = i_ArticleNode.SelectSingleNode(".//a");
 
-        if (URLNode != null)
-        {
-            articleURL = URLNode.GetAttributeValue("href", "");
+        if (URLNode is null) return articleURL;
+        articleURL = URLNode.GetAttributeValue("href", "");
 
-            if (!string.IsNullOrWhiteSpace(articleURL) && !articleURL.StartsWith("http"))
-            {
-                articleURL = new Uri(new Uri(k_BaseURL), articleURL).AbsoluteUri;
-            }
+        if (!string.IsNullOrWhiteSpace(articleURL) && !articleURL.StartsWith("http"))
+        {
+            articleURL = new Uri(new Uri(k_BaseURL), articleURL).AbsoluteUri;
         }
 
         return articleURL;
@@ -115,14 +109,12 @@ public sealed class MakoMainPageParser : IMainPageParser
         string articleImageURLs = string.Empty;
         HtmlNode imageNode = i_ArticleNode.SelectSingleNode(".//img");
 
-        if (imageNode != null)
-        {
-            articleImageURLs = imageNode.GetAttributeValue("srcSet", "");
+        if (imageNode is null) return articleImageURLs;
+        articleImageURLs = imageNode.GetAttributeValue("srcSet", "");
 
-            if (!string.IsNullOrWhiteSpace(articleImageURLs))
-            {
-                articleImageURLs = findFirstImage(articleImageURLs);
-            }
+        if (!string.IsNullOrWhiteSpace(articleImageURLs))
+        {
+            articleImageURLs = findFirstImage(articleImageURLs);
         }
 
         return articleImageURLs;
@@ -142,7 +134,7 @@ public sealed class MakoMainPageParser : IMainPageParser
     private string findFirstImage(string i_ImageURL)
     {
         StringBuilder builder = new StringBuilder();
-        builder.Append("https://www.mako.co.il");
+        builder.Append(k_BaseURL);
 
         foreach (char c in i_ImageURL)
         {
@@ -165,14 +157,6 @@ public sealed class MakoMainPageParser : IMainPageParser
         string regularExpression = @"Article-([a-zA-Z0-9]+)\.htm";
         Match match = Regex.Match(io_Article.URL, regularExpression);
 
-        if (match.Success)
-        {
-            io_Article.ID = match.Groups[1].Value;
-        }
-
-        else
-        {
-            io_Article.ID = io_Article.URL;
-        }
+        io_Article.ID = match.Success ? $"{k_Website}{match.Groups[1].Value}" : io_Article.URL;
     }
 }

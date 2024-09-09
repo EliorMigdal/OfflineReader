@@ -11,5 +11,4 @@ public class OuterArticle
     public DateTime Date { get; set; }
     public string URL { get; set; } = string.Empty;
     public string ID { get; set; } = string.Empty;
-    public DateTime LastUpdated { get; set; }
 }
