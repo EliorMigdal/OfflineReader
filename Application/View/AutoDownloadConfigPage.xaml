@@ -56,12 +56,12 @@
               Grid.Row="3"
               Margin="10,15,0,20"
               Padding="20,0,20,0" >
-            <Label  Text="Choose when to download" 
+            <Label  Text="Choose starting hour" 
                     Grid.Column="0"
                     FontSize="Small"
                     HorizontalOptions="Start"
                     VerticalOptions="Center"/>
-            <Picker Title="When to download"
+            <Picker Title="When to start"
                     Grid.Column="1"
                     HorizontalOptions="End"
                     VerticalOptions="Center"
@@ -81,12 +81,35 @@
             </Picker>
         </Grid>
 
-        <Label  Grid.Row="4"
-                Text="Note: The app will automatically download articles to the device every 24 hours"
+        <Grid ColumnDefinitions="Auto, *"
+              Grid.Row="4"
+              Margin="10,15,0,20"
+              Padding="20,0,20,0" >
+            <Label  Text="Choose download interval" 
+                Grid.Column="0"
                 FontSize="Small"
-                Margin="10,15,0,20"
-                Padding="20,0,20,0" 
-                HorizontalOptions="Center"/>
+                HorizontalOptions="Start"
+                VerticalOptions="Center"/>
+            <Picker Title="When to download"
+                Grid.Column="1"
+                HorizontalOptions="End"
+                VerticalOptions="Center"
+                Margin="40,0,0,0"
+                SelectedItem="{Binding SelectedDownloadIntervalString}" 
+                IsEnabled="{Binding IsAutoDownloadEnabled}">
+                <Picker.Items>
+                    <x:String>Every 6 Hours</x:String>
+                    <x:String>Every 12 Hours</x:String>
+                    <x:String>Every 24 Hours</x:String>
+                    <x:String>Every 2 Days</x:String>
+                    <x:String>Every 3 Days</x:String>
+                    <x:String>Every 4 Days</x:String>
+                    <x:String>Every 5 Days</x:String>
+                    <x:String>Every 1 Week</x:String>
+                    <x:String>Every 2 Weeks</x:String>
+                </Picker.Items>
+            </Picker>
+        </Grid>
 
         <Grid Grid.Row="5"
               ColumnDefinitions="Auto, *"
