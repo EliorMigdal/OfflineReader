@@ -32,13 +32,11 @@
                 <DataTemplate>
                     <Grid Margin="10">
                         <Frame BorderColor="Gray"
-                               BackgroundColor="DarkGray"
+                               BackgroundColor="LightBlue"
                                IsClippedToBounds="True"
                                HorizontalOptions="Center"
                                VerticalOptions="Center"
-                               HeightRequest="50"
-                               WidthRequest="120"
-                               Padding="5">
+                               Padding="15">
                             <Label Text="{Binding .}" 
                                    FontSize="14" 
                                    VerticalOptions="Center" 

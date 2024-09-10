@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Application.View.ChooseSitesPage"
+			 xmlns:viewmodel="clr-namespace:Application.ViewModel">
+    <ContentPage.BindingContext>
+		<viewmodel:ChooseSitesViewModel/>
+	</ContentPage.BindingContext>
+
+        <Grid RowDefinitions="Auto, Auto, Auto">
+        <ListView ItemsSource="{Binding Sites}" 
+                  Grid.Row="0"
+                  SelectionMode="None" 
+                  RowHeight="80" 
+                  SeparatorVisibility="None"
+                  BackgroundColor="Transparent">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal" BackgroundColor="LightGray" Padding="10" Margin="5">
+                            
+                            <CheckBox IsChecked="{Binding IsSelected}" />
+                            <Grid HeightRequest="60"
+                                  WidthRequest="50"
+                                  Margin="30">
+                                <Frame 
+                                    BorderColor="Transparent"
+                                    BackgroundColor="Transparent"
+                                    IsClippedToBounds="True"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center"
+                                    HeightRequest="70"
+                                    WidthRequest="100">
+                                    <Image Source="{Binding SupportedWebsite.ImageURL}"
+                                       Aspect="AspectFit"
+                                       HeightRequest="75"
+                                       WidthRequest="75"/>
+                                </Frame>
+                            </Grid>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Button Text="Save preferred sites" 
+                    Grid.Row="1"
+                    Command="{Binding SaveSitesCommand}" 
+                    TextColor="Black"
+                    BackgroundColor="LightBlue"
+                    HeightRequest="60"
+                    WidthRequest="250"
+                    Margin="80"/>
+        <Label Text="Successfully saved your preferred sites"
+               Grid.Row="2"
+               IsVisible="{Binding ShowMessageThatSaveCompleted}"
+               TextColor="Green"
+               FontSize="Small"
+               HorizontalOptions="Center"
+               VerticalOptions="Center" 
+               Margin="20"/>
+    </Grid>
+
+</ContentPage>

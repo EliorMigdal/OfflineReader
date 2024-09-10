@@ -37,8 +37,7 @@
                                IsClippedToBounds="True"
                                HorizontalOptions="Center"
                                VerticalOptions="Center"
-                               HeightRequest="70"
-                               WidthRequest="150">
+                               Padding="15, -15">
                             <Image Source="{Binding ImageURL}"
                                    Aspect="AspectFit"
                                    HeightRequest="100"

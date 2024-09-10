@@ -1,13 +1,13 @@
-﻿using System.Diagnostics;
-using Application.Service.Remote;
+﻿using Application.Service.Remote;
+using BusinessLogic.AutoDownloadSettings;
 using BusinessLogic.SupportedWebsite;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Application.Service.Local;
 
 public sealed class ConfigService
 {
-    private static string ConfigFilePath => Path.Combine(FileSystem.AppDataDirectory, "Config.json");
+    private static string ConfigFilePath => Path.Combine(FileSystem.AppDataDirectory, "Config");
     private readonly ServerAPI r_ServerAPI = ServerAPI.Instance;
     private static readonly object rm_CreationLock = new();
     private static ConfigService? m_Instance;
@@ -25,34 +25,41 @@ public sealed class ConfigService
             }
         }
     }
-    
-    private ConfigService() {}
 
-    public static bool DoesConfigFileExist()
+    private ConfigService()
     {
-        return File.Exists(ConfigFilePath);
+        if (!Directory.Exists(ConfigFilePath))
+        {
+            Directory.CreateDirectory(ConfigFilePath);
+        }
     }
 
-    public static string GetConfigFilePath()
+    public static AutoDownloadSettings GetSettings()
     {
-        return ConfigFilePath;
+        using Stream fileStream = new FileStream(ConfigFilePath + "/settings.json", FileMode.OpenOrCreate);
+        AutoDownloadSettings? settings = JsonSerializer.Deserialize<AutoDownloadSettings>(fileStream);
+
+        return settings ?? new AutoDownloadSettings();
     }
 
-    public static void AddWebsitesToConfigFile(List<SupportedWebsite> i_SupportedWebsites)
+    public static List<SupportedWebsite> GetSelectedWebsites()
     {
-        try
-        {
-            List<string> urls = i_SupportedWebsites.Select(website => website.URL).ToList();
-            string json = JsonConvert.SerializeObject(urls, Formatting.Indented);
-            File.WriteAllText(ConfigFilePath, json);
-            Debug.WriteLine($"Created config file!");
-        }
+        using Stream fileStream = new FileStream(ConfigFilePath + "/websites.json", FileMode.OpenOrCreate);
+        List<SupportedWebsite>? websites = JsonSerializer.Deserialize<List<SupportedWebsite>>(fileStream);
 
-        catch (Exception error)
-        {
-            Debug.WriteLine($"Failed to create config file! Error: {error}");
-        }
+        return websites ?? new List<SupportedWebsite>();
+    }
 
+    public static void SaveSelectedWebsites(List<SupportedWebsite> i_Websites)
+    {
+        using Stream fileStream = new FileStream(ConfigFilePath + "/websites.json", FileMode.Create);
+        JsonSerializer.Serialize(fileStream, i_Websites);
+    }
+
+    public static void SaveSettings(AutoDownloadSettings i_Settings)
+    {
+        using Stream fileStream = new FileStream(ConfigFilePath + "/settings.json", FileMode.Create);
+        JsonSerializer.Serialize(fileStream, i_Settings);
     }
 
     public async Task<List<SupportedWebsite>> LoadSupportedWebsites()

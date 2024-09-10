@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Application.View.AutoDownloadConfigPage"
+             xmlns:viewmodel="clr-namespace:Application.ViewModel"
+             x:DataType="viewmodel:AutoDownloadConfigViewModel">
+
+    <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto"
+          RowSpacing="0">
+        <Grid ColumnDefinitions="Auto, *"
+              Grid.Row="0">
+            <Label Text="Enable Auto Download?"
+                       FontSize="Medium"
+                       Margin="20"
+                       Grid.Column="0"
+                       HorizontalTextAlignment="Start"
+                       VerticalOptions="Center"/>
+            <Switch IsToggled="{Binding IsAutoDownloadEnabled}" 
+                    Grid.Column="1"
+                    HorizontalOptions="EndAndExpand"
+                    VerticalOptions="Center"
+                    Margin="20"/>
+        </Grid>
+
+        <Grid ColumnDefinitions="Auto, *"
+              Grid.Row="1"
+              Margin="10,15,0,20"
+              Padding="20,0,45,0" >
+            <Label  Text="Only when connected to WiFi?"
+                    FontSize="Small"
+                    Grid.Column="0"
+                    VerticalOptions="Center"/>
+            <Switch IsToggled="{Binding IsOnlyOnWifiOptionEnbaled}"
+                    IsEnabled="{Binding IsAutoDownloadEnabled}"
+                    Grid.Column="1"
+                    HorizontalOptions="EndAndExpand"
+                    VerticalOptions="Center"/>
+        </Grid>
+
+        <Grid ColumnDefinitions="Auto, *"
+              Grid.Row="2"
+              Margin="10,15,0,20"
+              Padding="20,0,45,0">
+            <Label  Text="Only when phone is charging?"
+                        FontSize="Small"
+                        Grid.Column="0"
+                        VerticalOptions="Center"/>
+            <Switch IsToggled="{Binding IsOnlyWhenChargingOptionEnbaled}"
+                    IsEnabled="{Binding IsAutoDownloadEnabled}"
+                    Grid.Column="1"
+                    HorizontalOptions="EndAndExpand"
+                    VerticalOptions="Center"/>
+        </Grid>
+
+        <Grid ColumnDefinitions="Auto, *"
+              Grid.Row="3"
+              Margin="10,15,0,20"
+              Padding="20,0,20,0" >
+            <Label  Text="Choose when to download" 
+                    Grid.Column="0"
+                    FontSize="Small"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"/>
+            <Picker Title="When to download"
+                    Grid.Column="1"
+                    HorizontalOptions="End"
+                    VerticalOptions="Center"
+                    Margin="90,0,0,0"
+                    SelectedItem="{Binding SelectedStartingHourString}" 
+                    IsEnabled="{Binding IsAutoDownloadEnabled}">
+                <Picker.Items>
+                    <x:String>6 AM</x:String>
+                    <x:String>7 AM</x:String>
+                    <x:String>8 AM</x:String>
+                    <x:String>9 AM</x:String>
+                    <x:String>6 PM</x:String>
+                    <x:String>7 PM</x:String>
+                    <x:String>8 PM</x:String>
+                    <x:String>9 PM</x:String>
+                </Picker.Items>
+            </Picker>
+        </Grid>
+
+        <Label  Grid.Row="4"
+                Text="Note: The app will automatically download articles to the device every 24 hours"
+                FontSize="Small"
+                Margin="10,15,0,20"
+                Padding="20,0,20,0" 
+                HorizontalOptions="Center"/>
+
+        <Grid Grid.Row="5"
+              ColumnDefinitions="Auto, *"
+              Margin="10,15,0,20"
+              Padding="20,0,20,0" >
+            <Label Text="Maximum articles to store offline" 
+                   Grid.Column="0"
+                   FontSize="Small"
+                   HorizontalOptions="Start"
+                   VerticalOptions="Center"/>
+            <Picker 
+                Title="Maximum articles to store"
+                Grid.Column="1"
+                HorizontalOptions="End"
+                VerticalOptions="Center"
+                Margin="45,0,0,0"
+                SelectedItem="{Binding SelectedMaxNumOfArticlesToStoreString}" 
+                IsEnabled="{Binding IsAutoDownloadEnabled}">
+                <Picker.Items>
+                    <x:String>10</x:String>
+                    <x:String>20</x:String>
+                    <x:String>30</x:String>
+                    <x:String>40</x:String>
+                    <x:String>50</x:String>
+                </Picker.Items>
+            </Picker>
+        </Grid>
+    </Grid>
+</ContentPage>
