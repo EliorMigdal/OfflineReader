@@ -31,8 +31,8 @@
                         SelectionChangedCommand="{Binding SelectedWebsiteCommand}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:SupportedWebsite">
-                    <Grid HeightRequest="60"
-                          WidthRequest="60"
+                    <Grid HeightRequest="100"
+                          WidthRequest="150"
                           Margin="10">
                         <Frame 
                                 BorderColor="Gray"

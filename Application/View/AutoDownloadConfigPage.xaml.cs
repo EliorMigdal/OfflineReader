@@ -4,7 +4,7 @@ namespace Application.View;
 
 public partial class AutoDownloadConfigPage
 {
-    public AutoDownloadConfigPage(ChooseSitesViewModel i_ViewModel)
+    public AutoDownloadConfigPage(AutoDownloadConfigViewModel i_ViewModel)
     {
         InitializeComponent();
         BindingContext = i_ViewModel;

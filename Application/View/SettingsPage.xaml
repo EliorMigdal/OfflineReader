@@ -8,10 +8,19 @@
         <viewmodel:SettingsViewModel/>
     </ContentPage.BindingContext>
     
-    <StackLayout Padding="10">
-        <Button Text="Choose Sites" Command="{Binding ChooseSitesClickedCommand}" Margin="10" />
-        <Button Text="Auto Download" Command="{Binding AutoDownloadClickedCommand}" Margin="10" />
-        <Button Text="Notifications" Command="{Binding NotificationsClickedCommand}" Margin="10" />
-    </StackLayout>
+    <Grid RowDefinitions="Auto, Auto"
+          Margin="20"
+          VerticalOptions="StartAndExpand">
+        <Button Grid.Row="0"
+                Text="Choose Sites" Command="{Binding ChooseSitesClickedCommand}" 
+                TextColor="Black"
+                BackgroundColor="LightBlue"
+                Margin="15"/>
+        <Button Grid.Row="1"
+                Text="Auto download settings" Command="{Binding AutoDownloadClickedCommand}"
+                TextColor="Black"
+                BackgroundColor="LightBlue"
+                Margin="15"/>
+    </Grid>
 
 </ContentPage>
