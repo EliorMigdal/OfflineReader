@@ -9,5 +9,4 @@ public partial class ChooseSitesPage
         InitializeComponent();
         BindingContext = i_ViewModel;
     }
-    
 }

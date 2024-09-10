@@ -18,29 +18,9 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
-                        <!--<Grid ColumnDefinitions="Auto, *">
-                            <Label  Text="{Binding AllPossibleSitesToChooseFrom.SupportedWebsite.Name}"
-                                    FontSize="Small"
-                                    Margin="20"
-                                    Grid.Column="0"
-                                    HorizontalTextAlignment="Start"
-                                    VerticalOptions="Center"/>
-                            <Switch IsToggled="{Binding AllPossibleSitesToChooseFrom.IsSelected}" 
-                                    Grid.Column="1"
-                                    HorizontalOptions="EndAndExpand"
-                                    VerticalOptions="Center"
-                                    Margin="20"/>
-                        </Grid>-->
                         <StackLayout Orientation="Horizontal" BackgroundColor="LightGray" Padding="10" Margin="5">
                             
                             <CheckBox IsChecked="{Binding IsSelected}" />
-                            <!--<Label Text="{Binding Name}" VerticalOptions="Center" TextColor="Black" />-->
-                            <!--<Image Source="{Binding SupportedWebsite.ImageURL}"
-                                   Aspect="AspectFit"
-                                   HeightRequest="40"
-                                   WidthRequest="40"
-                                   HorizontalOptions="End"/>-->
-
                             <Grid HeightRequest="60"
                                   WidthRequest="50"
                                   Margin="30">

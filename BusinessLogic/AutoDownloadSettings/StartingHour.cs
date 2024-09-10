@@ -1,5 +1,4 @@
-﻿
-namespace BusinessLogic.AutoDownloadSettings;
+﻿namespace BusinessLogic.AutoDownloadSettings;
 
 public enum StartingHour
 {

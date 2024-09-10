@@ -1,7 +1,5 @@
 using Application.View;
-using BusinessLogic.Article;
-using BusinessLogic.AutoDownloadSettings;
-using BusinessLogic.SupportedWebsite;
+using AsyncAwaitBestPractices.MVVM;
 using System.Windows.Input;
 
 namespace Application.ViewModel;
@@ -10,17 +8,11 @@ public class SettingsViewModel : BaseViewModel //, IQueryAttributable
 {
     public ICommand ChooseSitesClickedCommand { get; private set; } = null!;
     public ICommand AutoDownloadClickedCommand { get; private set; } = null!;
-    public ICommand NotificationsClickedCommand { get; private set; } = null!;
-
-    public AutoDownloadSettings? AutoDownloadSettings { get; set; } = new();
-    public List<SupportedWebsite>? ChosenSites { get; private set; } = new();
-
 
     public SettingsViewModel()
     {
-        ChooseSitesClickedCommand = new Command(async () => await onChooseSitesCommand());
-        AutoDownloadClickedCommand = new Command(async () => await onAutoDownloadCommand());
-        //NotificationsClickedCommand = new Command(async () => await onNotificationsCommand());
+        ChooseSitesClickedCommand = new AsyncCommand(onChooseSitesCommand);
+        AutoDownloadClickedCommand = new AsyncCommand(onAutoDownloadCommand);
     }
 
     private async Task onChooseSitesCommand()
@@ -56,20 +48,4 @@ public class SettingsViewModel : BaseViewModel //, IQueryAttributable
             IsBusy = false;
         }
     }
-
-    //private async Task onNotificationsCommand()
-    //{
-    //    if (IsBusy)
-    //        return;
-
-    //    IsBusy = true;
-    //    try
-    //    {
-    //        // Navigate to NotificationsPage or handle the command
-    //    }
-    //    finally
-    //    {
-    //        IsBusy = false;
-    //    }
-    //}
 }

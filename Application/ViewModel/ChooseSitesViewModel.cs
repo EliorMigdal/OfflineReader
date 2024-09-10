@@ -11,31 +11,6 @@ namespace Application.ViewModel;
 
 public class ChooseSitesViewModel : BaseViewModel
 {
-    //public class SinglePossiblyChosenSite
-    //{
-    //    private bool _isSelected = false;
-    //    public SupportedWebsite SupportedWebsite { get; set; } = null!;
-    //    public string Name => SupportedWebsite.Name;
-    //    public bool IsSelected 
-    //    { 
-    //        get => _isSelected;
-    //        set
-    //        {
-    //            if (_isSelected != value)
-    //            {
-    //                _isSelected = value;
-    //                SaveAutoDownloadSettingsToConfigFile();
-    //            }
-    //        }
-    //    }
-    //    public SinglePossiblyChosenSite(SupportedWebsite supportedWebsite, bool isSelected)
-    //    {
-    //        SupportedWebsite = supportedWebsite;
-    //        IsSelected = isSelected;
-    //    }
-    //}
-    //public static ObservableCollection<SinglePossiblyChosenSite> AllPossibleSitesToChooseFrom { get; private set; } = new();
-
     public class Site
     {
         public string Name { get; set; } = string.Empty;
@@ -52,26 +27,11 @@ public class ChooseSitesViewModel : BaseViewModel
                 }
             }
         }
-        //public bool IsSelected { get; set; } = false;
         public SupportedWebsite SupportedWebsite { get; set; } = null!;
     }
 
-    private bool _showMessageThatSaveCompleted = false;
-    public bool ShowMessageThatSaveCompleted
-    {
-        get => _showMessageThatSaveCompleted;
-        set
-        {
-            _showMessageThatSaveCompleted = value;
-            OnPropertyChanged();
-        }
-    }
-
     public ObservableCollection<Site> Sites { get; private set; } = new();
-    //public List<(SupportedWebsite supportedSite, bool isSelected)> AllPossibleSites { get; private set; } = new();
     private readonly ServerAPI rm_ServerAPI = ServerAPI.Instance;
-
-
     public ICommand SaveSitesCommand { get; private set; }
 
     public ChooseSitesViewModel()
@@ -86,7 +46,6 @@ public class ChooseSitesViewModel : BaseViewModel
             selectedWebsites = new List<SupportedWebsite>();
         }
         initializeSupportedWebsites(selectedWebsites);
-        //SetNamesOfSites();
         SaveSitesCommand = new AsyncCommand(onSaveSitesCommand);
     }
 
@@ -107,12 +66,10 @@ public class ChooseSitesViewModel : BaseViewModel
             {
                 if (selectedWebsitesNames.Contains(supportedWebsite.Name))
                 {
-                    //AllPossibleSitesToChooseFrom.Add(new SinglePossiblyChosenSite(supportedWebsite, true));
                     Sites.Add(new Site { Name = supportedWebsite.Name, IsSelected = true, SupportedWebsite = supportedWebsite });
                 }
                 else
                 {
-                    //AllPossibleSitesToChooseFrom.Add(new SinglePossiblyChosenSite(supportedWebsite, false));
                     Sites.Add(new Site { Name = supportedWebsite.Name, IsSelected = false, SupportedWebsite = supportedWebsite });
                 }
             }
@@ -124,29 +81,6 @@ public class ChooseSitesViewModel : BaseViewModel
                 "Fetching websites has failed.", "OK");
         }
     }
-
-    //internal static void SaveAutoDownloadSettingsToConfigFile()
-    //{
-    //    List<SupportedWebsite> chosenSites = new List<SupportedWebsite>();
-    //    foreach (var site in Sites)// AllPossibleSitesToChooseFrom)
-    //    {
-    //        if (site.IsSelected)
-    //        {
-    //            chosenSites.Add(site.SupportedWebsite);
-    //        }
-    //    }
-    //    ConfigService.SaveSelectedWebsites(chosenSites);
-    //}
-
-    //private void SetNamesOfSites()
-    //{
-    //    Sites.Add(new Site { Name = "Mako", IsSelected = false });
-    //    Sites.Add(new Site { Name = "Ynet", IsSelected = false });
-    //    Sites.Add(new Site { Name = "TheMarker", IsSelected = false });
-    //    Sites.Add(new Site { Name = "Walla", IsSelected = false });
-    //    Sites.Add(new Site { Name = "CNN", IsSelected = false });
-    //    Sites.Add(new Site { Name = "BBC", IsSelected = false });
-    //}
 
     private async Task onSaveSitesCommand()
     {
@@ -177,17 +111,14 @@ public class ChooseSitesViewModel : BaseViewModel
         }
     }
 
-
-    //private void OnSaveSitesCommand()
-    //{
-
-
-
-    //    //var selectedSites = AllPossibleSites.Where(site => site.IsSelected).ToList();
-
-    //    //// Logic to handle selected sites
-    //    //foreach (var site in selectedSites)
-    //    //{
-    //    //}
-    //}
+    private bool _showMessageThatSaveCompleted = false;
+    public bool ShowMessageThatSaveCompleted
+    {
+        get => _showMessageThatSaveCompleted;
+        set
+        {
+            _showMessageThatSaveCompleted = value;
+            OnPropertyChanged();
+        }
+    }
 }
