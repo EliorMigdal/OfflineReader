@@ -1,4 +1,5 @@
-﻿using BusinessLogic.AutoDownloadSettings;
+﻿using Application.BackgroundTask;
+using BusinessLogic.AutoDownloadSettings;
 using Application.Service.Local;
 
 namespace Application.ViewModel;
@@ -8,36 +9,40 @@ public class AutoDownloadConfigViewModel : BaseViewModel
     private bool _isAutoDownloadEnabled;
     private bool _isOnlyOnWifiOptionEnbaled;
     private bool _isOnlyWhenChargingOptionEnbaled;
-    private StartingHour _startingHour;
+    private eStartingHour _eStartingHour;
     private string _selectedStartingHourString = string.Empty;
     private string _selectedMaxNumOfArticlesToStoreString = string.Empty;
 
-    private static readonly Dictionary<string, StartingHour> StartingHourMapping = new Dictionary<string, StartingHour>
+    private static readonly Dictionary<string, eStartingHour> StartingHourMapping = new Dictionary<string, eStartingHour>
     {
-        { "6 AM", StartingHour.SixAM },
-        { "7 AM", StartingHour.SevenAM },
-        { "8 AM", StartingHour.EightAM },
-        { "9 AM", StartingHour.NineAM },
-        { "6 PM", StartingHour.SixPM },
-        { "7 PM", StartingHour.SevenPM },
-        { "8 PM", StartingHour.EightPM },
-        { "9 PM", StartingHour.NinePM }
+        { "6 AM", eStartingHour.SixAM },
+        { "7 AM", eStartingHour.SevenAM },
+        { "8 AM", eStartingHour.EightAM },
+        { "9 AM", eStartingHour.NineAM },
+        { "6 PM", eStartingHour.SixPM },
+        { "7 PM", eStartingHour.SevenPM },
+        { "8 PM", eStartingHour.EightPM },
+        { "9 PM", eStartingHour.NinePM }
     };
-    private static readonly Dictionary<StartingHour, string> ReverseStartingHourMapping = StartingHourMapping.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+    private static readonly Dictionary<eStartingHour, string> ReverseStartingHourMapping = StartingHourMapping.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+    private IBackgroundTaskService m_BackgroundTaskService;
 
 
     public AutoDownloadSettings AutoDownloadSettings { get; set; }
     
-    public AutoDownloadConfigViewModel()
+    public AutoDownloadConfigViewModel(IBackgroundTaskService i_Service)
     {
         try
         {
+            m_BackgroundTaskService = i_Service;
             AutoDownloadSettings = ConfigService.GetSettings();
         }
+        
         catch (Exception e)
         {
             AutoDownloadSettings = new AutoDownloadSettings();
         }
+        
         InitializeProperties();
     }
 
@@ -46,8 +51,8 @@ public class AutoDownloadConfigViewModel : BaseViewModel
         IsAutoDownloadEnabled = AutoDownloadSettings.AutoDownloadEnabled;
         IsOnlyOnWifiOptionEnbaled = AutoDownloadSettings.DownloadOnWifiOnly;
         IsOnlyWhenChargingOptionEnbaled = AutoDownloadSettings.DownloadOnlyWhenCharging;
-        _startingHour = AutoDownloadSettings.StartHour;
-        SelectedStartingHourString = ReverseStartingHourMapping.TryGetValue(_startingHour, out var hourString)
+        _eStartingHour = AutoDownloadSettings.StartHour;
+        SelectedStartingHourString = ReverseStartingHourMapping.TryGetValue(_eStartingHour, out var hourString)
                                     ? hourString 
                                     : "6 AM"; // Default value if not found
         SelectedMaxNumOfArticlesToStoreString = AutoDownloadSettings.MaxArticlesToStoreLocally.ToString();
@@ -114,14 +119,14 @@ public class AutoDownloadConfigViewModel : BaseViewModel
     {
         if (StartingHourMapping.TryGetValue(SelectedStartingHourString, out var startingHour))
         {
-            _startingHour = startingHour;
+            _eStartingHour = startingHour;
         }
         else
         {
-            _startingHour = StartingHour.SixAM; // Default value
+            _eStartingHour = eStartingHour.SixAM; // Default value
         }    
 
-        AutoDownloadSettings.StartHour = _startingHour;
+        AutoDownloadSettings.StartHour = _eStartingHour;
     }
 
     public string SelectedMaxNumOfArticlesToStoreString

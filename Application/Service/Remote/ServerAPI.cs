@@ -7,7 +7,7 @@ namespace Application.Service.Remote;
 
 public sealed class ServerAPI
 {
-    private readonly string r_BaseURL = "http://20.217.168.73/offlineReader";
+    private readonly string r_BaseURL = "http://51.4.3.92/offlineReader";
     private static readonly object rm_CreationLock = new();
     private readonly JsonSerializerOptions rm_CaseInsensitiveOptions = new()
     {

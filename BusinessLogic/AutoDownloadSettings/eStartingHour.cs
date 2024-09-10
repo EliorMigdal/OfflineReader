@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogic.AutoDownloadSettings;
 
-public enum StartingHour
+public enum eStartingHour
 {
     SixAM = 6,
     SevenAM,

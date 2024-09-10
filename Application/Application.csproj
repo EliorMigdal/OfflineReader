@@ -83,6 +83,9 @@
       <Compile Update="View\HistoryPage.xaml.cs">
         <DependentUpon>HistoryPage.xaml</DependentUpon>
       </Compile>
+      <Compile Update="Platforms\Android\PeriodicBackgroundWorker.cs">
+        <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>

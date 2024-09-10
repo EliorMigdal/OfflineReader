@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Windows.Input;
 using Application.Helpers;
 using Application.Helpers.Content.Generator;
@@ -71,8 +70,8 @@ public class ReaderViewModel : BaseViewModel, IQueryAttributable
     public ReaderViewModel()
     {
         initializeButtonImages();
-        DownloadButtonCommand = new AsyncCommand(saveArticle);
-        DeleteButtonCommand = new Command(deleteArticle);
+        DownloadButtonCommand = new AsyncCommand(saveArticleCommand);
+        DeleteButtonCommand = new Command(deleteArticleCommand);
         ConnectivityManager.ConnectivityChanged += OnConnectivityChanged!;
         
         initializeLayout();
@@ -105,7 +104,7 @@ public class ReaderViewModel : BaseViewModel, IQueryAttributable
         }
     }
     
-    private async Task saveArticle()
+    private async Task saveArticleCommand()
     {
         if (IsBusy)
             return;
@@ -140,7 +139,7 @@ public class ReaderViewModel : BaseViewModel, IQueryAttributable
         });
     }
 
-    private void deleteArticle()
+    private void deleteArticleCommand()
     {
         if (IsBusy)
             return;

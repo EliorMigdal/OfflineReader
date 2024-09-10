@@ -36,18 +36,39 @@ public sealed class ConfigService
 
     public static AutoDownloadSettings GetSettings()
     {
-        using Stream fileStream = new FileStream(ConfigFilePath + "/settings.json", FileMode.OpenOrCreate);
-        AutoDownloadSettings? settings = JsonSerializer.Deserialize<AutoDownloadSettings>(fileStream);
-
-        return settings ?? new AutoDownloadSettings();
+        AutoDownloadSettings settings;
+        
+        try
+        {
+            using Stream fileStream = new FileStream(ConfigFilePath + "/settings.json", FileMode.OpenOrCreate);
+            settings = JsonSerializer.Deserialize<AutoDownloadSettings>(fileStream) ?? new AutoDownloadSettings();
+        }
+        
+        catch (Exception)
+        {
+            settings = new AutoDownloadSettings();
+        }
+        
+        return settings;
     }
 
     public static List<SupportedWebsite> GetSelectedWebsites()
     {
-        using Stream fileStream = new FileStream(ConfigFilePath + "/websites.json", FileMode.OpenOrCreate);
-        List<SupportedWebsite>? websites = JsonSerializer.Deserialize<List<SupportedWebsite>>(fileStream);
+        List<SupportedWebsite> websites;
+        
+        try
+        {
+            using Stream fileStream = new FileStream(ConfigFilePath + "/websites.json", FileMode.OpenOrCreate);
+            websites = JsonSerializer.Deserialize<List<SupportedWebsite>>(fileStream) ?? new List<SupportedWebsite>();
+        }
+        
+        catch (Exception)
+        {
+            websites = new List<SupportedWebsite>();
+        }
 
-        return websites ?? new List<SupportedWebsite>();
+
+        return websites;
     }
 
     public static void SaveSelectedWebsites(List<SupportedWebsite> i_Websites)

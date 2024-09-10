@@ -1,4 +1,5 @@
-﻿using Application.View;
+﻿using Application.BackgroundTask;
+using Application.View;
 using Application.ViewModel;
 using Microsoft.Extensions.Logging;
 
@@ -22,6 +23,12 @@ public static class MauiProgram
         #endif
         
         builder.Services.AddSingleton(Connectivity.Current);
+        
+        #if ANDROID
+                builder.Services.AddSingleton<IBackgroundTaskService, PeriodicBackgroundWorker>();
+        #elif IOS
+                builder.Services.AddSingleton<IBackgroundTaskService, PeriodicBackgroundService>();
+        #endif
 
         Routing.RegisterRoute(nameof(ReadingPage), typeof(ReadingPage));
         builder.Services.AddTransient<ReaderViewModel>();
