@@ -8,26 +8,27 @@ namespace Application.Service.Remote;
 
 public sealed class OnlineContentService
 {
-    private static readonly object rm_CreationLock = new();
-    private static OnlineContentService? m_Instance;
+    private static readonly object sr_CreationLock = new();
+    private static OnlineContentService? s_Instance;
     public static OnlineContentService Instance
     {
         get
         {
-            if (m_Instance is not null) return m_Instance;
+            if (s_Instance is not null) return s_Instance;
 
-            lock (rm_CreationLock)
+            lock (sr_CreationLock)
             {
-                m_Instance ??= new OnlineContentService();
+                s_Instance ??= new OnlineContentService();
 
-                return m_Instance;
+                return s_Instance;
             }
         }
     }
     private ConfigService ConfigService { get; } = ConfigService.Instance;
     private HTMLSupplierService HTMLSupplier { get; } = HTMLSupplierService.Instance;
-    private MainPageParserFactory MainPageParserFactory { get; } = new();
     public ObservableCollection<OuterArticle> OnlineArticlesList { get; } = new();
+
+    private OnlineContentService() {}
 
     public async Task UpdateArticlesList()
     {

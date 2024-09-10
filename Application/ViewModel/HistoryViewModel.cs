@@ -12,7 +12,7 @@ public class HistoryViewModel : BaseViewModel
     public ObservableCollection<SupportedWebsite> SupportedWebsites { get; } = new();
     public SupportedWebsite? SelectedWebsite { get; set; }
     public ICommand SelectedWebsiteCommand { get; set; }
-    private readonly ServerAPI rm_ServerAPI = ServerAPI.Instance;
+    private readonly ServerAPI r_ServerAPI = ServerAPI.Instance;
 
     public HistoryViewModel()
     {
@@ -24,7 +24,7 @@ public class HistoryViewModel : BaseViewModel
     {
         try
         {
-            List<SupportedWebsite> supportedWebsites = await rm_ServerAPI.LoadSupportedWebsites();
+            List<SupportedWebsite> supportedWebsites = await r_ServerAPI.LoadSupportedWebsites();
 
             foreach (SupportedWebsite supportedWebsite in supportedWebsites)
             {
@@ -45,7 +45,7 @@ public class HistoryViewModel : BaseViewModel
         {
             if (SelectedWebsite != null)
             {
-                List<string> dates = await rm_ServerAPI.GetAvailableDates(SelectedWebsite.Name);
+                List<string> dates = await r_ServerAPI.GetAvailableDates(SelectedWebsite.Name);
             
                 await Shell.Current.GoToAsync(nameof(DatePickerPage), true, new Dictionary<string, object>
                 {

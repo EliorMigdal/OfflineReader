@@ -31,17 +31,13 @@
                         SelectionChangedCommand="{Binding SelectedWebsiteCommand}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:SupportedWebsite">
-                    <Grid HeightRequest="100"
-                          WidthRequest="150"
-                          Margin="10">
-                        <Frame 
-                                BorderColor="Gray"
-                                BackgroundColor="DarkGray"
-                                IsClippedToBounds="True"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center"
-                                HeightRequest="70"
-                                WidthRequest="150">
+                    <Grid Margin="10">
+                        <Frame BorderColor="Gray"
+                               BackgroundColor="DarkGray"
+                               IsClippedToBounds="True"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Padding="15, -15">
                             <Image Source="{Binding ImageURL}"
                                    Aspect="AspectFit"
                                    HeightRequest="100"

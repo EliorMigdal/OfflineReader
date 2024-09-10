@@ -18,15 +18,17 @@ public sealed class ConnectivityManager
             }
         }
     }
+    
     private readonly IConnectivity m_Connectivity = Connectivity.Current;
+    
+    private ConnectivityManager() {}
+
     public event EventHandler<ConnectivityChangedEventArgs> ConnectivityChanged
     {
         add => m_Connectivity.ConnectivityChanged += value;
         remove => m_Connectivity.ConnectivityChanged -= value;
     }
     
-    private ConnectivityManager() {}
-
     public bool IsDeviceConnected()
     {
         return m_Connectivity.NetworkAccess == NetworkAccess.Internet;
@@ -34,7 +36,7 @@ public sealed class ConnectivityManager
 
     public bool IsDeviceConnectedToWiFi()
     {
-        throw new NotImplementedException();
+        return m_Connectivity.ConnectionProfiles.Contains(ConnectionProfile.WiFi);
     }
     
     public async Task AlertConnectivityIssue()

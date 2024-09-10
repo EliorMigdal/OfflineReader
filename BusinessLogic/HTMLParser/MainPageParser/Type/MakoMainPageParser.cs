@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.RegularExpressions;
 using BusinessLogic.Article.Content;
 using BusinessLogic.Article.Partials;
 using HtmlAgilityPack;
@@ -8,9 +9,8 @@ namespace BusinessLogic.HTMLParser.MainPageParser.Type;
 public sealed class MakoMainPageParser : IMainPageParser
 {
     private static readonly object rm_CreationLock = new();
-    private readonly object rm_ParsingLock = new();
-    private readonly string k_BaseURL = "https://www.mako.co.il";
-    private readonly string k_Website = "mako";
+    private const string k_BaseURL = "https://www.mako.co.il";
+    private const string k_Website = "mako";
     private static MakoMainPageParser? m_Instance;
     public static MakoMainPageParser Instance
     {
@@ -31,24 +31,19 @@ public sealed class MakoMainPageParser : IMainPageParser
 
     public List<OuterArticle> ParseMainPageHTML(string i_HTML)
     {
-        lock (rm_ParsingLock)
-        {
-            List<OuterArticle> articles = new List<OuterArticle>();
-            HtmlDocument HTMLDocument = new HtmlDocument();
-            HTMLDocument.LoadHtml(i_HTML);
-            readSpotlightArticles(ref articles, HTMLDocument);
+        List<OuterArticle> articles = new List<OuterArticle>();
+        HtmlDocument HTMLDocument = new HtmlDocument();
+        HTMLDocument.LoadHtml(i_HTML);
+        readSpotlightArticles(ref articles, HTMLDocument);
 
-            return articles;
-        }
+        return articles;
     }
 
     private void readSpotlightArticles(ref List<OuterArticle> io_Articles, HtmlDocument i_HTML)
     {
-        HtmlNode spotlightNode = i_HTML.DocumentNode.SelectSingleNode("//div[contains(@class, 'Spotlight_root')]");
+        HtmlNodeCollection articleNodes = i_HTML.DocumentNode.SelectNodes("//article");
 
-        if (spotlightNode == null) return;
-        HtmlNodeCollection articleNodes = i_HTML.DocumentNode.SelectNodes(".//article");
-
+        if (articleNodes is null) return;
         foreach (HtmlNode articleNode in articleNodes)
         {
             try
@@ -58,10 +53,7 @@ public sealed class MakoMainPageParser : IMainPageParser
                 string articleImage = extractArticleImage(articleNode);
                 DateTime articleDate = extractArticleDate(articleNode);
 
-                if (articleURL.Length <= 0 || articleTitle.Length <= 0 || articleImage.Length <= 0)
-                {
-                    continue;
-                }
+                if (articleURL.Length <= 0 || articleTitle.Length <= 0 || articleImage.Length <= 0) continue;
 
                 OuterArticle article = new OuterArticle
                 {
@@ -69,11 +61,10 @@ public sealed class MakoMainPageParser : IMainPageParser
                     URL = articleURL,
                     MainImage = new ImageContent(articleImage, 0),
                     Website = k_Website,
-                    Date = articleDate,
-                    LastUpdated = articleDate
+                    Date = articleDate
                 };
-                
-                article.GenerateArticleID();
+
+                GenerateArticleID(article);
                 io_Articles.Add(article);
             }
 
@@ -89,7 +80,7 @@ public sealed class MakoMainPageParser : IMainPageParser
         string articleTitle = string.Empty;
         HtmlNode titleNode = i_ArticleNode.SelectSingleNode(".//h4 | .//h2");
 
-        if (titleNode != null)
+        if (titleNode is not null)
         {
             articleTitle = HtmlEntity.DeEntitize(titleNode.InnerText);
         }
@@ -102,14 +93,12 @@ public sealed class MakoMainPageParser : IMainPageParser
         string articleURL = string.Empty;
         HtmlNode URLNode = i_ArticleNode.SelectSingleNode(".//a");
 
-        if (URLNode != null)
-        {
-            articleURL = URLNode.GetAttributeValue("href", "");
+        if (URLNode is null) return articleURL;
+        articleURL = URLNode.GetAttributeValue("href", "");
 
-            if (!string.IsNullOrWhiteSpace(articleURL) && !articleURL.StartsWith("http"))
-            {
-                articleURL = new Uri(new Uri(k_BaseURL), articleURL).AbsoluteUri;
-            }
+        if (!string.IsNullOrWhiteSpace(articleURL) && !articleURL.StartsWith("http"))
+        {
+            articleURL = new Uri(new Uri(k_BaseURL), articleURL).AbsoluteUri;
         }
 
         return articleURL;
@@ -120,14 +109,12 @@ public sealed class MakoMainPageParser : IMainPageParser
         string articleImageURLs = string.Empty;
         HtmlNode imageNode = i_ArticleNode.SelectSingleNode(".//img");
 
-        if (imageNode != null)
-        {
-            articleImageURLs = imageNode.GetAttributeValue("srcSet", "");
+        if (imageNode is null) return articleImageURLs;
+        articleImageURLs = imageNode.GetAttributeValue("srcSet", "");
 
-            if (!string.IsNullOrWhiteSpace(articleImageURLs))
-            {
-                articleImageURLs = findFirstImage(articleImageURLs);
-            }
+        if (!string.IsNullOrWhiteSpace(articleImageURLs))
+        {
+            articleImageURLs = findFirstImage(articleImageURLs);
         }
 
         return articleImageURLs;
@@ -141,15 +128,13 @@ public sealed class MakoMainPageParser : IMainPageParser
             !DateTime.TryParse(dateNode.GetAttributeValue("dateTime", string.Empty), out DateTime o_Date))
             throw new Exception();
         
-        var articleDate = DateTime.Parse(o_Date.ToString("dd-MM-yyyy HH:mm"));
-
-        return articleDate;
+        return o_Date;
     }
 
     private string findFirstImage(string i_ImageURL)
     {
         StringBuilder builder = new StringBuilder();
-        builder.Append("https://www.mako.co.il");
+        builder.Append(k_BaseURL);
 
         foreach (char c in i_ImageURL)
         {
@@ -165,5 +150,13 @@ public sealed class MakoMainPageParser : IMainPageParser
         }
 
         return builder.ToString()[..(builder.Length - 3)].Replace("amp;", string.Empty);
+    }
+    
+    public void GenerateArticleID(OuterArticle io_Article)
+    {
+        string regularExpression = @"Article-([a-zA-Z0-9]+)\.htm";
+        Match match = Regex.Match(io_Article.URL, regularExpression);
+
+        io_Article.ID = match.Success ? $"{k_Website}{match.Groups[1].Value}" : io_Article.URL;
     }
 }

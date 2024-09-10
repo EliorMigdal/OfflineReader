@@ -1,49 +1,48 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+
 namespace Server.Services;
 
-public class TimedHostedService : IHostedService, IDisposable
+public class TimedHostedService(ILogger<TimedHostedService> logger) : IHostedService, IDisposable
 {
     private readonly DBService r_DBService = DBService.Instance;
-    private readonly ILogger<TimedHostedService> _logger;
-    private Timer _timer;
-
-    public TimedHostedService(ILogger<TimedHostedService> logger)
-    {
-        _logger = logger;
-    }
+    private Timer? m_Timer;
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Timed Hosted Service running.");
-
-        var nextRunTime = DateTime.Today.AddHours(20).AddMinutes(00);
+        logger.LogInformation("Timed Hosted Service running.");
+        var nextRunTime = DateTime.Today.AddHours(20);
+        
         if (DateTime.Now > nextRunTime)
         {
             nextRunTime = nextRunTime.AddDays(1);
         }
+        
         var initialDelay = nextRunTime - DateTime.Now;
-
-        _timer = new Timer(DoWork, null, initialDelay, TimeSpan.FromHours(24));
+        m_Timer = new Timer(DoWork, null, initialDelay, TimeSpan.FromHours(24));
 
         return Task.CompletedTask;
     }
 
-    private async void DoWork(object state)
+    private async void DoWork(object? state)
     {
-        _logger.LogInformation("Timed Hosted Service is working at {time}.", DateTimeOffset.Now);
+        logger.LogInformation("Timed Hosted Service is working at {time}.", DateTimeOffset.Now);
         await r_DBService.UpdateArticlesHistory();
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Timed Hosted Service is stopping.");
-
-        _timer.Change(Timeout.Infinite, 0);
+        logger.LogInformation("Timed Hosted Service is stopping.");
+        m_Timer?.Change(Timeout.Infinite, 0);
 
         return Task.CompletedTask;
     }
 
     public void Dispose()
     {
-        _timer.Dispose();
+        m_Timer?.Dispose();
     }
 }
